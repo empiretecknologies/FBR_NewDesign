@@ -13,7 +13,14 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title> @ViewBag.WebsiteName</title>
-    <link rel="shortcut icon" href="~/@favIcon" />
+    <script>
+        window.erpUserId = @Html.Raw(Json.Serialize(Context.Session.GetString("Id") ?? ""));
+        (function () {
+            var theme = localStorage.getItem('erpTheme_' + window.erpUserId) === 'dark' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="shortcut icon" href="~/images/empire-logo.png" />
     @* <link rel="shortcut icon" href="~/images/Favicon.png" /> *@
     <environment>
         <link href="~/css/bootstrap.min.css" rel="stylesheet">
@@ -46,6 +53,7 @@
         <link href="~/css/tautocomplete.css" rel="stylesheet" asp-append-version="true">
         <!-- Custom styles for this template -->
         <link href="~/css/style.css" rel="stylesheet" asp-append-version="true">
+        <link href="~/css/app-theme.css" rel="stylesheet" asp-append-version="true">
         <link href="~/css/posstyle.css" rel="stylesheet" asp-append-version="true">
         @*<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">*@
         <link href="~/lib/toast-notification/build/toastr.css" rel="stylesheet" />
@@ -65,14 +73,12 @@
             }
 
             #Loader {
-                top: 0;
-                left: 0;
-                z-index: 1002;
                 display: none;
                 position: fixed;
+                inset: 0;
+                z-index: 99999;
                 width: 100%;
                 height: 100%;
-                background-color: rgb(255 255 255 / 57%);
             }
 
             #form .dx-fieldset {
@@ -176,7 +182,7 @@
             }
 
             .highlight {
-                background-color: #055a87;
+                background-color: #1A73C7;
                 color: #fff;
             }
 
@@ -214,7 +220,7 @@
             .modal-header-bg {
                 width: 100%;
                 height: 12px;
-                background: #055a87;
+                background: #1A73C7;
             }
 
             .cropImageModal .modal-dialog {
@@ -393,7 +399,7 @@
             }
 
             .slide-track-custom {
-                background-color: #055a87;
+                background-color: #1A73C7;
                 clip-path: polygon(20px 0%, 100% 0%, 100% 100%, 0% 100%);
                 color: white;
                 overflow: hidden;
@@ -417,7 +423,7 @@
             }
 
             .breadcrumb-custom {
-                background-color: #055a87;
+                background-color: #1A73C7;
                 /* clip-path: polygon(0% 0%, 100% 0%, 90% 100%, 0px 100%); */
                 clip-path: polygon(0px 0px, 100% 0%, calc(100% - 20px) 100%, 0px 100%);
                 color: white;
@@ -531,264 +537,142 @@
 
 <body class="full_width">
     <div class="loader-box" id="Loader">
-        <div class="loader-1"></div>
+        <div class="erp-loader-card">
+            <div class="loader-1"></div>
+        </div>
     </div>
-    <div class="headertopbar">
-        <div class="container-fluid">
-            <div class="row g-0 d-flex align-items-center">
-                <div class="col-4">
-                    <img class="brang_logo" src="~/@logo">
+    @{
+        string navKey = Convert.ToString(ViewBag.NavKey) ?? "";
+        string pageGroup = Convert.ToString(ViewBag.PageGroup) ?? "";
+        bool openTransactions = pageGroup == "Transactions";
+        bool openReports = pageGroup == "Reports";
+        bool openSetup = pageGroup == "Setup";
+        bool openSettings = pageGroup == "Settings";
+    }
+    <div class="erp-shell" id="erpShell">
+        <aside class="erp-sidebar">
+            <div class="erp-brand">
+                <img class="erp-brand-logo erp-brand-logo-full" src="~/images/empire-logo-white.png" alt="Empire Technologies" />
+                <img class="erp-brand-logo erp-brand-logo-mark" src="~/images/empire-mark.png" alt="Empire Technologies" />
+            </div>
+            <nav class="erp-nav">
+                <a class="erp-nav-item @(navKey == "dashboard" ? "active" : "")" href="/Home" title="Dashboard">
+                    <i class="fa-solid fa-house"></i><span>Dashboard</span>
+                </a>
+                <div class="erp-nav-group open @(openTransactions ? "active-group" : "")">
+                    <button type="button" class="erp-nav-item erp-nav-toggle" title="Transactions">
+                        <span><i class="fa-solid fa-right-left"></i><span>Transactions</span></span>
+                        <i class="fa-solid fa-chevron-down erp-caret"></i>
+                    </button>
+                    <div class="erp-subnav" data-title="Transactions">
+                        <a class="@(navKey == "purchase-bill" ? "active" : "")" href="/PurchaseBill" title="Sales Tax Invoice">Sales Tax Invoice</a>
+                    </div>
                 </div>
-                <div class="col-8 text-end">
-                    <ul class="ul-right-menu topexlink">
-                        @* <li class="nav-item dropdown ph-hide">
-                            <a href="javascript:;" class="quick-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true"><i class="fa-brands fa-uikit"></i> Calculator</a>
-                            <ul class="dropdown-menu quicklink-dropdown">
-                                <li>
-                                    <div class="calculator">
-                                        <div class="input" id="input"></div>
-                                        <div class="buttons">
-                                            <div class="operators">
-                                                <div>+</div>
-                                                <div>-</div>
-                                                <div>x</div>
-                                                <div>/</div>
-                                            </div>
-                                            <div class="leftPanel">
-                                                <div class="numbers">
-                                                    <div>7</div>
-                                                    <div>8</div>
-                                                    <div>9</div>
-                                                </div>
-                                                <div class="numbers">
-                                                    <div>4</div>
-                                                    <div>5</div>
-                                                    <div>6</div>
-                                                </div>
-                                                <div class="numbers">
-                                                    <div>1</div>
-                                                    <div>2</div>
-                                                    <div>3</div>
-                                                </div>
-                                                <div class="numbers">
-                                                    <div>0</div>
-                                                    <div>.</div>
-                                                    <div id="clear">C</div>
-                                                </div>
-                                            </div>
-                                            <div class="equal" id="result">=</div>
-                                        </div>
+                <div class="erp-nav-group open @(openReports ? "active-group" : "")">
+                    <button type="button" class="erp-nav-item erp-nav-toggle" title="Reports">
+                        <span><i class="fa-solid fa-chart-column"></i><span>Reports</span></span>
+                        <i class="fa-solid fa-chevron-down erp-caret"></i>
+                    </button>
+                    <div class="erp-subnav" data-title="Reports">
+                        <a class="@(navKey == "sales-tax-invoice-report" ? "active" : "")" href="/SalesInvoiceReport" title="Sales Tax Invoice Report">Sales Tax Invoice Report</a>
+                    </div>
+                </div>
+                <div class="erp-nav-group open @(openSetup ? "active-group" : "")">
+                    <button type="button" class="erp-nav-item erp-nav-toggle" title="Setup">
+                        <span><i class="fa-solid fa-gears"></i><span>Setup</span></span>
+                        <i class="fa-solid fa-chevron-down erp-caret"></i>
+                    </button>
+                    <div class="erp-subnav" data-title="Setup">
+                        <a class="@(navKey == "customer" ? "active" : "")" href="/PartyTypes" title="Customer">Customer</a>
+                        <a class="@(navKey == "item-master" ? "active" : "")" href="/ItemMaster" title="Item Master">Item Master</a>
+                        <a class="@(navKey == "unit-of-measure" ? "active" : "")" href="/SetupType" title="Unit of Measure">Unit of Measure</a>
+                    </div>
+                </div>
+                <div class="erp-nav-group open @(openSettings ? "active-group" : "")">
+                    <button type="button" class="erp-nav-item erp-nav-toggle" title="Settings">
+                        <span><i class="fa-solid fa-user-gear"></i><span>Settings</span></span>
+                        <i class="fa-solid fa-chevron-down erp-caret"></i>
+                    </button>
+                    <div class="erp-subnav" data-title="Settings">
+                        <a class="@(navKey == "user-management" ? "active" : "")" href="/User" title="User Management">User Management</a>
+                        <a class="@(navKey == "database-backup" ? "active" : "")" href="/DatabaseBackup" title="Database Backup">Database Backup</a>
+                        <a href="javascript:;" id="erpSideProfile" title="My Profile">My Profile</a>
+                        <a href="javascript:;" onclick="Logout()" title="Logout">Logout</a>
+                    </div>
+                </div>
+            </nav>
+            <img class="erp-sidebar-city" src="~/images/erp-city.svg" alt="" />
+            <div class="erp-sidebar-foot">
+                <span>Empowering Business</span>
+                <span>with Smart Solutions</span>
+                <a class="erp-sidebar-link" href="https://empiretecknologies.com" target="_blank" rel="noopener noreferrer">empiretecknologies.com</a>
+                <small>v7.0.0</small>
+            </div>
+        </aside>
+        <div class="erp-sidebar-backdrop" id="erpSidebarBackdrop"></div>
+        <div class="erp-main">
+            <div class="erp-topbar">
+                <div class="erp-topbar-left">
+                    <button type="button" class="erp-menu-btn" title="Toggle menu"><i class="fa-solid fa-bars"></i></button>
+                </div>
+                <div class="erp-topbar-right">
+                    <div class="erp-chip"><i class="fa-solid fa-building"></i><span>@ViewBag.Company</span></div>
+                    <div class="erp-chip"><i class="fa-solid fa-location-dot"></i><span>@ViewBag.BranchForNav</span></div>
+                    <div class="erp-chip"><i class="fa-regular fa-calendar"></i><span>@ViewBag.Period</span></div>
+                    <a href="javascript:;" class="erp-user" id="erpUserBtn" title="My Profile">
+                        <img id="erpUserImg" src="@ViewBag.ProfileImage" alt="" onerror="this.onerror=null;this.src='/images/img-user.jpg';">
+                        <span id="erpUserName">@ViewBag.Name</span>
+                    </a>
+                    <div class="dropdown erp-settings">
+                        <button type="button" class="erp-settings-btn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Settings">
+                            <i class="fa-solid fa-gear"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end erp-settings-menu">
+                            <li class="erp-settings-title">Settings</li>
+                            <li><a href="/User" class="erp-settings-item"><i class="fa-solid fa-users-gear"></i><span>User Management</span></a></li>
+                            <li><a href="/DatabaseBackup" class="erp-settings-item"><i class="fa-solid fa-database"></i><span>Database Backup</span></a></li>
+                            <li><a href="javascript:;" class="erp-settings-item" id="erpMenuProfile"><i class="fa-solid fa-user-pen"></i><span>My Profile</span></a></li>
+                            <li>
+                                <div class="erp-settings-item erp-theme-row">
+                                    <i class="fa-solid fa-circle-half-stroke"></i><span>Dark Mode</span>
+                                    <div class="form-check form-switch m-0 ms-auto">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="erpThemeSwitch">
                                     </div>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown ph-hide">
-                            <a href="javascript:;" class="quick-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true"><i class="fa-brands fa-uikit"></i> Dropdown</a>
-                            <ul class="dropdown-menu quicklink-dropdown">
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown ph-hide">
-                            <a href="javascript:;" class="quick-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true"><i class="fa-brands fa-uikit"></i> Dropdown</a>
-                            <ul class="dropdown-menu quicklink-dropdown">
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <i class="fa-brands fa-uikit"></i> Menu
-                                    </a>
-                                </li>
-                            </ul>
-                        </li> *@
-                        <li class="nav-item dropdown ph-hide">
-                            <a href="javascript:;" class="nav-link dropdown-toggle noti_dropbtn"
-                               data-bs-toggle="dropdown" aria-expanded="true">
-                                <i class="fa-regular fa-bell"></i>
-                                @* <span class="noticount">9+</span> *@
-                            </a>
-                            <ul class="dropdown-menu notidrop">
-                                <li class="hdng">Notification</li>
-                                <div class="bodycntnt" id="notifications">
-                                    <ul>
-                                        <li>
-                                            <h4>Notification 1</h4>
-                                            <p>
-                                                Lorem Ipsum is simply dummy text of the printing and typesetting
-                                                industry.
-                                            </p>
-                                        </li>
-                                        <li>
-                                            <h4>Notification 2</h4>
-                                            <p>
-                                                Lorem Ipsum is simply dummy text of the printing and typesetting
-                                                industry.
-                                            </p>
-                                        </li>
-                                        <li>
-                                            <h4>Notification 3</h4>
-                                            <p>
-                                                Lorem Ipsum is simply dummy text of the printing and typesetting
-                                                industry.
-                                            </p>
-                                        </li>
-                                        <li>
-                                            <h4>Notification 4</h4>
-                                            <p>
-                                                Lorem Ipsum is simply dummy text of the printing and typesetting
-                                                industry.
-                                            </p>
-                                        </li>
-                                    </ul>
                                 </div>
-                            </ul>
-                        </li>
-                        <li class="searchli ph-hide">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
-                                <input type="text" class="form-control" placeholder="Search">
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <a href="javascript:;" class="nav-link dropdown-logout dropdown-toggle"
-                               data-bs-toggle="dropdown">
-                                @* <span class="dp-user">@ViewBag.Name</span> *@
-                                <img src="@ViewBag.ProfileImage" alt="">
-                                <div class="dp-user mt-2">
-                                    <p>@ViewBag.Name</p>
-                                </div>
-                            </a>
-                            <ul class="dropdown-menu logoutmenu">
-                                <li><a href="#"><i class="ti-user"></i><span>Account </span></a></li>
-                                <li><a href="#"><i class="ti-email"></i><span>Inbox</span></a></li>
-                                <li><a onclick="StopIIS()" style="cursor: pointer;"><i class="ti-lock"></i><span>Stop IIS</span></a></li>
-                                <li><a href="#"><i class="ti-blackboard"></i><span>Taskboard</span></a></li>
-                                <li><a href="#"><i class="ti-settings"></i><span>Settings</span></a></li>
-                                <li><a onclick="Logout()" style="cursor: pointer;"><i class="ti-shift-left"></i><span>Logout</span></a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                            </li>
+                            <li><a href="javascript:;" class="erp-settings-item" onclick="StopIIS()"><i class="fa-solid fa-power-off"></i><span>Stop IIS</span></a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a href="javascript:;" class="erp-settings-item erp-settings-logout" onclick="Logout()"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="container-fluid">
-            @Html.Raw(ViewBag.Menu)
-        </div>
-    </div><!-- End topbar -->
-
-    <input type="hidden" id="menuURLHidden" />
-    <div class="main_wrap @(ViewBag.IsSidebarOpen ? "" : "collapse_sidebar")">
-        <div class="leftsidebar">
-            <h3 class="hdr_title">Quick Links</h3>
-            <a href="javascript:;" class="toggle_sidebar"><i class="ti-angle-left"></i></a>
-            @* @Html.Raw(ViewBag.ChildMenu) *@
-            <div class="favMenu"></div>
-        </div>
-        <div class="rightsidecontent">
-            <div class="contain_wrap">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-lg-4 breadcrumb-box  d-flex align-items-center position-relative">
-
-                            @Html.Raw(ViewBag.BreadCrumbHTML)
+            <div class="erp-canvas">
+                <div class="erp-workspace">
+                    <div class="erp-crumb">
+                        @Html.Raw(ViewBag.BreadCrumbHTML)
+                    </div>
+                    <div class="container-fluid">
+                    <div id="gearDropdown" class="gear-dropdown">
+                        <div class="fw-bold mb-2 ms-0"><i style="color:#1A73C7;" class='fa-solid fa-gear'></i> Settings</div>
+                        <div class="mb-2 d-flex align-items-center justify-content-between" style="white-space: nowrap;">
+                            <label class="form-check-label" for="g2">  Row  Limit : </label>
+                            <input type="number" style="width:30%;" type="text" id="RowLimit" min="1" step="1" class="form-control mb-2">
                         </div>
-                        <div id="gearDropdown" class="gear-dropdown">
-                            <div class="fw-bold mb-2 ms-0"><i style="color:#055a87;" class='fa-solid fa-gear'></i> Settings</div>
-                            <div class="mb-2 d-flex align-items-center justify-content-between" style="white-space: nowrap;">
-                                <label class="form-check-label" for="g2">  Row  Limit : </label>
-                                <input type="number" style="width:30%;" type="text" id="RowLimit" min="1" step="1" class="form-control mb-2">
-
-                            </div>
-
-                            <div class="form-check form-switch mb-2 d-flex  align-items-center">
-                                <label class="form-check-label" for="g2">Data Clear :</label>
-                                <input class="mb-3 form-check-input dclear-chk" id="DClear-ChkBox" type="checkbox">
-
-                            </div>
-                            <div class="form-check form-switch mb-2 align-items-center">
-                                <label class="form-check-label" for="g1">Search With Detail : </label>
-                                <input class="gear-checkbox" id="Search-Chkbox" type="checkbox">
-
-                            </div>
-
-                            <div class="text-end">
-                                <button id="BtnApply" class="btn btn-sm btn-primary w-40">Apply</button>
-                            </div>
+                        <div class="form-check form-switch mb-2 d-flex  align-items-center">
+                            <label class="form-check-label" for="g2">Data Clear :</label>
+                            <input class="mb-3 form-check-input dclear-chk" id="DClear-ChkBox" type="checkbox">
                         </div>
-                        <div class="col-lg-8" style="text-align: right;">
-                            <div class="branch-slider" style="display: inline-block;">
-                                <div class="slide-track slide-track-custom">
-                                    <span class="branch-name branch-name-custom">
-                                        @Html.Raw(ViewBag.Company + "&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;" + ViewBag.BranchForNav + "&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;" + ViewBag.Period)
-                                    </span>
-                                </div>
-                            </div>
+                        <div class="form-check form-switch mb-2 align-items-center">
+                            <label class="form-check-label" for="g1">Search With Detail : </label>
+                            <input class="gear-checkbox" id="Search-Chkbox" type="checkbox">
                         </div>
-
+                        <div class="text-end">
+                            <button id="BtnApply" class="btn btn-sm btn-primary w-40">Apply</button>
+                        </div>
                     </div>
                     @RenderBody()
+                    </div>
                 </div>
             </div>
         </div>
@@ -1135,6 +1019,80 @@
         </div>
     </div>
 
+    <div class="modal fade erp-profile-modal" id="erpProfileModal" tabindex="-1" aria-labelledby="erpProfileTitle" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="erp-profile-cover">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="erp-profile-head">
+                        <label class="erp-profile-avatar" for="erpProfilePicture" title="Change profile picture">
+                            <img id="erpProfilePreview" src="/images/img-user.jpg" alt="" onerror="this.onerror=null;this.src='/images/img-user.jpg';">
+                            <span class="erp-profile-cam"><i class="fa-solid fa-camera"></i></span>
+                        </label>
+                        <input type="file" id="erpProfilePicture" accept="image/png,image/jpeg,image/gif,image/webp" hidden>
+                        <div class="erp-profile-id">
+                            <h5 id="erpProfileTitle">My Profile</h5>
+                            <span id="erpProfileHandle"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <form id="erpProfileForm" autocomplete="off" novalidate>
+                        <div class="erp-profile-section"><i class="fa-solid fa-id-card"></i> Personal Information</div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" for="erpProfileFullName">Full Name</label>
+                                <div class="erp-profile-input"><i class="fa-solid fa-user"></i><input type="text" class="form-control" id="erpProfileFullName" maxlength="50" placeholder="Enter full name"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="erpProfileUsername">Username <span class="text-danger">*</span></label>
+                                <div class="erp-profile-input"><i class="fa-solid fa-at"></i><input type="text" class="form-control" id="erpProfileUsername" maxlength="50" placeholder="Username" readonly></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="erpProfileCell">Mobile Number</label>
+                                <div class="erp-profile-input"><i class="fa-solid fa-mobile-screen"></i><input type="tel" class="form-control" id="erpProfileCell" maxlength="20" placeholder="03XX-XXXXXXX"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="erpProfileEmail">Email</label>
+                                <div class="erp-profile-input has-action">
+                                    <i class="fa-solid fa-envelope"></i>
+                                    <input type="email" class="form-control" id="erpProfileEmail" maxlength="50" placeholder="name@example.com" readonly>
+                                    <button type="button" class="erp-profile-change" id="erpProfileEmailChange">Change</button>
+                                </div>
+                                <div class="erp-profile-otp" id="erpProfileOtpBox">
+                                    <p class="erp-profile-otp-msg" id="erpProfileOtpMsg"></p>
+                                    <div class="erp-profile-otp-row">
+                                        <input type="text" class="form-control" id="erpProfileOtp" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="Enter 6-digit code">
+                                        <button type="button" class="btn btn-primary btn-sm" id="erpProfileOtpVerify">Verify</button>
+                                        <button type="button" class="btn btn-light btn-sm" id="erpProfileOtpResend">Resend</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="erp-profile-section mt-4"><i class="fa-solid fa-palette"></i> Appearance</div>
+                        <div class="erp-theme-options">
+                            <label class="erp-theme-option">
+                                <input type="radio" name="erpProfileTheme" value="light">
+                                <span class="erp-theme-preview erp-theme-preview-light"><span></span><span></span></span>
+                                <span class="erp-theme-name"><i class="fa-solid fa-sun"></i> Light Mode</span>
+                            </label>
+                            <label class="erp-theme-option">
+                                <input type="radio" name="erpProfileTheme" value="dark">
+                                <span class="erp-theme-preview erp-theme-preview-dark"><span></span><span></span></span>
+                                <span class="erp-theme-name"><i class="fa-solid fa-moon"></i> Dark Mode</span>
+                            </label>
+                        </div>
+                        <p class="erp-profile-hint"><i class="fa-solid fa-circle-info"></i> Click your picture to upload a new one (JPG, PNG, GIF or WEBP, max 2 MB).</p>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i> Cancel</button>
+                    <button type="button" class="btn btn-primary" id="erpProfileSave"><i class="fa fa-save"></i> Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <environment>
         <!--ImportantLinks-->
         @* <script src="~/js/jquery-3.6.4.min.js" asp-append-version="true"></script> *@
@@ -1194,18 +1152,13 @@
                 dataClear = window.pageSettings.dataClear;
             }
                       document.addEventListener('DOMContentLoaded', function () {
-                const sidebar = document.querySelector('.main_wrap');
-                $.get("/FavoriteMenu/GetFavorites", function (data) {
-                    if (data.data.length > 0) {
-                        const isOpen = data.data[0].iS_SIDEBAR_OPEN;
-                        if (isOpen) {
-                            sidebar.classList.remove('collapse_sidebar');
-                            sidebar.classList.remove('collapsed');
-                        }
-                    } else {
-                        sidebar.classList.add('collapse_sidebar');
-                    }
-                });
+                var shell = document.getElementById('erpShell');
+                if (!shell) return;
+                if (window.matchMedia('(max-width: 890px)').matches) {
+                    shell.classList.add('sidebar-collapsed');
+                } else if (localStorage.getItem('erpSidebarCollapsed') === '1') {
+                    shell.classList.add('sidebar-collapsed');
+                }
             });
 
                     document.getElementById('myTab')?.addEventListener(
@@ -1332,6 +1285,7 @@
         <script src="~/dx/ati_dxHelper.js"></script>
         <script src="~/js/customjs/empr_helper.js"></script>
         <script src="~/js/customjs/empr_ClosingShop.js"></script>
+        <script src="~/js/customjs/empr_Profile.js" asp-append-version="true"></script>
         <script src="~/js/jquery.mapkey.js"></script>
 
         <script src="~/lib/toast-notification/build/toastr.min.js"></script>

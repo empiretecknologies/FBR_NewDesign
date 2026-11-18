@@ -62,12 +62,16 @@ namespace Empire_ERP.Controllers
                 return RedirectToAction("Details", "Login");
             }
 
-            var dashboardResponse = _purchaseBillService.GetDashboardData(CommonHelper.GetValues(HttpContext));
-            ViewBag.DashboardData = (dashboardResponse != null && dashboardResponse.data is DashboardData)
-                ? dashboardResponse.data
-                : new DashboardData();
-
             return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetDashboardData(string fromDate, string toDate, string section = "all")
+        {
+            DateTime from = DateTime.TryParse(fromDate, out var parsedFrom) ? parsedFrom : DateTime.Today.AddMonths(-6).AddDays(1);
+            DateTime to = DateTime.TryParse(toDate, out var parsedTo) ? parsedTo : DateTime.Today;
+            var response = _purchaseBillService.GetDashboardData(CommonHelper.GetValues(HttpContext), from, to, section);
+            return Json(response);
         }
 
         public IActionResult Privacy()

@@ -44,7 +44,7 @@ var empr_DatabaseBackup = {
         ajaxHelper.ajaxGetJson('/DatabaseBackup/GenerateDBBackup', function (data) {
             if (data.msgType == 1) {
                 //window.location = window.location.origin + data.data;
-                empr_helper.notify("Backup file sent successfully.", data.msgType);
+                empr_helper.notify(data.msg || "Backup file sent successfully.", data.msgType);
             }
             else {
                 empr_helper.notify(data.msg, data.msgType);

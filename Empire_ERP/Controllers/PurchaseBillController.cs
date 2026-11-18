@@ -1261,6 +1261,67 @@ namespace Empire_ERP.Controllers
             return Json(response);
         }
 
+        [HttpGet]
+        public JsonResult GetInvoiceViewData(int code, int mdId)
+        {
+            try
+            {
+                var model = new PurchaseBillRDLCReport { TRAN_ID = code, MD_ID = mdId };
+                var reportDetails = new Reports.Datasets.BarcodeReportDataset.SaleTaxInvoiceDataTable();
+                var responseMessage = _purchaseBillService.GetDataForReport(model, reportDetails, CommonHelper.GetValues(HttpContext));
+                if (responseMessage.msgType != 1)
+                {
+                    return Json(new { msgType = 2, msg = string.IsNullOrEmpty(responseMessage.msg) ? "Unable to load invoice." : responseMessage.msg });
+                }
+                var reportData = (CustomPurchaseBillForPrintReport)responseMessage.data;
+                var m = reportData.Master;
+                var items = reportDetails.AsEnumerable().Select(r => new
+                {
+                    itemName = Convert.ToString(r["ItemName"]),
+                    hsCode = Convert.ToString(r["HSCode"]),
+                    unit = Convert.ToString(r["Unit"]),
+                    qty = r["Qty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["Qty"]),
+                    rate = r["Rate"] == DBNull.Value ? 0 : Convert.ToDecimal(r["Rate"]),
+                    amt = r["Amt"] == DBNull.Value ? 0 : Convert.ToDecimal(r["Amt"]),
+                    tax = r["Tax"] == DBNull.Value ? 0 : Convert.ToDecimal(r["Tax"]),
+                    taxAmt = r["TaxAmt"] == DBNull.Value ? 0 : Convert.ToDecimal(r["TaxAmt"]),
+                    netAmt = r["NetAmt"] == DBNull.Value ? 0 : Convert.ToDecimal(r["NetAmt"])
+                }).ToList();
+
+                return Json(new
+                {
+                    msgType = 1,
+                    master = new
+                    {
+                        invoiceNumber = m?.INVOICE_NUMBER,
+                        date = m?.DATE,
+                        refNo = m?.REF,
+                        fbrNo = m?.FBR_NO,
+                        supplierName = m?.C_NAME,
+                        supplierAddress = m?.B_ADDRESS,
+                        supplierTel = m?.B_TEL,
+                        supplierStrn = m?.STRN,
+                        supplierNtn = m?.B_NTN,
+                        buyerName = m?.PARTY_NAME,
+                        buyerAddress = m?.PADDRESS,
+                        buyerTel = m?.TELL,
+                        buyerStrn = m?.PT_CNIC,
+                        buyerNtn = m?.PT_NTN
+                    },
+                    items = items
+                });
+            }
+            catch (Exception ex)
+            {
+                string _catchMessage = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    _catchMessage += "<br/>" + ex.InnerException.Message;
+                }
+                return Json(new { msgType = 2, msg = _catchMessage });
+            }
+        }
+
 
         private string GenerateReport(PurchaseBillRDLCReport model)
         {
@@ -1280,12 +1341,9 @@ namespace Empire_ERP.Controllers
                     using (LocalReport report = new LocalReport())
                     {
                         var path = Path.Combine(_hostingEnvironment.ContentRootPath, @$"Reports\{reportData.Master?.REPORT_NAME}.rdlc");
-                        var stReader = new StreamReader(path);
-                        string stringreader = stReader.ReadToEnd();
-                        byte[] byteArray = Encoding.UTF8.GetBytes(stringreader);
-                        MemoryStream stream = new MemoryStream(byteArray);
+                        using var reportStream = System.IO.File.OpenRead(path);
                         report.EnableExternalImages = true;
-                        report.LoadReportDefinition(stream);
+                        report.LoadReportDefinition(reportStream);
                         report.DataSources.Clear();
 
                         if (reportData.Master?.REPORT_NAME == "SaleTaxInvoice")
@@ -1357,7 +1415,6 @@ namespace Empire_ERP.Controllers
                                 parameter22, parameter23, parameter24, parameter25, parameter26, parameter27, parameter28, parameter29 });
                         }
 
-                        report.Refresh();
                         report.DataSources.Add(new ReportDataSource() { Name = "SaleTaxInvoice", Value = reportData.Detail });
 
                         byte[] file;
@@ -1381,11 +1438,6 @@ namespace Empire_ERP.Controllers
                             file = report.Render("PDF");
                             filePath = $"{prefix} - {voucherNumber}" + ".pdf";
 
-                            stReader.Close();
-                            stReader.Dispose();
-                            stream.Flush();
-                            stream.Close();
-                            stream.Dispose();
                             report.Dispose();
                             string reportPath = Path.Combine(uploadsFolder, filePath);
                             System.IO.File.WriteAllBytes(reportPath, file);
@@ -1410,17 +1462,26 @@ namespace Empire_ERP.Controllers
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
 
-            string fileName = $"{Guid.NewGuid()}.png";
+            string safeName = text;
+            foreach (char c in Path.GetInvalidFileNameChars())
+            {
+                safeName = safeName.Replace(c, '_');
+            }
+            string fileName = $"fbr_{safeName}.png";
             string fullPath = Path.Combine(folder, fileName);
+            if (System.IO.File.Exists(fullPath))
+            {
+                return $"/Client/QR/{fileName}";
+            }
 
             var writer = new ZXing.BarcodeWriterPixelData
             {
                 Format = ZXing.BarcodeFormat.QR_CODE,
                 Options = new ZXing.Common.EncodingOptions
                 {
-                    Height = 300,
-                    Width = 300,
-                    Margin = 2
+                    Height = 150,
+                    Width = 150,
+                    Margin = 1
                 }
             };
 

@@ -271,10 +271,10 @@
                             </div>
                             `;
                     $(btnGroupHTML).appendTo(container);
-                    const color = options.data.reV_COLOR === "green" ? "#51bb25" : options.data.reV_COLOR === "red" ? "#dc3545" : "#055a87";
+                    const color = options.data.reV_COLOR === "green" ? "#51bb25" : options.data.reV_COLOR === "red" ? "#dc3545" : "#1A73C7";
                     if (currentValue === "N") {
                         $(container).find(".btn_n" + options.rowIndex).css({
-                            "background-color": "#055a87",
+                            "background-color": "#1A73C7",
                             "color": "white"
                         });
                     } else if (currentValue === "R") {
@@ -1526,7 +1526,7 @@
         });
         
         $(document).find(".btn_n" + rowIndex).css({
-            "background-color": "#055a87",
+            "background-color": "#1A73C7",
             "color": "white",
         });
 

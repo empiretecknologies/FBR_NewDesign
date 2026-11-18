@@ -298,9 +298,57 @@
             { dataField: 'reporT_NAME', caption: 'Name' },
         ];
         empr_helper.dxGridbindingForReports('#GridContainer', col, dataSrc, "ReportTypes", 'single');
+        empr_SalesInvoiceReport.RenderReportCards(dataSrc);
         setTimeout(function () {
-            $('#GridContainer').dxDataGrid('instance').selectRowsByIndexes([0]);
+            if (dataSrc && dataSrc.length > 0) {
+                $('#GridContainer').dxDataGrid('instance').selectRows([dataSrc[0]], false);
+            }
+            $('#ReportCardList .sir-report-item').first().addClass('active');
         }, 500);
+    },
+
+    RenderReportCards(dataSrc) {
+        var $list = $('#ReportCardList').empty();
+        if (!dataSrc || dataSrc.length == 0) {
+            $list.append('<div class="sir-report-empty">No reports available.</div>');
+            return;
+        }
+
+        $.each(dataSrc, function (index, item) {
+            var name = item.reporT_NAME || '';
+            $('<button type="button" class="sir-report-item">')
+                .attr('data-name', name.toLowerCase())
+                .append($('<span class="sir-report-icon">').append($('<i>').addClass(empr_SalesInvoiceReport.GetReportIcon(name))))
+                .append($('<span class="sir-report-text">')
+                    .append($('<strong>').text(name).attr('title', name))
+                    .append($('<span>').text('Report #' + (item.sno != null ? item.sno : index + 1))))
+                .append('<i class="fa-solid fa-circle-check sir-report-check"></i>')
+                .on('click', function () {
+                    $('#ReportCardList .sir-report-item').removeClass('active');
+                    $(this).addClass('active');
+                    $('#GridContainer').dxDataGrid('instance').selectRows([item], false);
+                })
+                .appendTo($list);
+        });
+
+        $('#ReportSearch').off('input').on('input', function () {
+            var term = $(this).val().toLowerCase().trim();
+            $('#ReportCardList .sir-report-item').each(function () {
+                $(this).toggle($(this).attr('data-name').indexOf(term) > -1);
+            });
+        });
+    },
+
+    GetReportIcon(name) {
+        var n = (name || '').toLowerCase();
+        if (n.indexOf('failed') > -1) return 'fa-solid fa-circle-exclamation';
+        if (n.indexOf('pending') > -1) return 'fa-solid fa-hourglass-half';
+        if (n.indexOf('log') > -1) return 'fa-solid fa-clock-rotate-left';
+        if (n.indexOf('push') > -1) return 'fa-solid fa-cloud-arrow-up';
+        if (n.indexOf('party') > -1) return 'fa-solid fa-users';
+        if (n.indexOf('summary') > -1 || n.indexOf('monthly') > -1) return 'fa-solid fa-chart-column';
+        if (n.indexOf('detail') > -1) return 'fa-solid fa-list-ul';
+        return 'fa-solid fa-file-invoice';
     },
 
     GetDataToSave() {

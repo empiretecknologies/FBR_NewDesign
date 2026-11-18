@@ -197,7 +197,7 @@ namespace Empire_ERP.Infrastructure.Repositories
                                                 M.REMARKS,
                                                 CASE WHEN M.ASTATUS = 'Y' THEN 'Active' ELSE 'In-Active' END AS ASTATUS
                                                 FROM {table} M 
-                                                LEFT OUTER JOIN TBL_PARTY_TYPES PT ON PT.PARTY_CODE = M.PARTY_CODE AND PT.ACT_CODE = M.ACT_CODE 
+                                                OUTER APPLY (SELECT TOP 1 PARTY_NAME FROM TBL_PARTY_TYPES WHERE PARTY_CODE = M.PARTY_CODE AND DLT = 'T') PT
                                                 WHERE  M.DLT = 'T' AND M.BCODE = '{common.Branch}' AND M.PERIOD_ID = '{common.Period}' ORDER BY M.TRAN_ID DESC";
 
                             SqlCommand command = new SqlCommand(query, connection);
@@ -239,7 +239,7 @@ namespace Empire_ERP.Infrastructure.Repositories
                                             CASE WHEN M.ASTATUS = 'Y' THEN 'Active' ELSE 'In-Active' END AS ASTATUS ,
                                             PM.TRAN_ID AS PTRAN_ID, PM.VOUCHER_NO AS PVOUCHER_NO, PM.MENU_ID AS PMENU_ID, MB.MENU_PAGE AS MENU_PAGE, MB.MENU_PARENT_CODE
                                             FROM {table} M 
-                                            LEFT OUTER JOIN TBL_PARTY_TYPES PT ON PT.PARTY_CODE = M.PARTY_CODE AND PT.ACT_CODE = M.ACT_CODE 
+                                            OUTER APPLY (SELECT TOP 1 PARTY_NAME FROM TBL_PARTY_TYPES WHERE PARTY_CODE = M.PARTY_CODE AND DLT = 'T') PT
                                             LEFT OUTER JOIN {detailTable} D
                                             ON D.TRAN_ID = M.TRAN_ID AND D.PERIOD_ID = M.PERIOD_ID AND D.BCODE = M.BCODE
                                             LEFT OUTER JOIN {pickDetail} PD ON PD.DT_CODE = D.PICK_ID_D AND PD.BCODE = D.BCODE AND PD.PERIOD_ID = D.PERIOD_ID
@@ -1531,44 +1531,39 @@ namespace Empire_ERP.Infrastructure.Repositories
                     SqlCommand command = new SqlCommand(query, connection);
                     connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        masterData.HEADER_NAME = $"{menuDetails.MD_NAME}";
-                        masterData.REPORT_NAME = $"{menuDetails.REPORT_NAME}";
-                        masterData.INVOICE_NUMBER = Convert.ToString(reader["VOUCHER_NO"]);
-                        masterData.DATE = reader["V_DATE"] == DBNull.Value ? null : Convert.ToDateTime(reader["V_DATE"]).ToString("dd-MM-yyyy");
-                        masterData.COMPANY_NAME = reader["C_NAME"] == DBNull.Value ? "" : Convert.ToString(reader["C_NAME"]);
-                        masterData.PARTY_NAME = reader["PARTY_NAME"] == DBNull.Value ? "" : Convert.ToString(reader["PARTY_NAME"]);
-                        masterData.PADDRESS = reader["PADDRESS"] == DBNull.Value ? "" : Convert.ToString(reader["PADDRESS"]);
-                        masterData.COMPANY_LOGO = currentCompany.C_LOGO;
-                        masterData.B_NTN = reader["B_NTN"] == DBNull.Value ? "" : Convert.ToString(reader["B_NTN"]);
-                        masterData.STRN = reader["STRN"] == DBNull.Value ? "" : Convert.ToString(reader["STRN"]);
-                        masterData.SIG1 = reader["MENU_SIG1"] == DBNull.Value ? "" : Convert.ToString(reader["MENU_SIG1"]);
-                        masterData.SIG2 = reader["MENU_SIG2"] == DBNull.Value ? "" : Convert.ToString(reader["MENU_SIG2"]);
-                        masterData.SIG3 = reader["MENU_SIG3"] == DBNull.Value ? "" : Convert.ToString(reader["MENU_SIG3"]);
-                        masterData.SIG4 = reader["MENU_SIG4"] == DBNull.Value ? "" : Convert.ToString(reader["MENU_SIG4"]);
-                        masterData.MENU_TERMS = reader["MENU_TERMS"] == DBNull.Value ? "" : Convert.ToString(reader["MENU_TERMS"]);
-                        masterData.B_WEBSITE = reader["B_WEBSITE"] == DBNull.Value ? "" : Convert.ToString(reader["B_WEBSITE"]);
-                        masterData.EMAIL = reader["EMAIL"] == DBNull.Value ? "" : Convert.ToString(reader["EMAIL"]);
-                        masterData.BTYPE = reader["BTYPE"] == DBNull.Value ? "" : Convert.ToString(reader["BTYPE"]);
-                        masterData.TELL = reader["TELL"] == DBNull.Value ? "" : Convert.ToString(reader["TELL"]);
-                        masterData.PT_NTN = reader["PT_NTN"] == DBNull.Value ? "" : Convert.ToString(reader["PT_NTN"]);
-                        masterData.C_NAME = reader["C_NAME"] == DBNull.Value ? "" : Convert.ToString(reader["C_NAME"]);
-                        masterData.B_ADDRESS = reader["B_ADDRESS"] == DBNull.Value ? "" : Convert.ToString(reader["B_ADDRESS"]);
-                        masterData.B_TEL = reader["B_TEL"] == DBNull.Value ? "" : Convert.ToString(reader["B_TEL"]);
-                        masterData.FBR_NO = reader["FBR_NO"] == DBNull.Value ? "" : Convert.ToString(reader["FBR_NO"]);
-                        masterData.PT_CNIC = reader["PT_CNIC"] == DBNull.Value ? "" : Convert.ToString(reader["PT_CNIC"]);
-                        masterData.REF = reader["REF"] == DBNull.Value ? "" : Convert.ToString(reader["REF"]);
-                    }
-                    reader.Close();
-                }
-                using (SqlConnection connection = new SqlConnection(new SQLService().getconnstring()))
-                {
-                    SqlCommand command = new SqlCommand(query, connection);
-                    connection.Open();
-                    SqlDataReader reader = command.ExecuteReader();
+                    bool masterRead = false;
                     while (reader.Read())
                     {
+                        if (!masterRead)
+                        {
+                            masterData.HEADER_NAME = $"{menuDetails.MD_NAME}";
+                            masterData.REPORT_NAME = $"{menuDetails.REPORT_NAME}";
+                            masterData.INVOICE_NUMBER = Convert.ToString(reader["VOUCHER_NO"]);
+                            masterData.DATE = reader["V_DATE"] == DBNull.Value ? null : Convert.ToDateTime(reader["V_DATE"]).ToString("dd-MM-yyyy");
+                            masterData.COMPANY_NAME = reader["C_NAME"] == DBNull.Value ? "" : Convert.ToString(reader["C_NAME"]);
+                            masterData.PARTY_NAME = reader["PARTY_NAME"] == DBNull.Value ? "" : Convert.ToString(reader["PARTY_NAME"]);
+                            masterData.PADDRESS = reader["PADDRESS"] == DBNull.Value ? "" : Convert.ToString(reader["PADDRESS"]);
+                            masterData.COMPANY_LOGO = currentCompany.C_LOGO;
+                            masterData.B_NTN = reader["B_NTN"] == DBNull.Value ? "" : Convert.ToString(reader["B_NTN"]);
+                            masterData.STRN = reader["STRN"] == DBNull.Value ? "" : Convert.ToString(reader["STRN"]);
+                            masterData.SIG1 = reader["MENU_SIG1"] == DBNull.Value ? "" : Convert.ToString(reader["MENU_SIG1"]);
+                            masterData.SIG2 = reader["MENU_SIG2"] == DBNull.Value ? "" : Convert.ToString(reader["MENU_SIG2"]);
+                            masterData.SIG3 = reader["MENU_SIG3"] == DBNull.Value ? "" : Convert.ToString(reader["MENU_SIG3"]);
+                            masterData.SIG4 = reader["MENU_SIG4"] == DBNull.Value ? "" : Convert.ToString(reader["MENU_SIG4"]);
+                            masterData.MENU_TERMS = reader["MENU_TERMS"] == DBNull.Value ? "" : Convert.ToString(reader["MENU_TERMS"]);
+                            masterData.B_WEBSITE = reader["B_WEBSITE"] == DBNull.Value ? "" : Convert.ToString(reader["B_WEBSITE"]);
+                            masterData.EMAIL = reader["EMAIL"] == DBNull.Value ? "" : Convert.ToString(reader["EMAIL"]);
+                            masterData.BTYPE = reader["BTYPE"] == DBNull.Value ? "" : Convert.ToString(reader["BTYPE"]);
+                            masterData.TELL = reader["TELL"] == DBNull.Value ? "" : Convert.ToString(reader["TELL"]);
+                            masterData.PT_NTN = reader["PT_NTN"] == DBNull.Value ? "" : Convert.ToString(reader["PT_NTN"]);
+                            masterData.C_NAME = reader["C_NAME"] == DBNull.Value ? "" : Convert.ToString(reader["C_NAME"]);
+                            masterData.B_ADDRESS = reader["B_ADDRESS"] == DBNull.Value ? "" : Convert.ToString(reader["B_ADDRESS"]);
+                            masterData.B_TEL = reader["B_TEL"] == DBNull.Value ? "" : Convert.ToString(reader["B_TEL"]);
+                            masterData.FBR_NO = reader["FBR_NO"] == DBNull.Value ? "" : Convert.ToString(reader["FBR_NO"]);
+                            masterData.PT_CNIC = reader["PT_CNIC"] == DBNull.Value ? "" : Convert.ToString(reader["PT_CNIC"]);
+                            masterData.REF = reader["REF"] == DBNull.Value ? "" : Convert.ToString(reader["REF"]);
+                            masterRead = true;
+                        }
                         DataRow dataRow = dataTable.NewRow();
                         dataRow["ItemName"] = Convert.ToString(reader["ITEM_NAME"]);
                         dataRow["HSCode"] = Convert.ToString(reader["HS_CODE"]);
@@ -1701,7 +1696,7 @@ namespace Empire_ERP.Infrastructure.Repositories
                                         LEFT OUTER JOIN TBL_SB_DETAIL D ON D.TRAN_ID = M.TRAN_ID
                                         LEFT OUTER JOIN TBL_BRANCH B ON B.BCODE = M.BCODE
                                         LEFT OUTER JOIN TBL_COMPANY C ON C.CCODE = B.CCODE
-                                        LEFT OUTER JOIN TBL_PARTY_TYPES P ON P.PARTY_CODE = M.PARTY_CODE AND P.ACT_CODE = M.ACT_CODE
+                                        OUTER APPLY (SELECT TOP 1 NTN, CNIC, PARTY_NAME, REMARKS, PADDRESS, REG_STATUS, PARTY_TYPE, REGION FROM TBL_PARTY_TYPES WHERE PARTY_CODE = M.PARTY_CODE AND DLT = 'T') P
                                         LEFT OUTER JOIN TBL_REGION R ON R.CODE = P.REGION
                                         WHERE M.TRAN_ID = {code} AND M.BCODE = {common.Branch} AND M.PERIOD_ID = {common.Period} AND D.BCODE = {common.Branch} AND D.PERIOD_ID = {common.Period}";
                     SqlCommand command = new SqlCommand(query, connection);
@@ -1842,123 +1837,42 @@ namespace Empire_ERP.Infrastructure.Repositories
             return detailList;
         }
 
-        public MyHttpResponseMessage GetDashboardData(Common common)
+        public MyHttpResponseMessage GetDashboardData(Common common, DateTime fromDate, DateTime toDate, string section = "all")
         {
             MyHttpResponseMessage response = new MyHttpResponseMessage();
             DashboardData dashboardData = new DashboardData();
             try
             {
-                string validFbrFilter = @"M.FBR_NO IS NOT NULL
-                    AND LTRIM(RTRIM(M.FBR_NO)) <> ''
-                    AND M.FBR_NO NOT LIKE '%[^A-Z0-9]%'
-                    AND M.FBR_NO LIKE '%[A-Z]%'
-                    AND M.FBR_NO LIKE '%[0-9]%'
-                    AND LEN(LTRIM(RTRIM(M.FBR_NO))) >= 15";
+                string mode = string.IsNullOrWhiteSpace(section) ? "all" : section.Trim().ToLowerInvariant();
+                bool loadMain = mode != "charts";
+                bool loadCharts = mode != "main";
 
-                using (SqlConnection connection = new SqlConnection(new SQLService().getconnstring()))
+                if (loadMain)
                 {
-                    connection.Open();
-
-                    string kpiQuery = $@"SELECT COUNT(DISTINCT M.TRAN_ID) AS FBR_COUNT,
-                                            ISNULL(SUM(D.AMT), 0) AS TOTAL_AMT,
-                                            ISNULL(SUM(D.TAX_AMT), 0) AS TOTAL_TAX
-                                            FROM TBL_SB_MASTER M
-                                            LEFT OUTER JOIN TBL_SB_DETAIL D ON D.TRAN_ID = M.TRAN_ID AND D.BCODE = M.BCODE AND D.PERIOD_ID = M.PERIOD_ID AND D.DLT = 'T'
-                                            WHERE M.DLT = 'T' AND M.BCODE = '{common.Branch}' AND M.PERIOD_ID = '{common.Period}'
-                                            AND {validFbrFilter}";
-
-                    SqlCommand kpiCommand = new SqlCommand(kpiQuery, connection);
-                    SqlDataReader kpiReader = kpiCommand.ExecuteReader();
-                    if (kpiReader.Read())
+                    dashboardData.TotalInvoices = MapKpi(ExecuteDashboard(163, fromDate, toDate, common));
+                    dashboardData.FbrApproved = MapKpi(ExecuteDashboard(164, fromDate, toDate, common));
+                    dashboardData.PendingInvoices = MapKpi(ExecuteDashboard(165, fromDate, toDate, common));
+                    dashboardData.RejectedInvoices = MapKpi(ExecuteDashboard(166, fromDate, toDate, common));
+                    dashboardData.TotalSales = MapKpi(ExecuteDashboard(167, fromDate, toDate, common));
+                    dashboardData.TotalSalesTax = MapKpi(ExecuteDashboard(168, fromDate, toDate, common));
+                    dashboardData.InvoiceStatusDistribution = MapStatusDistribution(ExecuteDashboard(170, fromDate, toDate, common));
+                    DataSet monitorSet = ExecuteDashboardSet(172, fromDate, toDate, common);
+                    dashboardData.FbrIntegrationMonitoring = MapNameValues(monitorSet.Tables.Count > 0 ? monitorSet.Tables[0] : new DataTable(), null);
+                    dashboardData.RecentTransactions = MapTransactions(ExecuteDashboard(173, fromDate, toDate, common));
+                    dashboardData.FbrErrorLogs = monitorSet.Tables.Count > 1
+                        ? MapFbrErrors(monitorSet.Tables[1])
+                        : new List<DashboardFbrError>();
+                    if (dashboardData.FbrErrorLogs.Count == 0)
                     {
-                        dashboardData.FbrInvoiceCount = kpiReader["FBR_COUNT"] == DBNull.Value ? 0 : Convert.ToInt32(kpiReader["FBR_COUNT"]);
-                        dashboardData.TotalAmount = kpiReader["TOTAL_AMT"] == DBNull.Value ? 0 : Convert.ToDouble(kpiReader["TOTAL_AMT"]);
-                        dashboardData.TotalTaxAmount = kpiReader["TOTAL_TAX"] == DBNull.Value ? 0 : Convert.ToDouble(kpiReader["TOTAL_TAX"]);
+                        dashboardData.FbrErrorLogs = MapFbrErrorsFromTransactions(dashboardData.RecentTransactions);
                     }
-                    kpiReader.Close();
-
-                    string chartQuery = $@"SELECT YEAR(M.V_DATE) AS YR, MONTH(M.V_DATE) AS MTH,
-                                            ISNULL(SUM(D.AMT), 0) AS TOTAL_AMT
-                                            FROM TBL_SB_MASTER M
-                                            LEFT OUTER JOIN TBL_SB_DETAIL D ON D.TRAN_ID = M.TRAN_ID AND D.BCODE = M.BCODE AND D.PERIOD_ID = M.PERIOD_ID AND D.DLT = 'T'
-                                            WHERE M.DLT = 'T' AND M.BCODE = '{common.Branch}' AND M.PERIOD_ID = '{common.Period}' AND M.V_DATE IS NOT NULL AND {validFbrFilter}
-                                            GROUP BY YEAR(M.V_DATE), MONTH(M.V_DATE) 
-                                            ORDER BY YR, MTH";
-
-                    SqlCommand chartCommand = new SqlCommand(chartQuery, connection);
-                    SqlDataReader chartReader = chartCommand.ExecuteReader();
-                    while (chartReader.Read())
-                    {
-                        int year = chartReader["YR"] == DBNull.Value ? 0 : Convert.ToInt32(chartReader["YR"]);
-                        int month = chartReader["MTH"] == DBNull.Value ? 0 : Convert.ToInt32(chartReader["MTH"]);
-                        if (year > 0 && month > 0)
-                        {
-                            dashboardData.SalesChart.Add(new DashboardSalesPoint
-                            {
-                                Month = new DateTime(year, month, 1).ToString("MMM yyyy"),
-                                Amount = chartReader["TOTAL_AMT"] == DBNull.Value ? 0 : Convert.ToDouble(chartReader["TOTAL_AMT"])
-                            });
-                        }
-                    }
-                    chartReader.Close();
-
-                    string dayChartQuery = $@"SELECT CONVERT(date, M.V_DATE) AS VDT,
-                                            ISNULL(SUM(D.AMT), 0) AS TOTAL_AMT
-                                            FROM TBL_SB_MASTER M
-                                            LEFT OUTER JOIN TBL_SB_DETAIL D ON D.TRAN_ID = M.TRAN_ID AND D.BCODE = M.BCODE AND D.PERIOD_ID = M.PERIOD_ID AND D.DLT = 'T'
-                                            WHERE M.DLT = 'T' AND M.BCODE = '{common.Branch}' AND M.PERIOD_ID = '{common.Period}' AND M.V_DATE IS NOT NULL
-                                            AND {validFbrFilter}
-                                            GROUP BY CONVERT(date, M.V_DATE)
-                                            ORDER BY VDT";
-
-                    SqlCommand dayChartCommand = new SqlCommand(dayChartQuery, connection);
-                    SqlDataReader dayChartReader = dayChartCommand.ExecuteReader();
-                    while (dayChartReader.Read())
-                    {
-                        if (dayChartReader["VDT"] == DBNull.Value)
-                        {
-                            continue;
-                        }
-
-                        DateTime voucherDate = Convert.ToDateTime(dayChartReader["VDT"]);
-                        dashboardData.DayWiseSales.Add(new DashboardSalesPoint
-                        {
-                            Month = voucherDate.ToString("dd MMM yyyy"),
-                            Amount = dayChartReader["TOTAL_AMT"] == DBNull.Value ? 0 : Convert.ToDouble(dayChartReader["TOTAL_AMT"])
-                        });
-                    }
-                    dayChartReader.Close();
-
-                    string sparkQuery = $@"SELECT CONVERT(date, M.V_DATE) AS VDT,
-                                            COUNT(DISTINCT M.TRAN_ID) AS INV_COUNT,
-                                            ISNULL(SUM(D.AMT), 0) AS TOTAL_AMT,
-                                            ISNULL(SUM(D.TAX_AMT), 0) AS TOTAL_TAX
-                                            FROM TBL_SB_MASTER M
-                                            LEFT OUTER JOIN TBL_SB_DETAIL D ON D.TRAN_ID = M.TRAN_ID AND D.BCODE = M.BCODE AND D.PERIOD_ID = M.PERIOD_ID AND D.DLT = 'T'
-                                            WHERE M.DLT = 'T' AND M.BCODE = '{common.Branch}' AND M.PERIOD_ID = '{common.Period}' AND M.V_DATE IS NOT NULL
-                                            AND {validFbrFilter}
-                                            GROUP BY CONVERT(date, M.V_DATE)
-                                            ORDER BY VDT";
-
-                    SqlCommand sparkCommand = new SqlCommand(sparkQuery, connection);
-                    SqlDataReader sparkReader = sparkCommand.ExecuteReader();
-                    while (sparkReader.Read())
-                    {
-                        if (sparkReader["VDT"] == DBNull.Value)
-                        {
-                            continue;
-                        }
-
-                        DateTime sparkDate = Convert.ToDateTime(sparkReader["VDT"]);
-                        dashboardData.Sparkline.Add(new DashboardSalesPoint
-                        {
-                            Month = sparkDate.ToString("dd MMM yyyy"),
-                            Count = sparkReader["INV_COUNT"] == DBNull.Value ? 0 : Convert.ToInt32(sparkReader["INV_COUNT"]),
-                            Amount = sparkReader["TOTAL_AMT"] == DBNull.Value ? 0 : Convert.ToDouble(sparkReader["TOTAL_AMT"]),
-                            TaxAmount = sparkReader["TOTAL_TAX"] == DBNull.Value ? 0 : Convert.ToDouble(sparkReader["TOTAL_TAX"])
-                        });
-                    }
-                    sparkReader.Close();
+                    dashboardData.TaxSalesSummary = MapTaxSummary(ExecuteDashboard(175, fromDate, toDate, common));
+                    dashboardData.QuickStats = MapNameValues(ExecuteDashboard(176, fromDate, toDate, common), null);
+                }
+                if (loadCharts)
+                {
+                    dashboardData.MonthlyInvoiceGeneration = MapChartPoints(ExecuteDashboard(169, fromDate, toDate, common), false);
+                    dashboardData.SalesTaxTrend = MapChartPoints(ExecuteDashboard(171, fromDate, toDate, common), true);
                 }
 
                 response.data = dashboardData;
@@ -1977,6 +1891,416 @@ namespace Empire_ERP.Infrastructure.Repositories
                 response.msgType = 2;
             }
             return response;
+        }
+
+        private DataTable ExecuteDashboard(int code, DateTime fromDate, DateTime toDate, Common common)
+        {
+            DataSet set = ExecuteDashboardSet(code, fromDate, toDate, common);
+            return set.Tables.Count > 0 ? set.Tables[0] : new DataTable();
+        }
+
+        private DataSet ExecuteDashboardSet(int code, DateTime fromDate, DateTime toDate, Common common)
+        {
+            DataSet set = new DataSet();
+            using (SqlConnection connection = new SqlConnection(new SQLService().getconnstring()))
+            using (SqlCommand command = new SqlCommand("EXEC DASHBOARD @Code, @FromDate, @ToDate, @BCode, @Period", connection))
+            {
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = 120;
+                command.Parameters.AddWithValue("@Code", code);
+                command.Parameters.AddWithValue("@FromDate", fromDate.ToString("yyyy-MM-dd"));
+                command.Parameters.AddWithValue("@ToDate", toDate.ToString("yyyy-MM-dd"));
+                command.Parameters.AddWithValue("@BCode", string.IsNullOrWhiteSpace(common.Branch) ? "1" : common.Branch);
+                command.Parameters.AddWithValue("@Period", string.IsNullOrWhiteSpace(common.Period) ? "1" : common.Period);
+                connection.Open();
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    adapter.Fill(set);
+                }
+            }
+            return set;
+        }
+
+        private static string NormCol(string name)
+        {
+            return (name ?? "").Replace(" ", "").Replace("_", "").Replace("-", "").ToUpperInvariant();
+        }
+
+        private DataColumn FindColumn(DataTable table, params string[] names)
+        {
+            if (table == null)
+            {
+                return null;
+            }
+
+            foreach (var name in names)
+            {
+                foreach (DataColumn col in table.Columns)
+                {
+                    if (NormCol(col.ColumnName) == NormCol(name))
+                    {
+                        return col;
+                    }
+                }
+            }
+            return null;
+        }
+
+        private bool IsNumericType(Type type)
+        {
+            return type == typeof(byte) || type == typeof(short) || type == typeof(int) || type == typeof(long)
+                || type == typeof(decimal) || type == typeof(float) || type == typeof(double)
+                || type == typeof(byte?) || type == typeof(short?) || type == typeof(int?) || type == typeof(long?)
+                || type == typeof(decimal?) || type == typeof(float?) || type == typeof(double?);
+        }
+
+        private DataColumn FirstNumericColumn(DataTable table, DataColumn exclude = null)
+        {
+            foreach (DataColumn col in table.Columns)
+            {
+                if (col != exclude && IsNumericType(col.DataType))
+                {
+                    return col;
+                }
+            }
+            return table.Columns.Count > 0 && table.Columns[0] != exclude ? table.Columns[0] : null;
+        }
+
+        private DashboardKpi MapKpi(DataTable table)
+        {
+            DashboardKpi kpi = new DashboardKpi();
+            if (table == null || table.Rows.Count == 0)
+            {
+                return kpi;
+            }
+
+            DataRow row = table.Rows[0];
+            DataColumn valueCol = FindColumn(table, "VALUE", "TOTAL", "COUNT", "QTY", "AMOUNT", "AMT", "TOTALINVOICES", "INVOICES", "TOTALSALES", "SALES", "TAX", "TOTALTAX", "SALESTAX")
+                ?? FirstNumericColumn(table);
+            if (valueCol != null)
+            {
+                kpi.Value = SafeDouble(row[valueCol]);
+            }
+
+            DataColumn percentCol = FindColumn(table, "PERCENT", "PERCENTAGE", "GROWTH", "VARIANCE", "VSLASTMONTH");
+            if (percentCol != null && percentCol != valueCol)
+            {
+                kpi.HasPercent = true;
+                kpi.Percent = SafeDouble(row[percentCol]);
+            }
+            return kpi;
+        }
+
+        private string FormatCell(object value)
+        {
+            if (value == null || value == DBNull.Value)
+            {
+                return "";
+            }
+            if (value is DateTime dateValue)
+            {
+                return dateValue.ToString("dd-MMM-yyyy hh:mm tt");
+            }
+            if (IsNumericType(value.GetType()))
+            {
+                double number = Convert.ToDouble(value);
+                if (Math.Abs(number % 1) < 0.0001)
+                {
+                    return number.ToString("N0");
+                }
+                return number.ToString("N2");
+            }
+            return value.ToString().Trim();
+        }
+
+        private string FormatLabel(object value)
+        {
+            if (value == null || value == DBNull.Value)
+            {
+                return "";
+            }
+            if (value is DateTime dateValue)
+            {
+                return dateValue.ToString("MMM-yy");
+            }
+            DateTime parsedDate;
+            if (DateTime.TryParse(value.ToString(), out parsedDate) && value.ToString().Length >= 8)
+            {
+                return parsedDate.ToString("MMM-yy");
+            }
+            return value.ToString().Trim();
+        }
+
+        private List<DashboardChartPoint> MapChartPoints(DataTable table, bool includeSecondValue)
+        {
+            List<DashboardChartPoint> points = new List<DashboardChartPoint>();
+            if (table == null || table.Rows.Count == 0)
+            {
+                return points;
+            }
+
+            DataColumn labelCol = FindColumn(table, "MONTH", "MONTHNAME", "PERIOD", "LABEL", "DATE", "MTH", "NAME", "STATUS", "TITLE");
+            DataColumn valueCol = FindColumn(table, "COUNT", "QTY", "VALUE", "TOTAL", "INVOICES", "SALES", "AMOUNT", "AMT", "TOTALSALES")
+                ?? FirstNumericColumn(table, labelCol);
+            DataColumn value2Col = includeSecondValue
+                ? FindColumn(table, "TAX", "SALESTAX", "TAXAMT", "TAXAMOUNT", "VALUE2")
+                : null;
+
+            if (labelCol == null && table.Columns.Count > 0)
+            {
+                labelCol = table.Columns[0];
+            }
+            if (valueCol == null && table.Columns.Count > 1)
+            {
+                valueCol = table.Columns[1];
+            }
+
+            foreach (DataRow row in table.Rows)
+            {
+                points.Add(new DashboardChartPoint
+                {
+                    Label = labelCol != null ? FormatLabel(row[labelCol]) : "",
+                    Value = valueCol != null ? SafeDouble(row[valueCol]) : 0,
+                    Value2 = value2Col != null ? SafeDouble(row[value2Col]) : 0
+                });
+            }
+            return points;
+        }
+
+        private List<DashboardChartPoint> MapStatusDistribution(DataTable table)
+        {
+            if (table == null || table.Rows.Count == 0)
+            {
+                return new List<DashboardChartPoint>();
+            }
+
+            DataColumn statusCol = FindColumn(table, "STATUS", "NAME", "LABEL", "TITLE");
+            if (statusCol != null || table.Rows.Count > 1)
+            {
+                return MapChartPoints(table, false);
+            }
+
+            List<DashboardChartPoint> points = new List<DashboardChartPoint>();
+            DataRow row = table.Rows[0];
+            foreach (DataColumn col in table.Columns)
+            {
+                points.Add(new DashboardChartPoint
+                {
+                    Label = col.ColumnName,
+                    Value = SafeDouble(row[col])
+                });
+            }
+            return points;
+        }
+
+        private List<DashboardNameValue> MapNameValues(DataTable table, string[] preferredColumns)
+        {
+            List<DashboardNameValue> items = new List<DashboardNameValue>();
+            if (table == null || table.Rows.Count == 0)
+            {
+                return items;
+            }
+
+            if (preferredColumns != null && preferredColumns.Length > 0 && table.Rows.Count == 1)
+            {
+                DataRow row = table.Rows[0];
+                foreach (var name in preferredColumns)
+                {
+                    DataColumn col = FindColumn(table, name);
+                    items.Add(new DashboardNameValue
+                    {
+                        Name = name,
+                        Value = col != null ? FormatCell(row[col]) : "0"
+                    });
+                }
+                return items;
+            }
+
+            if (table.Rows.Count == 1)
+            {
+                DataRow row = table.Rows[0];
+                foreach (DataColumn col in table.Columns)
+                {
+                    items.Add(new DashboardNameValue
+                    {
+                        Name = PrettyLabel(col.ColumnName),
+                        Value = FormatCell(row[col])
+                    });
+                }
+                return items;
+            }
+
+            DataColumn nameCol = FindColumn(table, "NAME", "LABEL", "TITLE", "ITEM", "DESCRIPTION") ?? table.Columns[0];
+            DataColumn valueCol = FindColumn(table, "VALUE", "TOTAL", "AMOUNT", "AMT", "COUNT") ?? (table.Columns.Count > 1 ? table.Columns[1] : null);
+            foreach (DataRow row in table.Rows)
+            {
+                items.Add(new DashboardNameValue
+                {
+                    Name = SafeString(row[nameCol]),
+                    Value = valueCol != null ? FormatCell(row[valueCol]) : ""
+                });
+            }
+            return items;
+        }
+
+        private List<DashboardNameValue> MapTaxSummary(DataTable table)
+        {
+            List<DashboardNameValue> items = new List<DashboardNameValue>();
+            var fields = new (string Label, string[] Columns)[]
+            {
+                ("Total Quantity", new[] { "QTY", "QUANTITY", "TOTALQUANTITY" }),
+                ("Excluding Tax", new[] { "AMT", "AMOUNT", "EXCLUDINGTAX" }),
+                ("Sales Tax", new[] { "TAX_AMT", "TAXAMT", "SALESTAX" }),
+                ("Further Tax", new[] { "FTAX_AMT", "FTAXAMT", "FURTHERTAX" }),
+                ("Discount", new[] { "DISCOUNT" }),
+                ("Including Tax", new[] { "NET_AMOUNT", "NETAMOUNT", "INCLUDINGTAX" })
+            };
+
+            if (table == null || table.Rows.Count == 0)
+            {
+                foreach (var field in fields)
+                {
+                    items.Add(new DashboardNameValue { Name = field.Label, Value = "0" });
+                }
+                return items;
+            }
+
+            DataRow row = table.Rows[0];
+            foreach (var field in fields)
+            {
+                DataColumn col = FindColumn(table, field.Columns);
+                items.Add(new DashboardNameValue
+                {
+                    Name = field.Label,
+                    Value = col != null ? FormatCell(row[col]) : "0"
+                });
+            }
+            return items;
+        }
+
+        private string PrettyLabel(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return "";
+            }
+
+            string text = name.Replace("_", " ").Trim();
+            return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text.ToLowerInvariant());
+        }
+
+        private List<DashboardTransaction> MapTransactions(DataTable table)
+        {
+            List<DashboardTransaction> rows = new List<DashboardTransaction>();
+            if (table == null || table.Rows.Count == 0)
+            {
+                return rows;
+            }
+
+            DataColumn invoiceCol = FindColumn(table, "INVOICENO", "INVNO", "VOUCHERNO", "VNO", "INVOICE", "TRANID");
+            DataColumn dateCol = FindColumn(table, "DATE", "VDATE", "INVDATE", "INVOICEDATE");
+            DataColumn customerCol = FindColumn(table, "CUSTOMER", "PARTY", "PARTYNAME", "NAME");
+            DataColumn amountCol = FindColumn(table, "AMOUNT", "AMT", "TOTAL");
+            DataColumn statusCol = FindColumn(table, "FBRSTATUS", "STATUS");
+            DataColumn errorCol = FindColumn(table, "ERROR", "MESSAGE", "FBRRESPONSE", "REMARKS", "DESCRIPTION", "DETAIL");
+
+            if (invoiceCol == null && table.Columns.Count > 0) invoiceCol = table.Columns[0];
+            if (dateCol == null && table.Columns.Count > 1) dateCol = table.Columns[1];
+            if (customerCol == null && table.Columns.Count > 2) customerCol = table.Columns[2];
+            if (amountCol == null && table.Columns.Count > 3) amountCol = table.Columns[3];
+            if (statusCol == null && table.Columns.Count > 4) statusCol = table.Columns[4];
+
+            foreach (DataRow row in table.Rows)
+            {
+                string dateText = "";
+                if (dateCol != null && row[dateCol] != DBNull.Value)
+                {
+                    DateTime parsedDate;
+                    dateText = DateTime.TryParse(row[dateCol].ToString(), out parsedDate)
+                        ? parsedDate.ToString("dd-MMM-yyyy")
+                        : SafeString(row[dateCol]);
+                }
+
+                rows.Add(new DashboardTransaction
+                {
+                    InvoiceNo = invoiceCol != null ? SafeString(row[invoiceCol]) : "",
+                    Date = dateText,
+                    Customer = customerCol != null ? SafeString(row[customerCol]) : "",
+                    Amount = amountCol != null ? SafeDouble(row[amountCol]) : 0,
+                    FbrStatus = statusCol != null ? SafeString(row[statusCol]) : "",
+                    Error = errorCol != null ? SafeString(row[errorCol]) : ""
+                });
+            }
+            return rows;
+        }
+
+        private List<DashboardFbrError> MapFbrErrors(DataTable table)
+        {
+            List<DashboardFbrError> rows = new List<DashboardFbrError>();
+            if (table == null || table.Rows.Count == 0)
+            {
+                return rows;
+            }
+
+            DataColumn invoiceCol = FindColumn(table, "INVOICENO", "INVNO", "VOUCHERNO", "VNO", "INVOICE", "TRANID");
+            DataColumn dateCol = FindColumn(table, "DATE", "VDATE", "INVDATE", "INVOICEDATE");
+            DataColumn customerCol = FindColumn(table, "CUSTOMER", "PARTY", "PARTYNAME", "NAME");
+            DataColumn errorCol = FindColumn(table, "ERROR", "MESSAGE", "FBRRESPONSE", "REMARKS", "DESCRIPTION", "DETAIL");
+            DataColumn statusCol = FindColumn(table, "FBRSTATUS", "STATUS");
+
+            if (invoiceCol == null && table.Columns.Count > 0) invoiceCol = table.Columns[0];
+            if (errorCol == null && table.Columns.Count > 1) errorCol = table.Columns[table.Columns.Count - 1];
+
+            foreach (DataRow row in table.Rows)
+            {
+                string dateText = "";
+                if (dateCol != null && row[dateCol] != DBNull.Value)
+                {
+                    DateTime parsedDate;
+                    dateText = DateTime.TryParse(row[dateCol].ToString(), out parsedDate)
+                        ? parsedDate.ToString("dd-MMM-yyyy")
+                        : SafeString(row[dateCol]);
+                }
+
+                rows.Add(new DashboardFbrError
+                {
+                    InvoiceNo = invoiceCol != null ? SafeString(row[invoiceCol]) : "",
+                    Date = dateText,
+                    Customer = customerCol != null ? SafeString(row[customerCol]) : "",
+                    Error = errorCol != null ? SafeString(row[errorCol]) : "",
+                    Status = statusCol != null ? SafeString(row[statusCol]) : "Rejected"
+                });
+            }
+            return rows;
+        }
+
+        private List<DashboardFbrError> MapFbrErrorsFromTransactions(List<DashboardTransaction> transactions)
+        {
+            List<DashboardFbrError> rows = new List<DashboardFbrError>();
+            if (transactions == null)
+            {
+                return rows;
+            }
+
+            foreach (var tx in transactions)
+            {
+                string status = (tx.FbrStatus ?? "").ToLowerInvariant();
+                bool isError = status.Contains("reject") || status.Contains("fail") || status.Contains("error");
+                if (!isError && string.IsNullOrWhiteSpace(tx.Error))
+                {
+                    continue;
+                }
+
+                rows.Add(new DashboardFbrError
+                {
+                    InvoiceNo = tx.InvoiceNo,
+                    Date = tx.Date,
+                    Customer = tx.Customer,
+                    Error = string.IsNullOrWhiteSpace(tx.Error) ? tx.FbrStatus : tx.Error,
+                    Status = string.IsNullOrWhiteSpace(tx.FbrStatus) ? "Error" : tx.FbrStatus
+                });
+            }
+            return rows;
         }
 
         private double SafeDouble(object value)

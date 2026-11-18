@@ -36,29 +36,31 @@ namespace Empire_ERP.Helpers
             }
             else
             {
-                string? url = filterContext.HttpContext.Request.Headers.Referer;
-
-                if (!String.IsNullOrWhiteSpace(url))
+                string controller = request.Path.ToString().Trim('/').Split('/')[0];
+                if (string.IsNullOrWhiteSpace(controller))
                 {
-                    Uri uri = new Uri(url);
+                    controller = "Home";
+                }
+                int? resolvedId = NavHelper.ResolveMenuId(controller);
+                if (resolvedId.HasValue)
+                {
+                    filterContext.HttpContext.Session.SetString("MenuID", resolvedId.Value.ToString());
+                }
+                else
+                {
+                    string? url = filterContext.HttpContext.Request.Headers.Referer;
 
-                    NameValueCollection queryParameters = System.Web.HttpUtility.ParseQueryString(uri.Query);
-
-                    string? code = queryParameters["Code"];
-
-                    if (!String.IsNullOrWhiteSpace(code))
+                    if (!String.IsNullOrWhiteSpace(url))
                     {
-                        filterContext.HttpContext.Session.SetString("MenuID", code);
-                    }
-                    else
-                    {
-                        if (!url.Contains("Login/Details"))
+                        Uri uri = new Uri(url);
+
+                        NameValueCollection queryParameters = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+                        string? code = queryParameters["Code"];
+
+                        if (!String.IsNullOrWhiteSpace(code))
                         {
-                            filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new
-                            {
-                                controller = "Home",
-                                action = "Index"
-                            }));
+                            filterContext.HttpContext.Session.SetString("MenuID", code);
                         }
                     }
                 }

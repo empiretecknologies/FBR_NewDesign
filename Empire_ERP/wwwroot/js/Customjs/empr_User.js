@@ -118,6 +118,14 @@ var empr_User = {
             const formattedDate = today.toISOString().split('T')[0];
             $('#USTART_DATE').val(formattedDate);
 
+            setTimeout(function () {
+                if (!$('#Code').val()) {
+                    $('#USERNAME').val('');
+                    $('#UPASS').val('');
+                    $('#CPASS').val('');
+                }
+            }, 300);
+
             empr_User.InitQuickSearch();
 
             empr_User.InitBranchDDL();

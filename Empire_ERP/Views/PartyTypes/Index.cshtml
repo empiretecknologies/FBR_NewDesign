@@ -1,20 +1,198 @@
-﻿
+﻿<style>
+    .Record .dx-selectbox.dx-texteditor {
+        height: 36px !important;
+        min-height: 36px !important;
+        overflow: hidden;
+    }
+
+    .Record .dx-selectbox .dx-texteditor-container,
+    .Record .dx-selectbox .dx-texteditor-input-container {
+        height: 34px !important;
+        min-height: 34px !important;
+        background: transparent !important;
+    }
+
+    .Record .dx-selectbox .dx-texteditor-input {
+        height: 34px !important;
+        min-height: 34px !important;
+        padding: 0 12px !important;
+        color: #0A2348 !important;
+        font-size: 12.5px !important;
+        line-height: 34px !important;
+    }
+
+    .Record .dx-selectbox .dx-placeholder {
+        top: 0 !important;
+        height: 34px !important;
+    }
+
+        .Record .dx-selectbox .dx-placeholder::before {
+            display: block;
+            height: 34px !important;
+            padding: 0 12px !important;
+            font-size: 12.5px !important;
+            line-height: 34px !important;
+        }
+
+    .qs-grid-card {
+        border: 1px solid #dbe6f2;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    #gridContainer .dx-datagrid {
+        border: 0;
+        color: #0A2348;
+    }
+
+    #gridContainer .dx-datagrid-header-panel {
+        padding: 10px 12px 6px;
+        border-bottom: 0;
+        background: #ffffff;
+    }
+
+        #gridContainer .dx-datagrid-header-panel .dx-group-panel-message {
+            color: #8aa0b8;
+            font-size: 12px;
+        }
+
+        #gridContainer .dx-datagrid-header-panel .dx-button {
+            border: 1px solid #dbe4ee;
+            border-radius: 6px;
+            background: #ffffff;
+        }
+
+            #gridContainer .dx-datagrid-header-panel .dx-button .dx-icon {
+                color: #0E3A70 !important;
+            }
+
+        #gridContainer .dx-datagrid-header-panel .dx-searchbox.dx-texteditor {
+            border: 1px solid #dbe4ee !important;
+            border-radius: 6px !important;
+            background: #eef3f8 !important;
+        }
+
+    #gridContainer .dx-datagrid-headers,
+    #gridContainer .dx-datagrid-headers .dx-header-row,
+    #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        background: #0F3F7A !important;
+        color: #ffffff !important;
+    }
+
+        #gridContainer .dx-datagrid-headers .dx-header-row > td {
+            padding-top: 10px !important;
+            padding-bottom: 10px !important;
+            border-color: rgba(255, 255, 255, 0.14) !important;
+            font-size: 12.5px !important;
+            font-weight: 600;
+        }
+
+            #gridContainer .dx-datagrid-headers .dx-header-row > td .dx-header-filter,
+            #gridContainer .dx-datagrid-headers .dx-header-row > td .dx-sort,
+            #gridContainer .dx-datagrid-headers .dx-header-row > td .dx-icon {
+                color: rgba(255, 255, 255, 0.75) !important;
+            }
+
+        #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row,
+        #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row > td {
+            background: #eef3f8 !important;
+            border-color: #dbe4ee !important;
+        }
+
+            #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row .dx-texteditor {
+                border: 1px solid #dbe4ee !important;
+                border-radius: 5px !important;
+                background: #ffffff !important;
+            }
+
+            #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row .dx-icon {
+                color: #5A7394 !important;
+            }
+
+    #gridContainer .dx-datagrid-rowsview .dx-row > td {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        border-color: #e7eef7 !important;
+        color: #0A2348;
+        font-size: 12.5px;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-row-alt > td {
+        background-color: #f7faff;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-data-row.dx-state-hover:not(.dx-selection) > td {
+        background-color: #eaf2fc !important;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection.dx-row > td {
+        background-color: #154C93 !important;
+        color: #ffffff !important;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-data-row a,
+    #gridContainer .dx-datagrid-rowsview .dx-data-row i {
+        color: #154C93;
+    }
+
+    #gridContainer .dx-datagrid-rowsview .dx-selection.dx-row a,
+    #gridContainer .dx-datagrid-rowsview .dx-selection.dx-row i {
+        color: #ffffff;
+    }
+
+    #gridContainer .dx-datagrid-pager {
+        padding: 10px 12px;
+        border-top: 1px solid #e7eef7;
+        background: #ffffff;
+    }
+
+        #gridContainer .dx-datagrid-pager .dx-page,
+        #gridContainer .dx-datagrid-pager .dx-page-size {
+            min-width: 28px;
+            padding: 5px 8px;
+            border-radius: 6px;
+            color: #0E3A70;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+            #gridContainer .dx-datagrid-pager .dx-page:hover,
+            #gridContainer .dx-datagrid-pager .dx-page-size:hover {
+                background: #eaf2fc;
+            }
+
+            #gridContainer .dx-datagrid-pager .dx-page.dx-selection,
+            #gridContainer .dx-datagrid-pager .dx-page-size.dx-selection {
+                background: #0E3A70 !important;
+                color: #ffffff !important;
+            }
+
+        #gridContainer .dx-datagrid-pager .dx-navigate-button {
+            color: #0E3A70;
+        }
+
+        #gridContainer .dx-datagrid-pager .dx-info {
+            color: #5A7394;
+            font-size: 12px;
+            opacity: 1;
+        }
+</style>
 
 <div class="card">
     <div class="card-header">
-        <button type="button" id="quicksearch" class="btn btn-light btn-search waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-xl"><i class="fa fa-search"></i> Quick Search</button>
         <button type="button" id="resetForm" class="btn btn-primary btn-new waves-effect waves-light float-end"><i class="fa fa-plus"></i> Add New</button>
     </div>
     <div class="card-body pt-1 TabsDiv Record">      
-        <ul class="nav nav-tabs nav-primary" id="myTab" role="tablist">
+        <ul class="nav nav-tabs nav-primary d-none" id="myTab" role="tablist">
             <li class="nav-item"><a class="nav-link active" id="pills-warninghome-tab" data-bs-toggle="tab" href="#pills-warninghome" role="tab" aria-controls="pills-warninghome" aria-selected="true">Main Info</a></li>
             <li class="nav-item"><a class="nav-link" style="display:none" id="pills-warningprofile-tab" data-bs-toggle="tab" href="#pills-warningprofile" role="tab" aria-controls="pills-warningprofile" aria-selected="false">Other Info</a></li>
             <li class="nav-item"><a class="nav-link" style="display:none" id="pills-warningcontact-tab" data-bs-toggle="tab" href="#pills-warningcontact" role="tab" aria-controls="pills-warningcontact" aria-selected="false">Branch Info</a></li>
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="pills-warninghome" role="tabpanel" aria-labelledby="pills-warninghome-tab">
-                <div class="card">
-                    <div class="card-body">
+                <div>
+                    <div class="pt-2">
                         <div class="row">
                             <div class="col-xl-2 col-md-4 col-sm-6 mb-1">
                                 <label class="form-label" for="Code">Code :</label>
@@ -33,12 +211,12 @@
                                 <label class="form-label" for="PARTY_SHORT_NAME">Short Name :</label>
                                 <input class="form-control" id="PARTY_SHORT_NAME" type="text" autocomplete="off">
                             </div>
-                            <div class="col-xl-4 col-md-6 mb-1">
+                            <div class="col-xl-4 col-md-6 mb-1 d-none">
                                 <label class="form-label" for="ACT_CODE">ChartAccount : <span class="text-danger">*</span></label>
                                 <div id="chartofaccount"></div>
                             </div>
                             <span class="text-center span account-validation d-none"></span>
-                            <div class="col-xl-5 col-md-6 mb-1">
+                            <div class="col-xl-6 col-md-6 mb-1">
                                 <label class="form-label" for="PADDRESS">Address : <span class="text-danger">*</span></label>
                                 <input class="form-control" id="PADDRESS" type="text" autocomplete="off">
                             </div>
@@ -264,32 +442,11 @@
             </div>
         </div>
     </div>
-    <!--  Extra Large modal example -->
-    <div class="modal fade bs-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="myExtraLargeModalLabel">Quick Search</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="col-md-12">
-                        <div class="card text-left">
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <div id="exportButtonsContainer">
-                                        <div id="excelButton"></div>
-                                        <div id="pdfButton"></div>
-                                    </div>
-                                    <div id="gridContainer"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+    <div class="card-body pt-0">
+        <div class="table-responsive qs-grid-card">
+            <div id="gridContainer"></div>
+        </div>
+    </div>
 </div>
 
 <input type="hidden" id="salesman_hidden" />

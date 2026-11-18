@@ -236,19 +236,58 @@ namespace Empire_ERP.Core.Entities
 
     public class DashboardData
     {
-        public int FbrInvoiceCount { get; set; }
-        public double TotalAmount { get; set; }
-        public double TotalTaxAmount { get; set; }
-        public List<DashboardSalesPoint> SalesChart { get; set; } = new List<DashboardSalesPoint>();
-        public List<DashboardSalesPoint> DayWiseSales { get; set; } = new List<DashboardSalesPoint>();
-        public List<DashboardSalesPoint> Sparkline { get; set; } = new List<DashboardSalesPoint>();
+        public DashboardKpi TotalInvoices { get; set; } = new DashboardKpi();
+        public DashboardKpi FbrApproved { get; set; } = new DashboardKpi();
+        public DashboardKpi PendingInvoices { get; set; } = new DashboardKpi();
+        public DashboardKpi RejectedInvoices { get; set; } = new DashboardKpi();
+        public DashboardKpi TotalSales { get; set; } = new DashboardKpi();
+        public DashboardKpi TotalSalesTax { get; set; } = new DashboardKpi();
+        public List<DashboardChartPoint> MonthlyInvoiceGeneration { get; set; } = new List<DashboardChartPoint>();
+        public List<DashboardChartPoint> InvoiceStatusDistribution { get; set; } = new List<DashboardChartPoint>();
+        public List<DashboardChartPoint> SalesTaxTrend { get; set; } = new List<DashboardChartPoint>();
+        public List<DashboardNameValue> FbrIntegrationMonitoring { get; set; } = new List<DashboardNameValue>();
+        public List<DashboardFbrError> FbrErrorLogs { get; set; } = new List<DashboardFbrError>();
+        public List<DashboardTransaction> RecentTransactions { get; set; } = new List<DashboardTransaction>();
+        public List<DashboardNameValue> TaxSalesSummary { get; set; } = new List<DashboardNameValue>();
+        public List<DashboardNameValue> QuickStats { get; set; } = new List<DashboardNameValue>();
     }
 
-    public class DashboardSalesPoint
+    public class DashboardKpi
     {
-        public string Month { get; set; }
+        public double Value { get; set; }
+        public double Percent { get; set; }
+        public bool HasPercent { get; set; }
+    }
+
+    public class DashboardChartPoint
+    {
+        public string Label { get; set; }
+        public double Value { get; set; }
+        public double Value2 { get; set; }
+    }
+
+    public class DashboardNameValue
+    {
+        public string Name { get; set; }
+        public string Value { get; set; }
+    }
+
+    public class DashboardTransaction
+    {
+        public string InvoiceNo { get; set; }
+        public string Date { get; set; }
+        public string Customer { get; set; }
         public double Amount { get; set; }
-        public double TaxAmount { get; set; }
-        public int Count { get; set; }
+        public string FbrStatus { get; set; }
+        public string Error { get; set; }
+    }
+
+    public class DashboardFbrError
+    {
+        public string InvoiceNo { get; set; }
+        public string Date { get; set; }
+        public string Customer { get; set; }
+        public string Error { get; set; }
+        public string Status { get; set; }
     }
 }

@@ -183,9 +183,9 @@ namespace Empire_ERP.Core.Services
             return response;
         }
 
-        public MyHttpResponseMessage GetDashboardData(Common common)
+        public MyHttpResponseMessage GetDashboardData(Common common, DateTime fromDate, DateTime toDate, string section = "all")
         {
-            return _PurchaseBillRepository.GetDashboardData(common);
+            return _PurchaseBillRepository.GetDashboardData(common, fromDate, toDate, section);
         }
 
         public MyHttpResponseMessage InvoiceBulkCheckParties(List<InvoiceBulkPartyRow> parties, Common common)

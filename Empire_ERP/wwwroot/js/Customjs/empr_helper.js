@@ -4109,7 +4109,7 @@
                         column: "Action",
                         summaryType: "custom",
                         customizeText: function (data) {
-                            return "Count: " + datasrc.length;
+                            return "Count: " + (data.value || 0);
                         },
                         name: "ActionCount"
                     },
@@ -4117,8 +4117,9 @@
                         column: "GR Code",
                         summaryType: "custom",
                         customizeText: function (data) {
-                            return "Count: " + datasrc.length;
-                        }
+                            return "Count: " + (data.value || 0);
+                        },
+                        name: "GRCodeCount"
                     },
                     {
                         column: "qty",
@@ -4291,6 +4292,16 @@
                         }
                     }
                 ],
+                calculateCustomSummary: function (options) {
+                    if (options.name === "ActionCount" || options.name === "GRCodeCount") {
+                        if (options.summaryProcess === "start") {
+                            options.totalValue = 0;
+                        }
+                        if (options.summaryProcess === "calculate") {
+                            options.totalValue += 1;
+                        }
+                    }
+                }
             }
         }).dxDataGrid('instance');
     },
@@ -5726,7 +5737,7 @@
                                 const column = cellInfo.gridCell.column;
 
                                 if (column.caption.toLowerCase().includes('trans')) {
-                                    cellInfo.pdfCell.textColor = '#055a87';
+                                    cellInfo.pdfCell.textColor = '#1A73C7';
                                 }
 
                                 if (cellInfo.gridCell.rowType === 'header') {
@@ -6772,7 +6783,7 @@
                                 const column = cellInfo.gridCell.column;
 
                                 if (column.caption.toLowerCase().includes('trans')) {
-                                    cellInfo.pdfCell.textColor = '#055a87';
+                                    cellInfo.pdfCell.textColor = '#1A73C7';
                                 }
 
                                 if (cellInfo.gridCell.rowType === 'header') {
@@ -8141,7 +8152,7 @@
                                 const column = cellInfo.gridCell.column;
 
                                 if (column.caption.toLowerCase().includes('trans')) {
-                                    cellInfo.pdfCell.textColor = '#055a87';
+                                    cellInfo.pdfCell.textColor = '#1A73C7';
                                 }
 
                                 if (cellInfo.gridCell.rowType === 'header') {
@@ -9301,7 +9312,7 @@
         debugger;
         isLandscape = isLandscape !== undefined ? isLandscape : true;
         customFontSize = customFontSize || 9;
-        const headerBgColor = '#055a87';
+        const headerBgColor = '#1A73C7';
 
         const companyName = 'DG';
         const reportName = isSubReport ? 'Name Not Defined' : CurrentReportName;
@@ -11722,7 +11733,7 @@
                                 }
 
                                 if (column.caption.toLowerCase().includes('trans')) {
-                                    cellInfo.pdfCell.textColor = '#055a87';
+                                    cellInfo.pdfCell.textColor = '#1A73C7';
                                 }
 
                                 if (cellInfo.gridCell.rowType === 'header') {

@@ -142,7 +142,7 @@
                     const pageType = options.data.pagE_TYPE;
                     const pickId = options.data.pickId;
                     
-                    var iconColor = (pickId != null && pickId != 0) ? '#7CFC00' : '#055a87';
+                    var iconColor = (pickId != null && pickId != 0) ? '#7CFC00' : '#1A73C7';
 
                     $("<div style='text-align:center; width:100%;'>")
                         .append(`<i class='fa-solid fa-arrows-rotate' style='cursor:pointer; color: ${iconColor}; font-size:18px;' id='rotateIcon'></i>`)
@@ -161,7 +161,7 @@
                             $modal.find('.modalRecord').hide(); 
                             $modal.find('.modal-body').prepend(`
                             <div class="modal-loader d-flex justify-content-center py-4">
-                                <div class="spinner-border" style="color: #055a87;" role="status">
+                                <div class="spinner-border" style="color: #1A73C7;" role="status">
                                     <span class="visually-hidden">Loading...</span>
                                 </div>
                             </div>
@@ -201,7 +201,7 @@
                         .prop('disabled', true);
 
                     // Print icon (Font Awesome)
-                    var $printIcon = $("<i class='fa fa-print' id='elm_print' style='font-size: 13px; color: #055a87;'></i>");
+                    var $printIcon = $("<i class='fa fa-print' id='elm_print' style='font-size: 13px; color: #1A73C7;'></i>");
 
                     // Append both
                     $wrapper.append($checkbox).append($printIcon).appendTo(container);

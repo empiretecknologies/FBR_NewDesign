@@ -1,262 +1,1105 @@
-﻿@using Empire_ERP.Core.Entities
-@using System.Linq
-@{
+﻿@{
 	ViewData["Title"] = "Home Page";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	var dashboard = ViewBag.DashboardData as DashboardData ?? new DashboardData();
 }
 
 <style>
-	.dashboard-wrap {
-		padding-bottom: 8px;
+	.fbr-dash {
+		--fd-navy: #0A2348;
+		--fd-header: #0E4A94;
+		--fd-blue: #2F80ED;
+		--fd-green: #22C55E;
+		--fd-orange: #F59E0B;
+		--fd-red: #EF4444;
+		--fd-cyan: #06B6D4;
+		--fd-purple: #A855F7;
+		--fd-muted: #6B7C93;
+		--fd-border: #D7E6F4;
+		--fd-card: #ffffff;
+		color: var(--fd-navy);
+		padding-bottom: 10px;
 	}
 
-	.dashboard-wrap .bx-kpi {
-		margin-bottom: 16px;
-		padding: 20px 22px;
-		min-height: 118px;
-		border-radius: 10px;
-		border: 1px solid #e6eef3;
+	html[data-theme="dark"] .fbr-dash {
+		--fd-navy: #E3ECF7;
+		--fd-header: #163A68;
+		--fd-muted: #93A7C2;
+		--fd-border: #2A3D5A;
+		--fd-card: #122033;
+	}
+
+	.fbr-dash .fd-toolbar {
 		display: flex;
-		flex-wrap: nowrap;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 10px;
+		margin: 0 0 14px;
+	}
+
+	.fbr-dash .fd-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		background: var(--fd-card);
+		border: 1px solid #E4EEF7;
+		border-radius: 22px;
+		padding: 8px 14px;
+		min-height: 42px;
+		box-shadow: 0 6px 16px rgba(10, 35, 72, 0.05);
+		color: var(--fd-navy);
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	html[data-theme="dark"] .fbr-dash .fd-pill {
+		border-color: var(--fd-border);
+	}
+
+	.fbr-dash .fd-pill i {
+		color: #0E4A94;
+	}
+
+	.fbr-dash .fd-period {
+		border: 0;
+		background: transparent;
+		color: var(--fd-navy);
+		font-weight: 600;
+		font-size: 13px;
+		outline: none;
+		min-width: 150px;
+		padding-right: 4px;
+	}
+
+	.fbr-dash .fd-refresh {
+		width: 28px;
+		height: 28px;
+		border: 0;
+		border-radius: 50%;
+		background: #EEF6FB;
+		color: #0E4A94;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		margin-left: 4px;
+	}
+
+	.fbr-dash .fd-hero {
+		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 16px;
-		box-shadow: 0 6px 16px rgb(5 90 135 / 6%);
+		flex-wrap: wrap;
+		margin-bottom: 14px;
 	}
 
-	.dashboard-wrap .bx-kpi .kpi-inner:first-child {
-		flex: 1 1 auto;
-		min-width: 0;
-		padding-right: 8px;
-	}
-
-	.dashboard-wrap .bx-kpi .kpi-inner:last-child {
-		flex: 0 0 118px;
-		width: 118px;
+	.fbr-dash .fd-hero-left {
 		display: flex;
-		justify-content: flex-end;
 		align-items: center;
+		gap: 14px;
 	}
 
-	.dashboard-wrap .kpi-label {
-		display: block;
-		font-size: 12px;
-		font-weight: 600;
-		letter-spacing: 0.6px;
-		text-transform: uppercase;
-		line-height: 1.35;
-		margin-bottom: 8px;
-		color: #055a87;
-	}
-
-	.dashboard-wrap .kpi-value {
-		font-size: 26px;
-		font-weight: 700;
-		line-height: 1.2;
-		margin: 0;
-		color: #1b1b1b;
-		word-break: break-word;
-	}
-
-	.dashboard-wrap .kpi-spark {
-		width: 118px;
-		height: 48px;
-	}
-
-	.dashboard-wrap .card {
-		border: 1px solid #e6eef3;
-		border-radius: 10px;
-		box-shadow: 0 6px 16px rgb(5 90 135 / 6%);
-	}
-
-	.dashboard-wrap .card-header {
-		padding: 16px 18px 12px;
-		border-bottom: 1px solid #e6eef3;
-	}
-
-	.dashboard-wrap .sales-chart-head {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		flex-wrap: wrap;
-		gap: 12px 16px;
-	}
-
-	.dashboard-wrap .card-title {
-		font-size: 18px;
-		font-weight: 700;
-		color: #055a87;
-		margin-bottom: 6px;
-	}
-
-	.dashboard-wrap .sales-total {
-		display: flex;
-		align-items: baseline;
-		flex-wrap: wrap;
-		gap: 8px;
-	}
-
-	.dashboard-wrap .sales-total-label {
-		font-size: 12px;
-		font-weight: 600;
-		letter-spacing: 0.5px;
-		text-transform: uppercase;
-		color: #6b7c86;
-	}
-
-	.dashboard-wrap .sales-total-value {
-		font-size: 22px;
-		font-weight: 700;
-		color: #055a87;
-		line-height: 1.2;
-	}
-
-	.dashboard-wrap .sales-view-toggle .btn {
-		border: 1px solid #055a87;
-		color: #055a87;
-		background: #fff;
-		font-size: 13px;
-		font-weight: 600;
-		padding: 6px 14px;
-		line-height: 1.2;
-	}
-
-	.dashboard-wrap .sales-view-toggle .btn.active,
-	.dashboard-wrap .sales-view-toggle .btn:hover,
-	.dashboard-wrap .sales-view-toggle .btn:focus {
-		background: #055a87;
+	.fbr-dash .fd-logo {
+		width: 58px;
+		height: 58px;
+		border-radius: 16px;
+		background: linear-gradient(180deg, #1A73C7 0%, #0E4A94 100%);
 		color: #fff;
-		border-color: #055a87;
-		box-shadow: none;
-	}
-
-	.dashboard-wrap .card-body {
-		padding: 12px 16px 16px;
-		position: relative;
-	}
-
-	#salesChart {
-		width: 100%;
-		height: 380px;
-		min-height: 380px;
-	}
-
-	.dashboard-wrap .sales-empty {
-		display: none;
+		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		min-height: 240px;
-		color: #6b7c86;
-		font-size: 14px;
+		position: relative;
+		box-shadow: 0 10px 20px rgba(14, 74, 148, 0.28);
+		font-weight: 800;
+		letter-spacing: 0.4px;
+		font-size: 15px;
+		line-height: 1;
+	}
+
+	.fbr-dash .fd-logo-ok {
+		position: absolute;
+		right: -4px;
+		bottom: -4px;
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		background: #22C55E;
+		color: #fff;
+		font-size: 9px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 2px solid #fff;
+	}
+
+	.fbr-dash .fd-hero h2 {
+		margin: 0;
+		font-size: 26px;
+		font-weight: 800;
+		color: #0E4A94;
+		line-height: 1.15;
+	}
+
+	.fbr-dash .fd-hero p {
+		margin: 3px 0 0;
+		color: var(--fd-muted);
+		font-size: 13px;
 		font-weight: 500;
 	}
 
-	@@media (max-width: 991px) {
-		#salesChart {
-			height: 320px;
-			min-height: 320px;
-		}
+	.fbr-dash .fd-hero-right {
+		display: flex;
+		align-items: center;
+		gap: 18px;
+		flex-wrap: wrap;
+	}
 
-		.dashboard-wrap .kpi-value {
-			font-size: 22px;
+	.fbr-dash .fd-connected {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		font-size: 13px;
+		font-weight: 700;
+		color: #16A34A;
+		line-height: 1.25;
+	}
+
+	.fbr-dash .fd-connected small {
+		display: block;
+		font-weight: 600;
+		color: var(--fd-muted);
+		font-size: 12px;
+		margin-top: 2px;
+	}
+
+	.fbr-dash .fd-dot {
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		background: #22C55E;
+		box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
+	}
+
+	.fbr-dash .fd-sync {
+		color: var(--fd-muted);
+		font-size: 12px;
+		font-weight: 600;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.fbr-dash .fd-kpis {
+		display: grid;
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+		gap: 12px;
+		margin-bottom: 14px;
+	}
+
+	.fbr-dash .fd-kpi {
+		position: relative;
+		overflow: hidden;
+		background: var(--fd-card);
+		border: 1px solid var(--fd-border);
+		border-radius: 16px;
+		padding: 14px 14px 16px;
+		box-shadow: 0 8px 20px rgba(10, 35, 72, 0.05);
+		min-height: 118px;
+	}
+
+	.fbr-dash .fd-kpi::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -18px;
+		height: 48px;
+		opacity: 0.28;
+		background: radial-gradient(120px 40px at 70% 100%, var(--kpi), transparent 70%);
+	}
+
+	.fbr-dash .fd-kpi-icon {
+		width: 36px;
+		height: 36px;
+		border-radius: 10px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #fff;
+		background: var(--kpi);
+		margin-bottom: 10px;
+		font-size: 15px;
+	}
+
+	.fbr-dash .fd-kpi-label {
+		display: block;
+		font-size: 12px;
+		font-weight: 600;
+		color: var(--fd-muted);
+		margin-bottom: 4px;
+	}
+
+	.fbr-dash .fd-kpi-value {
+		margin: 0;
+		font-size: 24px;
+		font-weight: 800;
+		line-height: 1.1;
+		color: var(--fd-navy);
+	}
+
+	.fbr-dash .fd-kpi-trend {
+		margin-top: 8px;
+		font-size: 11px;
+		font-weight: 700;
+	}
+
+	.fbr-dash .fd-kpi-trend.up { color: #16A34A; }
+	.fbr-dash .fd-kpi-trend.down { color: #DC2626; }
+	.fbr-dash .kpi-inv { --kpi: #3B82F6; }
+	.fbr-dash .kpi-ok { --kpi: #22C55E; }
+	.fbr-dash .kpi-pend { --kpi: #F59E0B; }
+	.fbr-dash .kpi-rej { --kpi: #EF4444; }
+	.fbr-dash .kpi-sales { --kpi: #06B6D4; }
+	.fbr-dash .kpi-tax { --kpi: #A855F7; }
+
+	.fbr-dash .fd-row {
+		display: grid;
+		gap: 12px;
+		margin-bottom: 12px;
+	}
+
+	.fbr-dash .fd-row-3 {
+		grid-template-columns: 1.15fr 0.95fr 1.15fr;
+	}
+
+	.fbr-dash .fd-row-mid {
+		grid-template-columns: 1.15fr 1.55fr 0.85fr;
+		align-items: stretch;
+	}
+
+	.fbr-dash .fd-row-mid .fd-card {
+		display: flex;
+		flex-direction: column;
+		height: 290px;
+		min-height: 290px;
+		max-height: 290px;
+	}
+
+	.fbr-dash .fd-row-mid .fd-card-b {
+		flex: 1;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	.fbr-dash .fd-txn-scroll {
+		height: 100%;
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding-right: 4px;
+	}
+
+	.fbr-dash .fd-txn-scroll::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	.fbr-dash .fd-txn-scroll::-webkit-scrollbar-thumb {
+		background: #B7CCE0;
+		border-radius: 8px;
+	}
+
+	.fbr-dash .fd-txn-scroll .fd-table thead th {
+		position: sticky;
+		top: 0;
+		background: var(--fd-card);
+		z-index: 1;
+	}
+
+	.fbr-dash .fd-card {
+		background: var(--fd-card);
+		border: 1px solid var(--fd-border);
+		border-radius: 16px;
+		overflow: hidden;
+		box-shadow: 0 8px 20px rgba(10, 35, 72, 0.05);
+		min-height: 100%;
+	}
+
+	.fbr-dash .fd-card-h {
+		background: var(--fd-header);
+		color: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		padding: 10px 14px;
+		min-height: 44px;
+	}
+
+	.fbr-dash .fd-card-h h3 {
+		margin: 0;
+		font-size: 13.5px;
+		font-weight: 700;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.fbr-dash .fd-chip {
+		background: rgba(255,255,255,0.16);
+		border: 0;
+		color: #fff;
+		border-radius: 14px;
+		padding: 4px 10px;
+		font-size: 11px;
+		font-weight: 600;
+	}
+
+	.fbr-dash .fd-chart-period {
+		background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%230A2348' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M3 6l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 10px center;
+		border: 0;
+		color: #0A2348;
+		border-radius: 8px;
+		padding: 5px 28px 5px 12px;
+		font-size: 11.5px;
+		font-weight: 700;
+		outline: none;
+		cursor: pointer;
+		appearance: none;
+		-webkit-appearance: none;
+		box-shadow: 0 2px 6px rgba(10, 35, 72, 0.15);
+	}
+
+	.fbr-dash .fd-chart-period option {
+		color: #0A2348;
+		background: #fff;
+	}
+
+	.fbr-dash .fd-chip-link {
+		color: #fff;
+		text-decoration: none;
+		font-size: 12px;
+		font-weight: 600;
+	}
+
+	.fbr-dash .fd-chip-link:hover { color: #dbeafe; }
+
+	.fbr-dash .fd-card-b {
+		padding: 12px 14px 14px;
+	}
+
+	.fbr-dash .fd-chart {
+		width: 100%;
+		height: 230px;
+	}
+
+	.fbr-dash .fd-pie-wrap {
+		display: grid;
+		grid-template-columns: 1fr 130px;
+		gap: 8px;
+		align-items: center;
+	}
+
+	.fbr-dash .fd-pie-box {
+		position: relative;
+		height: 180px;
+	}
+
+	.fbr-dash .fd-pie-center {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		pointer-events: none;
+		z-index: 1;
+	}
+
+	.fbr-dash .fd-pie-center strong {
+		font-size: 22px;
+		font-weight: 800;
+		color: var(--fd-navy);
+		line-height: 1;
+	}
+
+	.fbr-dash .fd-pie-box .fd-chart {
+		height: 100%;
+	}
+
+	.fbr-dash .fd-legend {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		font-size: 12px;
+	}
+
+	.fbr-dash .fd-legend li {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 8px;
+		padding: 7px 10px;
+		border-radius: 10px;
+		background: #F4F8FC;
+		color: var(--fd-navy);
+		font-weight: 600;
+		line-height: 1.2;
+	}
+
+	.fbr-dash .fd-legend li:last-child {
+		margin-bottom: 0;
+	}
+
+	.fbr-dash .fd-legend li strong {
+		display: block;
+		font-size: 14px;
+		font-weight: 800;
+	}
+
+	html[data-theme="dark"] .fbr-dash .fd-legend li,
+	html[data-theme="dark"] .fbr-dash .fd-total {
+		background: #1B2C46;
+	}
+
+	.fbr-dash .fd-dot-sm {
+		width: 14px;
+		height: 14px;
+		flex: 0 0 14px;
+		border-radius: 50%;
+		display: inline-block;
+	}
+
+	.fbr-dash .fd-total {
+		margin-top: 10px;
+		padding: 8px 14px;
+		border-radius: 10px;
+		background: #F4F8FC;
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		font-size: 13px;
+		font-weight: 700;
+		color: var(--fd-navy);
+	}
+
+	.fbr-dash .fd-total span:last-child {
+		font-size: 16px;
+		font-weight: 800;
+	}
+
+	.fbr-dash .fd-monitor {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 12px 18px;
+		font-size: 12.5px;
+		align-items: start;
+	}
+
+	.fbr-dash .fd-mon-item .lab {
+		color: var(--fd-muted);
+		font-weight: 600;
+		display: block;
+		margin-bottom: 4px;
+		font-size: 12px;
+	}
+
+	.fbr-dash .fd-mon-item .val {
+		font-weight: 700;
+		color: var(--fd-navy);
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		line-height: 1.3;
+	}
+
+	.fbr-dash .fd-mon-item .val i {
+		font-size: 13px;
+	}
+
+	.fbr-dash .fd-fail-count {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 22px;
+		height: 22px;
+		padding: 0 6px;
+		border-radius: 50%;
+		background: #FEE2E2;
+		color: #DC2626;
+		font-size: 12px;
+		font-weight: 800;
+	}
+
+	.fbr-dash .fd-log-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		border: 1px solid #C9DFF0;
+		border-radius: 22px;
+		padding: 9px 16px;
+		background: #ffffff;
+		color: #0E4A94;
+		font-weight: 700;
+		font-size: 13px;
+		text-decoration: none;
+		box-shadow: 0 4px 12px rgba(10, 35, 72, 0.06);
+		white-space: nowrap;
+	}
+
+	.fbr-dash .fd-log-btn:hover {
+		color: #0E4A94;
+		background: #F3F8FD;
+	}
+
+	.fbr-dash .fd-mon-logs {
+		grid-column: 2;
+		grid-row: 3 / span 2;
+		align-self: center;
+		justify-self: end;
+	}
+
+	.fbr-dash .ok { color: #16A34A !important; }
+	.fbr-dash .warn { color: #DC2626 !important; }
+	.fbr-dash .info { color: #0E4A94 !important; }
+
+	.fbr-dash .fd-active {
+		background: #22C55E;
+		color: #fff;
+		border-radius: 12px;
+		padding: 3px 10px;
+		font-size: 11px;
+		font-weight: 700;
+	}
+
+	.fbr-dash .fd-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 12px;
+	}
+
+	.fbr-dash .fd-table th {
+		color: var(--fd-muted);
+		font-weight: 700;
+		text-align: left;
+		padding: 6px 6px 8px;
+		border-bottom: 1px solid var(--fd-border);
+		white-space: nowrap;
+	}
+
+	.fbr-dash .fd-table td {
+		padding: 9px 6px;
+		border-bottom: 1px solid #EEF4FA;
+		font-weight: 600;
+		color: var(--fd-navy);
+		vertical-align: middle;
+		white-space: nowrap;
+	}
+
+	.fbr-dash .fd-table td:nth-child(3) {
+		white-space: normal;
+		max-width: 150px;
+		line-height: 1.25;
+	}
+
+	html[data-theme="dark"] .fbr-dash .fd-table td {
+		border-bottom-color: var(--fd-border);
+	}
+
+	.fbr-dash .st {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		font-weight: 700;
+		font-size: 12px;
+	}
+
+	.fbr-dash .st.ok { color: #16A34A; }
+	.fbr-dash .st.bad { color: #DC2626; }
+	.fbr-dash .st.wait { color: #D97706; }
+
+	.fbr-dash .fd-eye {
+		width: 26px;
+		height: 26px;
+		border-radius: 50%;
+		border: 1px solid var(--fd-border);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: #0E4A94;
+		background: #F4F9FD;
+	}
+
+	.fbr-dash .fd-actions a {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 10px 8px;
+		border-radius: 10px;
+		text-decoration: none;
+		color: var(--fd-navy);
+		font-weight: 700;
+		font-size: 13px;
+	}
+
+	.fbr-dash .fd-actions a:hover { background: #F3F8FD; }
+
+	html[data-theme="dark"] .fbr-dash .fd-actions a:hover { background: #1B2C46; }
+
+	.fbr-dash .fd-act-ico {
+		width: 30px;
+		height: 30px;
+		border-radius: 8px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: #fff;
+		font-size: 13px;
+	}
+
+	.fbr-dash .fd-summary {
+		display: grid;
+		grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(0, 1.6fr);
+		gap: 8px;
+		align-items: stretch;
+	}
+
+	.fbr-dash .fd-sum-item {
+		padding: 6px 10px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.fbr-dash .fd-sum-item span {
+		display: block;
+		font-size: 11.5px;
+		color: var(--fd-navy);
+		font-weight: 500;
+		margin-bottom: 4px;
+		white-space: nowrap;
+	}
+
+	.fbr-dash .fd-sum-item strong {
+		font-size: 15px;
+		font-weight: 800;
+		color: var(--fd-navy);
+		white-space: nowrap;
+	}
+
+	.fbr-dash .fd-sum-item.total {
+		background: #EEF6FF;
+		border-radius: 10px;
+		align-items: center;
+		text-align: center;
+	}
+
+	.fbr-dash .fd-sum-item.total span {
+		font-weight: 700;
+	}
+
+	.fbr-dash .fd-sum-item.total strong {
+		font-size: 18px;
+	}
+
+	html[data-theme="dark"] .fbr-dash .fd-sum-item.total {
+		background: #1B2C46;
+	}
+
+	.fbr-dash .fd-qstats {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+		align-items: center;
+	}
+
+	.fbr-dash .fd-qstat {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		min-width: 0;
+	}
+
+	.fbr-dash .fd-qstat i {
+		width: 26px;
+		flex: 0 0 26px;
+		background: transparent;
+		color: #1A73C7;
+		font-size: 20px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.fbr-dash .fd-qstat > div {
+		min-width: 0;
+		flex: 1;
+	}
+
+	.fbr-dash .fd-qstat span {
+		display: block;
+		font-size: 11px;
+		color: var(--fd-muted);
+		font-weight: 600;
+		line-height: 1.3;
+		white-space: normal;
+		word-break: break-word;
+	}
+
+	.fbr-dash .fd-qstat strong {
+		display: block;
+		font-size: 16px;
+		font-weight: 800;
+		color: var(--fd-navy);
+		line-height: 1.2;
+		margin-top: 2px;
+	}
+
+	.fd-error-modal .modal-content {
+		border: 0;
+		border-radius: 16px;
+		overflow: hidden;
+	}
+
+	.fd-error-modal .modal-header {
+		background: #0E4A94;
+		color: #fff;
+		border: 0;
+		padding: 14px 18px;
+	}
+
+	.fd-error-modal .modal-title {
+		font-size: 16px;
+		font-weight: 700;
+	}
+
+	.fd-error-modal .btn-close {
+		filter: invert(1);
+	}
+
+	.fd-error-list {
+		max-height: 420px;
+		overflow-y: auto;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.fd-error-card {
+		border: 1px solid #D7E6F4;
+		border-radius: 12px;
+		padding: 12px 14px;
+		background: #F8FBFE;
+	}
+
+	.fd-error-card h6 {
+		margin: 0 0 6px;
+		font-size: 13px;
+		font-weight: 800;
+		color: #0A2348;
+		display: flex;
+		justify-content: space-between;
+		gap: 8px;
+	}
+
+	.fd-error-meta {
+		font-size: 12px;
+		color: #5A7394;
+		margin-bottom: 8px;
+	}
+
+	.fd-error-msg {
+		font-size: 13px;
+		font-weight: 600;
+		color: #B42318;
+		background: #FEF3F2;
+		border-radius: 8px;
+		padding: 8px 10px;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
+	.fd-error-empty {
+		text-align: center;
+		padding: 28px 10px;
+		color: #5A7394;
+	}
+
+	@@media (max-width: 1399px) {
+		.fbr-dash .fd-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+		.fbr-dash .fd-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	}
+
+	@@media (max-width: 1199px) {
+		.fbr-dash .fd-row-3,
+		.fbr-dash .fd-row-mid { grid-template-columns: 1fr; }
+		.fbr-dash .fd-row-mid .fd-card {
+			height: 280px;
+			min-height: 280px;
+			max-height: 280px;
 		}
+		.fbr-dash .fd-pie-wrap { grid-template-columns: 1fr 160px; }
 	}
 
 	@@media (max-width: 767px) {
-		.dashboard-wrap .bx-kpi {
-			padding: 16px 16px;
-			min-height: 102px;
-			gap: 12px;
-		}
-
-		.dashboard-wrap .bx-kpi .kpi-inner:last-child,
-		.dashboard-wrap .kpi-spark {
-			flex: 0 0 96px;
-			width: 96px;
-		}
-
-		.dashboard-wrap .kpi-value {
-			font-size: 20px;
-		}
-
-		.dashboard-wrap .sales-total-value {
-			font-size: 18px;
-		}
-
-		#salesChart {
-			height: 260px;
-			min-height: 260px;
-		}
-
-		.dashboard-wrap .sales-view-toggle {
-			width: 100%;
-		}
-
-		.dashboard-wrap .sales-view-toggle .btn {
-			flex: 1 1 auto;
-		}
+		.fbr-dash .fd-kpis,
+		.fbr-dash .fd-summary,
+		.fbr-dash .fd-qstats,
+		.fbr-dash .fd-monitor { grid-template-columns: 1fr; }
+		.fbr-dash .fd-hero h2 { font-size: 20px; }
+		.fbr-dash .fd-pie-wrap { grid-template-columns: 1fr; }
+		.fbr-dash .fd-toolbar { justify-content: stretch; }
+		.fbr-dash .fd-mon-logs { grid-column: 1 / -1; grid-row: auto; justify-self: stretch; }
+		.fbr-dash .fd-log-btn { width: 100%; }
+		.fbr-dash .fd-pill { width: 100%; justify-content: space-between; }
 	}
 </style>
 
-<div class="dashboard-wrap">
-	<div class="row">
-		<div class="col-xl-4 col-md-6 col-12">
-			<div class="bx-kpi">
-				<div class="kpi-inner">
-					<span class="kpi-label">FBR Invoice Count</span>
-					<h2 class="kpi-value">@dashboard.FbrInvoiceCount.ToString("N0")</h2>
-				</div>
-				<div class="kpi-inner">
-					<div id="kpiCountSpark" class="kpi-spark"></div>
-				</div>
+<div class="fbr-dash">
+	<div class="fd-toolbar">
+		<div class="fd-pill">
+			<i class="fa-regular fa-calendar"></i>
+			<span id="fdDateRange">18 May 2026 - 17 Nov 2026</span>
+		</div>
+		<div class="fd-pill">
+			<select id="fdPeriod" class="fd-period" aria-label="Dashboard period">
+				<option value="day">Day</option>
+				<option value="week">Week</option>
+				<option value="month" selected>Month</option>
+				<option value="thisMonth">This Month</option>
+				<option value="last3">Last 3 Months</option>
+				<option value="last6">Last 6 Months</option>
+			</select>
+		</div>
+		<div class="fd-pill">
+			<i class="fa-regular fa-clock"></i>
+			<span id="fdLastUpdated">Last Updated: 17 Nov 2026 04:22 PM</span>
+			<button type="button" class="fd-refresh" id="fdRefresh" title="Refresh"><i class="fa-solid fa-rotate"></i></button>
+		</div>
+	</div>
+
+	<div class="fd-hero">
+		<div class="fd-hero-left">
+			<div class="fd-logo">
+				FBR
+				<span class="fd-logo-ok"><i class="fa-solid fa-check"></i></span>
+			</div>
+			<div>
+				<h2>FBR Digital Invoice</h2>
+				<p>Dashboard • Real-Time Monitoring &amp; Analytics</p>
 			</div>
 		</div>
-		<div class="col-xl-4 col-md-6 col-12">
-			<div class="bx-kpi">
-				<div class="kpi-inner">
-					<span class="kpi-label">Total Amount</span>
-					<h2 class="kpi-value">@dashboard.TotalAmount.ToString("N2")</h2>
-				</div>
-				<div class="kpi-inner">
-					<div id="kpiAmountSpark" class="kpi-spark"></div>
-				</div>
+		<div class="fd-hero-right">
+			<div class="fd-connected">
+				<span class="fd-dot" id="fdConnDot" style="margin-top:5px;"></span>
+				<div>FBR Connected<small id="fdEnvironment">Production Environment</small></div>
+			</div>
+			<div class="fd-sync"><i class="fa-regular fa-clock"></i> <span id="fdLastSync">Last Sync: -</span></div>
+		</div>
+	</div>
+
+	<div class="fd-kpis">
+		<div class="fd-kpi kpi-inv">
+			<div class="fd-kpi-icon"><i class="fa-solid fa-file-invoice"></i></div>
+			<span class="fd-kpi-label">Total Invoices</span>
+			<h3 class="fd-kpi-value" id="kpiInvoices">0</h3>
+			<div class="fd-kpi-trend" id="kpiInvoicesTrend" style="display:none;"></div>
+		</div>
+		<div class="fd-kpi kpi-ok">
+			<div class="fd-kpi-icon"><i class="fa-solid fa-check"></i></div>
+			<span class="fd-kpi-label">FBR Approved</span>
+			<h3 class="fd-kpi-value" id="kpiApproved">0</h3>
+			<div class="fd-kpi-trend" id="kpiApprovedTrend" style="display:none;"></div>
+		</div>
+		<div class="fd-kpi kpi-pend">
+			<div class="fd-kpi-icon"><i class="fa-regular fa-clock"></i></div>
+			<span class="fd-kpi-label">Pending Invoices</span>
+			<h3 class="fd-kpi-value" id="kpiPending">0</h3>
+			<div class="fd-kpi-trend" id="kpiPendingTrend" style="display:none;"></div>
+		</div>
+		<div class="fd-kpi kpi-rej">
+			<div class="fd-kpi-icon"><i class="fa-solid fa-xmark"></i></div>
+			<span class="fd-kpi-label">Rejected Invoices</span>
+			<h3 class="fd-kpi-value" id="kpiRejected">0</h3>
+			<div class="fd-kpi-trend" id="kpiRejectedTrend" style="display:none;"></div>
+		</div>
+		<div class="fd-kpi kpi-sales">
+			<div class="fd-kpi-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+			<span class="fd-kpi-label">Total Sales</span>
+			<h3 class="fd-kpi-value" id="kpiSales">PKR 0</h3>
+			<div class="fd-kpi-trend" id="kpiSalesTrend" style="display:none;"></div>
+		</div>
+		<div class="fd-kpi kpi-tax">
+			<div class="fd-kpi-icon"><i class="fa-solid fa-percent"></i></div>
+			<span class="fd-kpi-label">Total Sales Tax</span>
+			<h3 class="fd-kpi-value" id="kpiSalesTax">PKR 0</h3>
+			<div class="fd-kpi-trend" id="kpiSalesTaxTrend" style="display:none;"></div>
+		</div>
+	</div>
+
+	<div class="fd-row fd-row-3">
+		<div class="fd-card">
+			<div class="fd-card-h">
+				<h3><i class="fa-solid fa-chart-column"></i> Monthly Invoice Generation</h3>
+				<select class="fd-chart-period" aria-label="Monthly invoice period">
+					<option value="day">Day</option>
+					<option value="week">Week</option>
+					<option value="month">Month</option>
+					<option value="thisMonth">This Month</option>
+					<option value="last3">Last 3 Months</option>
+					<option value="last6" selected>Last 6 Months</option>
+				</select>
+			</div>
+			<div class="fd-card-b">
+				<div id="monthlyInvoiceChart" class="fd-chart"></div>
 			</div>
 		</div>
-		<div class="col-xl-4 col-md-6 col-12">
-			<div class="bx-kpi">
-				<div class="kpi-inner">
-					<span class="kpi-label">Total Tax Amount</span>
-					<h2 class="kpi-value">@dashboard.TotalTaxAmount.ToString("N2")</h2>
+		<div class="fd-card">
+			<div class="fd-card-h">
+				<h3><i class="fa-solid fa-chart-pie"></i> Invoice Status Distribution</h3>
+			</div>
+			<div class="fd-card-b">
+				<div class="fd-pie-wrap">
+					<div class="fd-pie-box">
+						<div id="statusPieChart" class="fd-chart"></div>
+					</div>
+					<div>
+						<ul class="fd-legend" id="fdStatusLegend"></ul>
+					</div>
 				</div>
-				<div class="kpi-inner">
-					<div id="kpiTaxSpark" class="kpi-spark"></div>
-				</div>
+				<div class="fd-total"><span>Total</span><span id="fdStatusTotal">0</span></div>
+			</div>
+		</div>
+		<div class="fd-card">
+			<div class="fd-card-h">
+				<h3><i class="fa-solid fa-chart-line"></i> Sales &amp; Sales Tax Trend</h3>
+				<select class="fd-chart-period" aria-label="Sales trend period">
+					<option value="day">Day</option>
+					<option value="week">Week</option>
+					<option value="month">Month</option>
+					<option value="thisMonth">This Month</option>
+					<option value="last3">Last 3 Months</option>
+					<option value="last6" selected>Last 6 Months</option>
+				</select>
+			</div>
+			<div class="fd-card-b">
+				<div id="salesTaxTrendChart" class="fd-chart"></div>
 			</div>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-12">
-			<div class="card">
-				<div class="card-header">
-					<div class="sales-chart-head">
-						<div>
-							<h3 class="card-title">Sales</h3>
-							<div class="sales-total">
-								<span class="sales-total-label">Total Sale</span>
-								<strong id="totalSaleValue" class="sales-total-value">0.00</strong>
-							</div>
-						</div>
-						<div class="btn-group sales-view-toggle" role="group" aria-label="Sales view">
-							<button type="button" class="btn" data-view="day">Day Wise</button>
-							<button type="button" class="btn active" data-view="month">Month Wise</button>
-						</div>
+
+	<div class="fd-row fd-row-mid">
+		<div class="fd-card">
+			<div class="fd-card-h">
+				<h3><i class="fa-solid fa-signal"></i> FBR Integration Monitoring</h3>
+				<span class="fd-active">Active</span>
+			</div>
+			<div class="fd-card-b">
+				<div class="fd-monitor" id="fdMonitor">
+					<div class="fd-mon-item">
+						<span class="lab">API Connection:</span>
+						<span class="val ok" id="monApi"><i class="fa-solid fa-circle-check"></i> -</span>
+					</div>
+					<div class="fd-mon-item">
+						<span class="lab">Failed Requests:</span>
+						<span class="val warn" id="monFailed"><i class="fa-solid fa-circle-exclamation"></i> <span class="fd-fail-count" id="monFailedCount">0</span></span>
+					</div>
+					<div class="fd-mon-item">
+						<span class="lab">Environment:</span>
+						<span class="val info" id="monEnv"><i class="fa-solid fa-industry"></i> -</span>
+					</div>
+					<div class="fd-mon-item">
+						<span class="lab">Token Status:</span>
+						<span class="val ok" id="monToken"><i class="fa-solid fa-circle-check"></i> -</span>
+					</div>
+					<div class="fd-mon-item">
+						<span class="lab">Last Successful:</span>
+						<span class="val" id="monLast"><i class="fa-regular fa-calendar"></i> -</span>
+					</div>
+					<div class="fd-mon-logs">
+						<a class="fd-log-btn" href="javascript:;" id="fdViewErrorLogs"><i class="fa-solid fa-triangle-exclamation"></i> View Error Logs</a>
+					</div>
+					<div class="fd-mon-item">
+						<span class="lab">API Response Time:</span>
+						<span class="val" id="monTime"><i class="fa-solid fa-bolt"></i> -</span>
 					</div>
 				</div>
-				<div class="card-body">
-					<div id="salesChartEmpty" class="sales-empty">No sales data available.</div>
-					<div id="salesChart" class="w-100"></div>
+			</div>
+		</div>
+		<div class="fd-card">
+			<div class="fd-card-h">
+				<h3>Recent Transactions</h3>
+				<a class="fd-chip-link" href="/PurchaseBill">View All →</a>
+			</div>
+			<div class="fd-card-b" style="padding-top:6px;">
+				<div class="fd-txn-scroll">
+					<table class="fd-table">
+						<thead>
+							<tr>
+								<th>Invoice No.</th>
+								<th>Date</th>
+								<th>Customer</th>
+								<th>Amount</th>
+								<th>FBR Status</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody id="fdTxnBody">
+							<tr><td colspan="6">No transactions.</td></tr>
+						</tbody>
+					</table>
 				</div>
+			</div>
+		</div>
+		<div class="fd-card">
+			<div class="fd-card-h">
+				<h3>Quick Actions</h3>
+			</div>
+			<div class="fd-card-b fd-actions">
+				<a href="/PurchaseBill"><span class="fd-act-ico" style="background:#3B82F6"><i class="fa-solid fa-file-invoice"></i></span> New Invoice</a>
+				<a href="/SalesInvoiceReport"><span class="fd-act-ico" style="background:#0EA5E9"><i class="fa-solid fa-chart-column"></i></span> View Reports</a>
+				<a href="javascript:;" id="fdQuickErrorLogs"><span class="fd-act-ico" style="background:#EF4444"><i class="fa-solid fa-triangle-exclamation"></i></span> FBR Error Logs</a>
+				<a href="javascript:;" id="erpDashSettings"><span class="fd-act-ico" style="background:#64748B"><i class="fa-solid fa-gear"></i></span> Settings</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="fd-row" style="grid-template-columns: 2.2fr 0.8fr;">
+		<div class="fd-card">
+			<div class="fd-card-h">
+				<h3><i class="fa-solid fa-receipt"></i> Tax &amp; Sales Summary</h3>
+			</div>
+			<div class="fd-card-b">
+				<div class="fd-summary" id="fdTaxSummary">
+					<div class="fd-sum-item"><span>Total Quantity</span><strong>0</strong></div>
+					<div class="fd-sum-item"><span>Excluding Tax</span><strong>0</strong></div>
+					<div class="fd-sum-item"><span>Sales Tax</span><strong>0</strong></div>
+					<div class="fd-sum-item"><span>Further Tax</span><strong>0</strong></div>
+					<div class="fd-sum-item"><span>Discount</span><strong>0</strong></div>
+					<div class="fd-sum-item total"><span>Including Tax</span><strong>0</strong></div>
+				</div>
+			</div>
+		</div>
+		<div class="fd-card">
+			<div class="fd-card-h">
+				<h3><i class="fa-solid fa-chart-simple"></i> Quick Stats</h3>
+			</div>
+			<div class="fd-card-b">
+				<div class="fd-qstats" id="fdQuickStats"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade fd-error-modal" id="fdErrorLogModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title"><i class="fa-solid fa-triangle-exclamation me-2"></i>FBR Error Logs</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div id="fdErrorLogCount" class="mb-2" style="font-size:12.5px;font-weight:700;color:#0E4A94;"></div>
+				<div class="fd-error-list" id="fdErrorLogList"></div>
 			</div>
 		</div>
 	</div>
@@ -265,159 +1108,469 @@
 @section LinkScriptSection {
 	<script type="text/javascript">
 		$(function () {
-			var monthWiseData = @Html.Raw(Json.Serialize((dashboard.SalesChart ?? new List<DashboardSalesPoint>()).Select(x => new { month = x.Month, amount = x.Amount })));
-			var dayWiseData = @Html.Raw(Json.Serialize((dashboard.DayWiseSales ?? new List<DashboardSalesPoint>()).Select(x => new { month = x.Month, amount = x.Amount })));
-			var sparkData = @Html.Raw(Json.Serialize((dashboard.Sparkline ?? new List<DashboardSalesPoint>()).Select(x => new { month = x.Month, amount = x.Amount, taxAmount = x.TaxAmount, count = x.Count })));
-			var currentView = "month";
+			$("#fdPeriod, .fd-chart-period").each(function () {
+				if ($(this).hasClass("select2-hidden-accessible")) { $(this).select2("destroy"); }
+			});
+			var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+			var invoiceData = [];
+			var trendData = [];
+			var statusData = [];
+			var pieMainStatus = "";
+			var fbrErrorLogs = [];
 
-			function formatAmount(value) {
-				return value != null ? Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00";
+			function pad(n) { return n < 10 ? "0" + n : n; }
+
+			function formatDate(d) {
+				return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
 			}
 
-			function getTotal(data) {
-				if (!data || !data.length) {
-					return 0;
+			function formatDateTime(d) {
+				var h = d.getHours();
+				var ampm = h >= 12 ? "PM" : "AM";
+				h = h % 12;
+				h = h ? h : 12;
+				return formatDate(d) + " " + pad(h) + ":" + pad(d.getMinutes()) + " " + ampm;
+			}
+
+			function isoDate(d) {
+				return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+			}
+
+			function addMonths(date, monthsToAdd) {
+				var d = new Date(date.getTime());
+				d.setMonth(d.getMonth() + monthsToAdd);
+				return d;
+			}
+
+			function getRange(period) {
+				var end = new Date();
+				var start = new Date();
+				if (period === "day") {
+					start = new Date(end.getTime());
+				} else if (period === "week") {
+					start.setDate(end.getDate() - 6);
+				} else if (period === "month") {
+					start.setMonth(end.getMonth() - 1);
+					start.setDate(start.getDate() + 1);
+				} else if (period === "thisMonth") {
+					start = new Date(end.getFullYear(), end.getMonth(), 1);
+				} else if (period === "last3") {
+					start = addMonths(end, -3);
+					start.setDate(start.getDate() + 1);
+				} else {
+					start = addMonths(end, -6);
+					start.setDate(start.getDate() + 1);
 				}
-				return data.reduce(function (sum, item) {
-					return sum + (Number(item.amount) || 0);
-				}, 0);
+				return { start: start, end: end };
 			}
 
-			function getViewData(view) {
-				return view === "day" ? dayWiseData : monthWiseData;
+			function formatCount(n) {
+				return Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
 			}
 
-			function updateTotalSale(data) {
-				$("#totalSaleValue").text(formatAmount(getTotal(data)));
+			function formatMoney(n) {
+				n = Number(n || 0);
+				var abs = Math.abs(n);
+				if (abs >= 1000000) {
+					return "PKR " + (n / 1000000).toFixed(1) + "M";
+				}
+				return "PKR " + n.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 			}
 
-			function toggleEmptyState(data) {
-				var isEmpty = !data || !data.length;
-				$("#salesChartEmpty").css("display", isEmpty ? "flex" : "none");
-				$("#salesChart").toggle(!isEmpty);
+			function formatCompact(n) {
+				n = Number(n || 0);
+				var abs = Math.abs(n);
+				if (abs >= 1000000) {
+					return (n / 1000000).toFixed(1) + "M";
+				}
+				return n.toLocaleString(undefined, { maximumFractionDigits: 1 });
 			}
 
-			function initSparkline(selector, valueField) {
-				if (!$(selector).length) {
-					return;
+			function setKpi(valueId, trendId, kpi, money) {
+				kpi = kpi || {};
+				$(valueId).text(money ? formatMoney(kpi.value) : formatCount(kpi.value));
+				if (kpi.hasPercent) {
+					var pct = Number(kpi.percent || 0);
+					var up = pct >= 0;
+					$(trendId).attr("class", "fd-kpi-trend " + (up ? "up" : "down"))
+						.html('<i class="fa-solid fa-arrow-' + (up ? "up" : "down") + '"></i> ' + Math.abs(pct).toFixed(1) + "% vs last month")
+						.show();
+				} else {
+					$(trendId).hide();
+				}
+			}
+
+			function statusColor(label) {
+				var t = (label || "").toLowerCase();
+				if (t.indexOf("reject") >= 0) return "#EF4444";
+				if (t.indexOf("pend") >= 0) return "#F59E0B";
+				return "#22C55E";
+			}
+
+			function statusClass(label) {
+				var t = (label || "").toLowerCase();
+				if (t.indexOf("reject") >= 0) return "bad";
+				if (t.indexOf("pend") >= 0) return "wait";
+				return "ok";
+			}
+
+			function axisColors() {
+				var dark = document.documentElement.getAttribute("data-theme") === "dark";
+				return {
+					label: dark ? "#93A7C2" : "#6B7C93",
+					grid: dark ? "#22344F" : "#E7EEF7",
+					text: dark ? "#E3ECF7" : "#0A2348"
+				};
+			}
+
+			function renderInvoiceChart() {
+				var c = axisColors();
+				var options = {
+					dataSource: invoiceData,
+					palette: ["#2F80ED"],
+					commonSeriesSettings: {
+						argumentField: "month",
+						type: "bar",
+						color: "#2F80ED",
+						ignoreEmptyPoints: true,
+						barPadding: 0.45,
+						label: {
+							visible: true,
+							backgroundColor: "none",
+							font: { color: "#2F80ED", size: 11, weight: 700 },
+							customizeText: function (e) {
+								return Number(e.value).toLocaleString();
+							}
+						}
+					},
+					series: [{ valueField: "count", name: "Invoices" }],
+					legend: { visible: false },
+					tooltip: { enabled: true },
+					argumentAxis: {
+						label: { font: { color: c.label, size: 11 } }
+					},
+					valueAxis: {
+						valueMarginsEnabled: true,
+						maxValueMargin: 0.15,
+						endOnTick: true,
+						grid: { color: c.grid },
+						label: { font: { color: c.label, size: 11 } }
+					},
+					"export": { enabled: false }
+				};
+				if ($("#monthlyInvoiceChart").data("dxChart")) {
+					$("#monthlyInvoiceChart").dxChart("instance").option(options);
+				} else {
+					$("#monthlyInvoiceChart").dxChart(options);
+				}
+			}
+
+			function renderTrendChart() {
+				var c = axisColors();
+				var options = {
+					dataSource: trendData,
+					commonSeriesSettings: {
+						argumentField: "month",
+						type: "spline",
+						point: { size: 7 },
+						label: {
+							visible: true,
+							backgroundColor: "none",
+							font: { size: 10, weight: 700 },
+							customizeText: function (e) {
+								return formatCompact(e.value);
+							}
+						}
+					},
+					series: [
+						{ valueField: "sales", name: "Sales", color: "#2F80ED" },
+						{ valueField: "tax", name: "Sales Tax", color: "#22C55E" }
+					],
+					legend: {
+						visible: true,
+						verticalAlignment: "top",
+						horizontalAlignment: "right",
+						font: { size: 11, color: c.text }
+					},
+					tooltip: { enabled: true },
+					argumentAxis: {
+						label: { font: { color: c.label, size: 11 } }
+					},
+					valueAxis: {
+						grid: { color: c.grid },
+						label: { font: { color: c.label, size: 11 } }
+					},
+					"export": { enabled: false }
+				};
+				if ($("#salesTaxTrendChart").data("dxChart")) {
+					$("#salesTaxTrendChart").dxChart("instance").option(options);
+				} else {
+					$("#salesTaxTrendChart").dxChart(options);
+				}
+			}
+
+			function renderPieChart() {
+				var options = {
+					type: "pie",
+					palette: statusData.map(function (x) { return statusColor(x.status); }),
+					dataSource: statusData,
+					legend: { visible: false },
+					series: [{
+						argumentField: "status",
+						valueField: "value",
+						label: {
+							visible: true,
+							position: "inside",
+							backgroundColor: "none",
+							font: { color: "#ffffff", size: 16, weight: 700 },
+							customizeText: function (e) {
+								return e.argument === pieMainStatus ? (e.percent * 100).toFixed(1) + "%" : "";
+							}
+						}
+					}],
+					tooltip: { enabled: true },
+					"export": { enabled: false }
+				};
+				if ($("#statusPieChart").data("dxPieChart")) {
+					$("#statusPieChart").dxPieChart("instance").option(options);
+				} else {
+					$("#statusPieChart").dxPieChart(options);
+				}
+			}
+
+			function bindCharts(data) {
+				data = data || {};
+				invoiceData = (data.monthlyInvoiceGeneration || []).map(function (x) {
+					return { month: x.label, count: x.value };
+				});
+				trendData = (data.salesTaxTrend || []).map(function (x) {
+					return { month: x.label, sales: x.value, tax: x.value2 };
+				});
+				renderInvoiceChart();
+				renderTrendChart();
+			}
+
+			function bindDashboard(data) {
+				data = data || {};
+				setKpi("#kpiInvoices", "#kpiInvoicesTrend", data.totalInvoices, false);
+				setKpi("#kpiApproved", "#kpiApprovedTrend", data.fbrApproved, false);
+				setKpi("#kpiPending", "#kpiPendingTrend", data.pendingInvoices, false);
+				setKpi("#kpiRejected", "#kpiRejectedTrend", data.rejectedInvoices, false);
+				setKpi("#kpiSales", "#kpiSalesTrend", data.totalSales, true);
+				setKpi("#kpiSalesTax", "#kpiSalesTaxTrend", data.totalSalesTax, true);
+
+				statusData = (data.invoiceStatusDistribution || []).map(function (x) {
+					return { status: x.label, value: x.value };
+				});
+
+				var statusTotal = statusData.reduce(function (sum, x) { return sum + Number(x.value || 0); }, 0);
+				var approved = statusData.filter(function (x) { return (x.status || "").toLowerCase().indexOf("approv") >= 0; });
+				pieMainStatus = approved.length ? approved[0].status : (statusData[0] ? statusData[0].status : "");
+				$("#fdStatusTotal").text(formatCount(statusTotal));
+				var legendHtml = "";
+				statusData.forEach(function (x) {
+					var label = String(x.status || "");
+					label = label.charAt(0).toUpperCase() + label.slice(1).toLowerCase();
+					legendHtml += '<li><span class="fd-dot-sm" style="background:' + statusColor(x.status) + '"></span><div>' + label + '<strong>' + formatCount(x.value) + '</strong></div></li>';
+				});
+				$("#fdStatusLegend").html(legendHtml);
+
+				bindMonitoring(data.fbrIntegrationMonitoring || []);
+				fbrErrorLogs = data.fbrErrorLogs || [];
+
+				var txnHtml = "";
+				(data.recentTransactions || []).forEach(function (row) {
+					var st = statusClass(row.fbrStatus);
+					var icon = st === "bad" ? "circle-xmark" : (st === "wait" ? "clock" : "circle-check");
+					txnHtml += '<tr>' +
+						'<td>' + (row.invoiceNo || "") + '</td>' +
+						'<td>' + (row.date || "") + '</td>' +
+						'<td>' + (row.customer || "") + '</td>' +
+						'<td>' + formatCount(row.amount) + '</td>' +
+						'<td><span class="st ' + st + '"><i class="fa-solid fa-' + icon + '"></i> ' + (row.fbrStatus || "") + '</span></td>' +
+						'<td><a class="fd-eye" href="/PurchaseBill"><i class="fa-regular fa-eye"></i></a></td>' +
+						'</tr>';
+				});
+				$("#fdTxnBody").html(txnHtml || '<tr><td colspan="6">No transactions.</td></tr>');
+
+				var taxHtml = "";
+				var taxItems = data.taxSalesSummary || [];
+				taxItems.forEach(function (item, idx) {
+					var raw = String(item.value || "0");
+					var num = Number(raw.replace(/,/g, ""));
+					var isQty = String(item.name || "").toLowerCase().indexOf("quantity") >= 0;
+					var shown = isNaN(num) || isQty ? raw : formatMoney(num);
+					taxHtml += '<div class="fd-sum-item' + (idx === taxItems.length - 1 ? " total" : "") + '"><span>' + (item.name || "") + '</span><strong>' + shown + '</strong></div>';
+				});
+				if (taxHtml) {
+					$("#fdTaxSummary").html(taxHtml);
 				}
 
-				$(selector).dxSparkline({
-					dataSource: sparkData,
-					argumentField: "month",
-					valueField: valueField,
-					type: "splinearea",
-					lineColor: "#055a87",
-					firstLastColor: "#055a87",
-					pointSize: 0,
-					showMinMax: false,
-					showFirstLast: false,
-					tooltip: {
-						enabled: true
+				var statsHtml = "";
+				var icons = ["fa-users", "fa-file-invoice", "fa-user-check", "fa-clock"];
+				(data.quickStats || []).forEach(function (item, idx) {
+					statsHtml += '<div class="fd-qstat"><i class="fa-solid ' + (icons[idx] || "fa-chart-simple") + '"></i><div><span>' + (item.name || "") + '</span><strong>' + (item.value || "0") + '</strong></div></div>';
+				});
+				$("#fdQuickStats").html(statsHtml);
+
+				renderPieChart();
+			}
+
+			var dashPending = 0;
+			function showDashLoader() {
+				dashPending++;
+				$("#Loader").css("display", "flex");
+			}
+			function hideDashLoader() {
+				dashPending--;
+				if (dashPending <= 0) {
+					dashPending = 0;
+					$("#Loader").hide();
+				}
+			}
+
+			function loadDashboard() {
+				var period = $("#fdPeriod").val();
+				var range = getRange(period);
+				$("#fdDateRange").text(formatDate(range.start) + " - " + formatDate(range.end));
+				showDashLoader();
+				$.ajax({
+					url: "/Home/GetDashboardData",
+					type: "GET",
+					data: { fromDate: isoDate(range.start), toDate: isoDate(range.end), section: "main" },
+					success: function (res) {
+						if (res && res.msgType === 2) {
+							if (window.toastr) { toastr.error(res.msg || "Dashboard load failed"); }
+							else { alert(res.msg || "Dashboard load failed"); }
+						}
+						bindDashboard(res && res.data ? res.data : {});
+						$("#fdLastUpdated").text("Last Updated: " + formatDateTime(new Date()));
+					},
+					error: function () {
+						if (window.toastr) { toastr.error("Dashboard load failed"); }
+					},
+					complete: function () {
+						hideDashLoader();
 					}
 				});
 			}
 
-			function getChartOptions(data, view) {
-				return {
-					dataSource: data,
-					palette: ["#055a87", "#04003b", "#7f76ff", "#d2e1e9"],
-					commonSeriesSettings: {
-						argumentField: "month",
-						type: "splinearea",
-						opacity: 0.28,
-						point: {
-							visible: view !== "day",
-							size: 6,
-							hoverStyle: {
-								size: 8
-							}
+			function loadCharts() {
+				var period = $(".fd-chart-period").first().val();
+				var range = getRange(period);
+				showDashLoader();
+				$.ajax({
+					url: "/Home/GetDashboardData",
+					type: "GET",
+					data: { fromDate: isoDate(range.start), toDate: isoDate(range.end), section: "charts" },
+					success: function (res) {
+						if (res && res.msgType === 2) {
+							if (window.toastr) { toastr.error(res.msg || "Chart load failed"); }
+							else { alert(res.msg || "Chart load failed"); }
 						}
+						bindCharts(res && res.data ? res.data : {});
 					},
-					series: [{
-						valueField: "amount",
-						name: "Total Sale",
-						color: "#055a87"
-					}],
-					legend: {
-						visible: false
+					error: function () {
+						if (window.toastr) { toastr.error("Chart load failed"); }
 					},
-					tooltip: {
-						enabled: true,
-						customizeTooltip: function (arg) {
-							return {
-								text: arg.argumentText + "<br/>Total Sale: " + formatAmount(arg.value)
-							};
-						}
-					},
-					crosshair: {
-						enabled: true,
-						color: "#055a87",
-						width: 1,
-						dashStyle: "dot",
-						label: {
-							visible: false
-						}
-					},
-					argumentAxis: {
-						label: {
-							overlappingBehavior: view === "day" ? "hide" : "rotate",
-							rotationAngle: view === "day" ? 0 : 45
-						}
-					},
-					valueAxis: {
-						title: {
-							text: "Total Sale"
-						}
-					},
-					"export": {
-						enabled: false
+					complete: function () {
+						hideDashLoader();
 					}
-				};
+				});
 			}
 
-			function renderSalesChart(view) {
-				var data = getViewData(view);
-				updateTotalSale(data);
-				toggleEmptyState(data);
+			loadDashboard();
+			loadCharts();
 
-				if (!$("#salesChart").length || !data.length) {
-					if ($("#salesChart").data("dxChart")) {
-						$("#salesChart").dxChart("instance").option("dataSource", []);
-					}
-					return;
-				}
-
-				if ($("#salesChart").data("dxChart")) {
-					$("#salesChart").dxChart("instance").option(getChartOptions(data, view));
-					$("#salesChart").dxChart("render");
-					return;
-				}
-
-				$("#salesChart").dxChart(getChartOptions(data, view));
-			}
-
-			initSparkline("#kpiCountSpark", "count");
-			initSparkline("#kpiAmountSpark", "amount");
-			initSparkline("#kpiTaxSpark", "taxAmount");
-			renderSalesChart(currentView);
-
-			$(".sales-view-toggle .btn").on("click", function () {
-				var view = $(this).data("view");
-				if (!view || view === currentView) {
-					return;
-				}
-
-				currentView = view;
-				$(".sales-view-toggle .btn").removeClass("active");
-				$(this).addClass("active");
-				renderSalesChart(currentView);
+			$("#fdPeriod").on("change", function () {
+				loadDashboard();
 			});
 
-			$(window).on("resize", function () {
-				if ($("#salesChart").data("dxChart") && $("#salesChart").is(":visible")) {
-					$("#salesChart").dxChart("render");
+			$(".fd-chart-period").on("change", function () {
+				var value = $(this).val();
+				$(".fd-chart-period").val(value);
+				loadCharts();
+			});
+
+			$("#fdRefresh").on("click", function () {
+				loadDashboard();
+				loadCharts();
+			});
+
+			function findMon(items, keys) {
+				for (var i = 0; i < items.length; i++) {
+					var n = String(items[i].name || "").replace(/_/g, " ").toLowerCase();
+					for (var k = 0; k < keys.length; k++) {
+						if (n.indexOf(keys[k]) >= 0) {
+							return String(items[i].value || "");
+						}
+					}
 				}
+				return "";
+			}
+
+			function bindMonitoring(items) {
+				var api = findMon(items, ["api connection", "connection"]);
+				var failed = findMon(items, ["failed", "fail request"]);
+				var env = findMon(items, ["environment"]);
+				var token = findMon(items, ["token"]);
+				var last = findMon(items, ["last successful", "last sync", "successful"]);
+				var time = findMon(items, ["response time", "response"]);
+
+				$("#monApi").attr("class", "val ok").html('<i class="fa-solid fa-circle-check"></i> ' + (api || "-"));
+				$("#monFailedCount").text(failed || "0");
+				$("#monEnv").html('<i class="fa-solid fa-industry"></i> ' + (env || "-"));
+				$("#monToken").attr("class", "val ok").html('<i class="fa-solid fa-circle-check"></i> ' + (token || "-"));
+				$("#monLast").html('<i class="fa-regular fa-calendar"></i> ' + (last || "-"));
+				$("#monTime").html('<i class="fa-solid fa-bolt"></i> ' + (time || "-"));
+				if (env) { $("#fdEnvironment").text(env); }
+				if (last) { $("#fdLastSync").text("Last Sync: " + last); }
+			}
+
+			function openErrorLogs() {
+				var html = "";
+				var rows = fbrErrorLogs || [];
+				$("#fdErrorLogCount").text(rows.length ? (rows.length + " error" + (rows.length > 1 ? "s" : "") + " found") : "");
+				if (!rows.length) {
+					html = '<div class="fd-error-empty"><i class="fa-solid fa-circle-check" style="color:#22C55E;font-size:28px;display:block;margin-bottom:8px;"></i>No FBR errors in the selected period.</div>';
+				} else {
+					rows.forEach(function (row, idx) {
+						html += '<div class="fd-error-card">' +
+							'<h6><span>' + (row.invoiceNo || ("Error " + (idx + 1))) + '</span><span class="st bad">' + (row.status || "Error") + '</span></h6>' +
+							'<div class="fd-error-meta">' + (row.date || "") + (row.customer ? " • " + row.customer : "") + '</div>' +
+							'<div class="fd-error-msg">' + (row.error || row.status || "FBR request failed.") + '</div>' +
+							'</div>';
+					});
+				}
+				$("#fdErrorLogList").html(html);
+				var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById("fdErrorLogModal"));
+				modal.show();
+			}
+
+			$("#fdViewErrorLogs, #fdQuickErrorLogs").on("click", function (e) {
+				e.preventDefault();
+				openErrorLogs();
+			});
+
+			$("#erpDashSettings").on("click", function (e) {
+				e.preventDefault();
+				if (window.empr_Profile && typeof empr_Profile.open === "function") {
+					empr_Profile.open();
+				} else {
+					$("#erpMenuProfile").trigger("click");
+				}
+			});
+
+			new MutationObserver(function () {
+				renderInvoiceChart();
+				renderTrendChart();
+				renderPieChart();
+			}).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+			$(window).on("resize", function () {
+				if ($("#monthlyInvoiceChart").data("dxChart")) { $("#monthlyInvoiceChart").dxChart("render"); }
+				if ($("#salesTaxTrendChart").data("dxChart")) { $("#salesTaxTrendChart").dxChart("render"); }
+				if ($("#statusPieChart").data("dxPieChart")) { $("#statusPieChart").dxPieChart("render"); }
 			});
 		});
 	</script>

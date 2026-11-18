@@ -220,7 +220,7 @@ button.toast-close-button {
 
 #toast-container > .toast-success {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADsSURBVEhLY2AYBfQMgf///3P8+/evAIgvA/FsIF+BavYDDWMBGroaSMMBiE8VC7AZDrIFaMFnii3AZTjUgsUUWUDA8OdAH6iQbQEhw4HyGsPEcKBXBIC4ARhex4G4BsjmweU1soIFaGg/WtoFZRIZdEvIMhxkCCjXIVsATV6gFGACs4Rsw0EGgIIH3QJYJgHSARQZDrWAB+jawzgs+Q2UO49D7jnRSRGoEFRILcdmEMWGI0cm0JJ2QpYA1RDvcmzJEWhABhD/pqrL0S0CWuABKgnRki9lLseS7g2AlqwHWQSKH4oKLrILpRGhEQCw2LiRUIa4lwAAAABJRU5ErkJggg==) !important;
-    background-color: #055a87;
+    background-color: #1A73C7;
 }
 
 #toast-container>.toast-warning {
@@ -249,16 +249,20 @@ button.toast-close-button {
     background-color: #030303
 }
 
+.toast-success {
+    background-color: #1A73C7
+}
+
 .toast-error {
-    background-color: #BD362F
+    background-color: #C44536
 }
 
 .toast-info {
-    background-color: #2F96B4
+    background-color: #0E4A94
 }
 
 .toast-warning {
-    background-color: #F89406
+    background-color: #D4A017
 }
 
 .toast-progress {

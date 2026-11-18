@@ -22,6 +22,7 @@ builder.Services.Configure<MvcOptions>(options =>
 });
 
 var app = builder.Build();
+Empire_ERP.Controllers.CommonController.ConfigureEmail(app.Configuration);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

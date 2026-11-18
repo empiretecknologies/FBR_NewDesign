@@ -95,8 +95,9 @@ namespace Empire_ERP.Controllers
         {
             using (var client = new ImapClient())
             {
-                await client.ConnectAsync("imap.titan.email", 993, SecureSocketOptions.SslOnConnect);
-                await client.AuthenticateAsync("Support@empiretecknologies.com", "DS&T5*lKS&^SalesMNT24");
+                var mail = CommonController.MailConfig;
+                await client.ConnectAsync(mail.ImapHost, mail.ImapPort, mail.ImapEnableSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.None);
+                await client.AuthenticateAsync(mail.MailFrom, mail.Password);
 
                 var inbox = client.Inbox;
                 await inbox.OpenAsync(FolderAccess.ReadOnly);

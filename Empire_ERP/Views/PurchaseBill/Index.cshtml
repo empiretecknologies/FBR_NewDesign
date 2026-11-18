@@ -1,53 +1,27 @@
 ﻿<style>
     #SodaPickGridContainer .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused) > td, .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused) > tr > td, .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > td, .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > tr > td {
-        background-color: #055a87 !important;
+        background-color: #1A73C7 !important;
         color: white;
     }
 
-    .pb-form .card-header {
-        padding: 8px 12px;
-    }
-
-    .pb-form .card-body.Record {
-        padding: 8px 12px 10px;
-    }
-
-    .pb-form .pb-field {
-        margin-bottom: 6px;
-    }
-
     .pb-form .image-box {
-        width: 118px;
-        height: 118px;
+        width: 100%;
+        height: 150px;
         margin: 0 auto;
-        border: 1px solid #ddd;
-        border-radius: 6px;
+        border: 1px solid #d5e4f4;
+        border-radius: 12px;
         overflow: hidden;
-        background: #055a87;
+        background: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
         .pb-form .image-box img {
-            width: 92%;
-            height: 92%;
+            width: 90%;
+            height: 90%;
             object-fit: contain;
         }
-
-    .pb-form .pb-actions {
-        padding: 4px 0 8px;
-        gap: 8px;
-    }
-
-    .pb-form .pb-save-row {
-        padding-top: 8px !important;
-        padding-bottom: 8px !important;
-    }
-
-    .pb-form .nav-tabs {
-        margin-top: 2px;
-    }
 
     .verified-label {
         color: #28a745;
@@ -57,18 +31,1250 @@
         display: inline-block;
     }
 
+    .pb-form .Record .row.g-2 {
+        --bs-gutter-x: 14px;
+        --bs-gutter-y: 8px;
+    }
+
+    .pb-form .Record label.form-label {
+        margin-bottom: 5px !important;
+        color: #0A2348 !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+    }
+
+    .pb-form .Record .form-control {
+        height: 36px;
+        min-height: 36px !important;
+        padding: 0 12px !important;
+        border: 1px solid #dbe4ee !important;
+        border-radius: 6px !important;
+        background-color: #eef3f8;
+        color: #0A2348;
+        font-size: 12.5px !important;
+        font-weight: 500;
+        line-height: 34px;
+        box-shadow: none !important;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    }
+
+        .pb-form .Record .form-control:hover {
+            border-color: #b9cbe0 !important;
+        }
+
+        .pb-form .Record .form-control:focus {
+            border-color: #154C93 !important;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(21, 76, 147, 0.14) !important;
+        }
+
+        .pb-form .Record .form-control[readonly] {
+            background-color: #eef3f8;
+            color: #0A2348;
+        }
+
+    .pb-form .Record #FBR_RES:not(:placeholder-shown) {
+        border-color: #9fd9b4 !important;
+        background-color: #e6f6ec;
+        color: #15803d;
+        font-weight: 600;
+    }
+
+    .pb-form .Record textarea.form-control {
+        padding: 8px 12px !important;
+        line-height: 18px;
+        resize: none;
+    }
+
+    .pb-form .Record .dx-selectbox.dx-texteditor {
+        height: 36px !important;
+        min-height: 36px !important;
+        border: 1px solid #dbe4ee !important;
+        border-radius: 6px !important;
+        background: #eef3f8 !important;
+        box-shadow: none !important;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .pb-form .Record .dx-selectbox.dx-texteditor.dx-state-hover {
+            border-color: #b9cbe0 !important;
+        }
+
+        .pb-form .Record .dx-selectbox.dx-texteditor.dx-state-focused,
+        .pb-form .Record .dx-selectbox.dx-texteditor.dx-state-active,
+        .pb-form .Record .dx-selectbox.dx-texteditor.dx-dropdowneditor-active {
+            border-color: #154C93 !important;
+            background: #ffffff !important;
+            box-shadow: 0 0 0 3px rgba(21, 76, 147, 0.14) !important;
+        }
+
+        .pb-form .Record .dx-selectbox.dx-texteditor::before,
+        .pb-form .Record .dx-selectbox.dx-texteditor::after {
+            border: 0 !important;
+        }
+
+    .pb-form .Record .dx-selectbox .dx-texteditor-container,
+    .pb-form .Record .dx-selectbox .dx-texteditor-input-container {
+        height: 34px !important;
+        min-height: 34px !important;
+        background: transparent !important;
+    }
+
+    .pb-form .Record .dx-selectbox .dx-texteditor-input {
+        height: 34px !important;
+        min-height: 34px !important;
+        padding: 0 12px !important;
+        color: #0A2348 !important;
+        font-size: 12.5px !important;
+        font-weight: 500;
+        line-height: 34px !important;
+    }
+
+    .pb-form .Record .dx-selectbox .dx-placeholder {
+        top: 0 !important;
+        height: 34px !important;
+        line-height: 34px;
+    }
+
+        .pb-form .Record .dx-selectbox .dx-placeholder::before {
+            display: block;
+            height: 34px !important;
+            min-height: 34px !important;
+            padding: 0 12px !important;
+            color: #8aa0b8 !important;
+            font-size: 12.5px !important;
+            line-height: 34px !important;
+        }
+
+    .pb-form .Record .dx-selectbox .dx-texteditor-buttons-container {
+        height: 34px;
+        padding-right: 4px;
+    }
+
+    .pb-form .Record .dx-selectbox .dx-clear-button-area {
+        width: 24px;
+        min-width: 24px;
+    }
+
+        .pb-form .Record .dx-selectbox .dx-clear-button-area .dx-icon-clear {
+            color: #9fb0c4;
+        }
+
+    .pb-form .Record .dx-selectbox .dx-dropdowneditor-button {
+        width: 26px;
+        min-width: 26px;
+        height: 34px;
+        padding: 0;
+        border: 0 !important;
+        background: transparent !important;
+    }
+
+        .pb-form .Record .dx-selectbox .dx-dropdowneditor-button .dx-dropdowneditor-icon,
+        .pb-form .Record .dx-selectbox.dx-state-hover .dx-dropdowneditor-button .dx-dropdowneditor-icon,
+        .pb-form .Record .dx-selectbox.dx-state-active .dx-dropdowneditor-button .dx-dropdowneditor-icon,
+        .pb-form .Record .dx-selectbox.dx-dropdowneditor-active .dx-dropdowneditor-button .dx-dropdowneditor-icon {
+            width: 26px;
+            height: 34px;
+            border: 0 !important;
+            background: transparent !important;
+            color: #0E3A70 !important;
+        }
+
+        .pb-form .Record .dx-selectbox .dx-dropdowneditor-icon::before {
+            display: inline-block;
+            color: #0E3A70 !important;
+            transition: transform 0.2s ease;
+        }
+
+    .pb-form .Record .dx-selectbox.dx-dropdowneditor-active .dx-dropdowneditor-icon::before {
+        transform: rotate(180deg);
+    }
+
+    body .dx-dropdownlist-popup-wrapper .dx-overlay-content {
+        border: 1px solid #d5e3f1 !important;
+        border-radius: 10px !important;
+        background: #ffffff !important;
+        box-shadow: 0 12px 28px rgba(10, 35, 72, 0.14) !important;
+        overflow: hidden;
+    }
+
+    body .dx-dropdownlist-popup-wrapper .dx-list .dx-scrollview-content {
+        padding: 4px;
+    }
+
+    body .dx-dropdownlist-popup-wrapper .dx-list .dx-list-item {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        border: 0 !important;
+        border-radius: 6px;
+    }
+
+    body .dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item-content {
+        padding: 8px 12px !important;
+        border-bottom: 0 !important;
+        color: #0A2348 !important;
+        font-family: 'Poppins', sans-serif;
+        font-size: 12.5px !important;
+        font-weight: 500 !important;
+        line-height: 18px;
+    }
+
+    body .dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-state-hover,
+    body .dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-state-focused {
+        background-color: #EEF5FC !important;
+    }
+
+    body .dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-list-item-selected,
+    body .dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-state-focused.dx-list-item-selected {
+        background-color: #E3EFFB !important;
+    }
+
+        body .dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-list-item-selected .dx-list-item-content,
+        body .dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-state-focused .dx-list-item-content {
+            color: #0E4A94 !important;
+        }
+
+        body .dx-dropdownlist-popup-wrapper .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-list-item-selected .dx-list-item-content {
+            font-weight: 600 !important;
+        }
+
+    .pb-form .Record .my-doc-input-group {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        height: 36px !important;
+        min-height: 36px;
+        padding: 0;
+        border: 1px solid #dbe4ee !important;
+        border-radius: 6px !important;
+        background: #eef3f8;
+        overflow: hidden;
+    }
+
+        .pb-form .Record .my-doc-input-group .my-doc-text {
+            flex: 1 1 auto;
+            height: 34px;
+            min-height: 34px !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        .pb-form .Record .my-doc-input-group .my-doc-browse {
+            flex: 0 0 auto;
+            height: 34px;
+            margin: 0 !important;
+            padding: 0 16px !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: #0E3A70 !important;
+            font-size: 12px !important;
+            font-weight: 600;
+            line-height: 34px;
+        }
+
+            .pb-form .Record .my-doc-input-group .my-doc-browse:hover {
+                background-color: #0A2348 !important;
+            }
+
+        .pb-form .Record .my-doc-input-group .my-doc-eye {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 34px;
+            width: 34px;
+            height: 34px;
+            background: #ffffff;
+            color: #0E3A70;
+            text-decoration: none;
+        }
+
+            .pb-form .Record .my-doc-input-group .my-doc-eye .my-eye-btn {
+                margin: 0 !important;
+                line-height: 1 !important;
+                font-size: 13px;
+            }
+
+    .pb-form .pb-head-card {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 10px;
+        padding: 8px 16px !important;
+        border: 1px solid #dbe6f2;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #ffffff 0%, #f6f9fe 55%, #e9f1fb 100%);
+        box-shadow: 0 6px 18px rgba(10, 35, 72, 0.06);
+    }
+
+        .pb-form .pb-head-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 48%;
+            width: 170px;
+            background: linear-gradient(115deg, transparent 0 34%, rgba(21, 76, 147, 0.9) 34% 44%, transparent 44% 54%, rgba(77, 150, 230, 0.35) 54% 62%, transparent 62%);
+            pointer-events: none;
+        }
+
+        .pb-form .pb-head-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .pb-form .pb-head-card .erp-page-icon {
+            width: 48px;
+            height: 48px;
+            border: 3px solid #dfeaf8;
+            border-radius: 50%;
+            background: linear-gradient(180deg, #1F5FAE 0%, #0E3A70 100%);
+            box-shadow: 0 6px 14px rgba(14, 58, 112, 0.28);
+        }
+
+        .pb-form .pb-head-card .erp-page-title h2 {
+            color: #0E3A70;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .pb-form .pb-head-card .erp-page-title p {
+            color: #5A7394;
+            font-size: 12px;
+        }
+
+    .pb-form .erp-actions .erp-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 36px;
+        min-width: 0;
+        padding: 0 14px !important;
+        border: 0 !important;
+        border-radius: 6px !important;
+        background: #0E3A70 !important;
+        color: #ffffff !important;
+        font-size: 12.5px !important;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(14, 58, 112, 0.25);
+        transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+        .pb-form .erp-actions .erp-action:hover {
+            background: #0A2348 !important;
+            transform: translateY(-1px);
+        }
+
+        .pb-form .erp-actions .erp-action.btn-new {
+            border: 1px solid #d3deea !important;
+            background: #ffffff !important;
+            color: #0E3A70 !important;
+            box-shadow: 0 2px 6px rgba(10, 35, 72, 0.08);
+        }
+
+            .pb-form .erp-actions .erp-action.btn-new:hover {
+                background: #eef3f8 !important;
+            }
+
+    .pb-form .pb-top-row {
+        --bs-gutter-x: 12px;
+        --bs-gutter-y: 10px;
+        margin-bottom: 10px;
+    }
+
+    .pb-form .pb-details-card,
+    .pb-form .pb-qr-card,
+    .pb-form .pb-items-card {
+        border: 1px solid #dbe6f2 !important;
+        border-radius: 12px !important;
+        background: #ffffff;
+        box-shadow: 0 6px 18px rgba(10, 35, 72, 0.06) !important;
+        overflow: hidden;
+    }
+
+    .pb-form .pb-items-card {
+        overflow: visible;
+    }
+
+    .pb-form .pb-detail-grid-wrap {
+        overflow: visible;
+    }
+
+    .pb-form #DetailContainer .dx-datagrid-rowsview {
+        overflow-y: auto !important;
+    }
+
+    .pb-form #DetailContainer .dx-scrollbar-vertical {
+        width: 12px;
+    }
+
+    .pb-form #gridContainer .dx-datagrid-headers .dx-header-row > td .dx-datagrid-text-content {
+        white-space: nowrap;
+    }
+
+    .pb-form .pb-details-card {
+        height: 100%;
+        margin-bottom: 0;
+    }
+
+        .pb-form .pb-details-card .card-body {
+            padding: 10px 14px 12px;
+        }
+
+    .pb-form .pb-card-tab-wrap {
+        border-bottom: 2px solid #154C93;
+        background: #f6f9fd;
+    }
+
+    .pb-form .pb-card-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 34px;
+        padding: 0 36px 0 16px;
+        background: linear-gradient(90deg, #0E3A70 0%, #1A5BAA 100%);
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 100%, 0 100%);
+    }
+
+    .pb-form .pb-qr-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        text-align: center;
+    }
+
+    .pb-form .pb-qr-head {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 36px;
+        background: linear-gradient(90deg, #0E3A70 0%, #1A5BAA 100%);
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .pb-form .pb-qr-body {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px;
+    }
+
+        .pb-form .pb-qr-body .image-box {
+            height: 130px;
+            border: 0;
+            border-radius: 8px;
+        }
+
+        .pb-form .pb-qr-body .verified-label {
+            margin: 0;
+            padding: 5px 16px;
+            border: 1px solid #b7e4c7;
+            border-radius: 999px;
+            background: #dcf3e4;
+            color: #15803d !important;
+            font-size: 13px !important;
+            font-weight: 700;
+        }
+
+    .pb-form .pb-items-card {
+        margin-bottom: 0;
+    }
+
+        .pb-form .pb-items-card > .nav.nav-tabs.nav-primary {
+            gap: 4px;
+            margin: 0;
+            padding: 8px 10px 0 !important;
+            border: 0 !important;
+            border-bottom: 2px solid #0E3A70 !important;
+            border-radius: 0 !important;
+            background: #f3f6fa !important;
+        }
+
+            .pb-form .pb-items-card > .nav.nav-tabs.nav-primary li a,
+            .pb-form .pb-items-card > .nav.nav-tabs.nav-primary li a.active {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 18px !important;
+                border: 0 !important;
+                border-radius: 8px 8px 0 0 !important;
+                background: #e3e9f1 !important;
+                color: #0E3A70 !important;
+                font-size: 13px !important;
+                font-weight: 600;
+                box-shadow: none !important;
+            }
+
+                .pb-form .pb-items-card > .nav.nav-tabs.nav-primary li a.active {
+                    background: linear-gradient(90deg, #0E3A70 0%, #1A5BAA 100%) !important;
+                    color: #ffffff !important;
+                }
+
+        .pb-form .pb-items-card .dx-datagrid-header-panel {
+            padding: 8px 10px 4px;
+            border-bottom: 0;
+        }
+
+        .pb-form .pb-items-card .dx-datagrid-headers,
+        .pb-form .pb-items-card .dx-datagrid-headers .dx-header-row,
+        .pb-form .pb-items-card .dx-datagrid-headers .dx-header-row > td {
+            background: #0F3F7A !important;
+            color: #ffffff !important;
+        }
+
+            .pb-form .pb-items-card .dx-datagrid-headers .dx-header-row > td {
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+                border-color: rgba(255, 255, 255, 0.14) !important;
+                font-size: 12.5px !important;
+                font-weight: 600;
+                white-space: nowrap;
+            }
+
+            .pb-form .pb-items-card .dx-datagrid-headers .dx-header-row > td .dx-datagrid-text-content {
+                white-space: nowrap;
+            }
+
+        .pb-form .pb-items-card .dx-datagrid-rowsview .dx-row > td {
+            color: #0A2348;
+            font-size: 12.5px;
+        }
+
+        .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell {
+            padding: 3px 4px !important;
+            vertical-align: middle;
+        }
+
+            .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox.dx-texteditor {
+                height: 30px !important;
+                min-height: 30px !important;
+                border: 1px solid #c9d8ea !important;
+                border-radius: 6px !important;
+                background: #ffffff !important;
+                box-shadow: none !important;
+                overflow: hidden;
+            }
+
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox.dx-texteditor::before,
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox.dx-texteditor::after {
+                    border: 0 !important;
+                }
+
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox.dx-texteditor.dx-state-hover {
+                    border-color: #9fb9d6 !important;
+                }
+
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox.dx-texteditor.dx-state-focused,
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox.dx-texteditor.dx-dropdowneditor-active {
+                    border-color: #154C93 !important;
+                    box-shadow: 0 0 0 2px rgba(21, 76, 147, 0.15) !important;
+                }
+
+            .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox .dx-texteditor-container,
+            .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox .dx-texteditor-input-container {
+                height: 28px !important;
+                min-height: 28px !important;
+                background: transparent !important;
+            }
+
+            .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox input.dx-texteditor-input {
+                height: 28px !important;
+                min-height: 28px !important;
+                padding: 0 10px !important;
+                color: #0A2348 !important;
+                font-size: 12.5px !important;
+                font-weight: 500;
+                line-height: 28px !important;
+            }
+
+            .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox .dx-placeholder {
+                top: 0 !important;
+                height: 28px !important;
+                line-height: 28px;
+            }
+
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox .dx-placeholder::before {
+                    display: block;
+                    height: 28px !important;
+                    min-height: 28px !important;
+                    padding: 0 10px !important;
+                    color: #8aa0b8 !important;
+                    font-size: 12.5px !important;
+                    line-height: 28px !important;
+                }
+
+            .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox .dx-texteditor-buttons-container {
+                height: 28px;
+                padding-right: 2px;
+            }
+
+            .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox .dx-clear-button-area {
+                width: 22px;
+                min-width: 22px;
+            }
+
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox .dx-clear-button-area .dx-icon-clear {
+                    color: #9fb0c4;
+                }
+
+            .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox .dx-dropdowneditor-button {
+                width: 24px;
+                min-width: 24px;
+                height: 28px;
+                padding: 0;
+                border: 0 !important;
+                background: transparent !important;
+            }
+
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox .dx-dropdowneditor-button .dx-dropdowneditor-icon,
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox.dx-state-hover .dx-dropdowneditor-button .dx-dropdowneditor-icon,
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox.dx-state-active .dx-dropdowneditor-button .dx-dropdowneditor-icon,
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox.dx-dropdowneditor-active .dx-dropdowneditor-button .dx-dropdowneditor-icon {
+                    width: 24px;
+                    height: 28px;
+                    border: 0 !important;
+                    background: transparent !important;
+                    color: #0E3A70 !important;
+                }
+
+                .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox .dx-dropdowneditor-icon::before {
+                    display: inline-block;
+                    color: #0E3A70 !important;
+                    transition: transform 0.2s ease;
+                }
+
+            .pb-form .pb-items-card .dx-datagrid-rowsview .dx-editor-cell .dx-selectbox.dx-dropdowneditor-active .dx-dropdowneditor-icon::before {
+                transform: rotate(180deg);
+            }
+
+        .pb-form .pb-items-card .dx-datagrid-total-footer {
+            border-top: 1px solid #dbe6f2;
+            background: #eef3f8 !important;
+        }
+
+            .pb-form .pb-items-card .dx-datagrid-total-footer .dx-datagrid-summary-item {
+                color: #0E3A70 !important;
+                font-size: 13px;
+                font-weight: 700;
+            }
+
+    .pb-form .erp-page-foot {
+        position: sticky;
+        bottom: 0;
+        z-index: 20;
+        align-items: center;
+        margin-top: 10px;
+        padding: 8px 14px;
+        border: 1px solid #dbe6f2;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #ffffff 0%, #f3f7fc 100%);
+        box-shadow: 0 -6px 18px rgba(10, 35, 72, 0.10);
+    }
+
+        .pb-form .erp-page-foot .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 38px;
+            min-width: 110px;
+            padding: 0 20px !important;
+            border: 0 !important;
+            border-radius: 6px !important;
+            color: #ffffff !important;
+            font-size: 13px !important;
+            font-weight: 600;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+            .pb-form .erp-page-foot .btn:hover {
+                transform: translateY(-1px);
+            }
+
+        .pb-form .erp-page-foot .btn-save {
+            background: linear-gradient(180deg, #154C93 0%, #0E3A70 100%) !important;
+            box-shadow: 0 6px 14px rgba(14, 58, 112, 0.28);
+        }
+
+        .pb-form .erp-page-foot .btn-delete {
+            background: linear-gradient(180deg, #e5383b 0%, #c81e1e 100%) !important;
+            box-shadow: 0 6px 14px rgba(200, 30, 30, 0.25);
+        }
+
+    .pb-form .bs-example-modal-xl .modal-content {
+        border: 0;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(10, 35, 72, 0.30);
+    }
+
+    .pb-form .bs-example-modal-xl .modal-header {
+        padding: 12px 18px !important;
+        border-bottom: 0;
+        background: linear-gradient(90deg, #0E3A70 0%, #1A5BAA 100%);
+    }
+
+        .pb-form .bs-example-modal-xl .modal-header .modal-title {
+            color: #ffffff;
+            font-size: 16px !important;
+            font-weight: 600;
+        }
+
+        .pb-form .bs-example-modal-xl .modal-header .btn-close {
+            filter: invert(1) grayscale(1) brightness(2);
+            opacity: 0.9;
+        }
+
+    .pb-form .bs-example-modal-xl .modal-body {
+        padding: 14px 16px !important;
+        background: #f6f9fd;
+    }
+
+        .pb-form .bs-example-modal-xl .modal-body > .col-md-12 > .card {
+            margin: 0;
+            border: 1px solid #dbe6f2 !important;
+            border-radius: 12px !important;
+            box-shadow: none !important;
+            overflow: hidden;
+        }
+
+            .pb-form .bs-example-modal-xl .modal-body > .col-md-12 > .card > .card-body {
+                padding: 0;
+            }
+
+    .pb-form #gridContainer .dx-datagrid {
+        border: 0;
+        color: #0A2348;
+    }
+
+    .pb-form #gridContainer .dx-datagrid-header-panel {
+        padding: 10px 12px 6px;
+        border-bottom: 0;
+        background: #ffffff;
+    }
+
+        .pb-form #gridContainer .dx-datagrid-header-panel .dx-group-panel-message {
+            color: #8aa0b8;
+            font-size: 12px;
+        }
+
+        .pb-form #gridContainer .dx-datagrid-header-panel .dx-button {
+            border: 1px solid #dbe4ee;
+            border-radius: 6px;
+            background: #ffffff;
+        }
+
+            .pb-form #gridContainer .dx-datagrid-header-panel .dx-button .dx-icon {
+                color: #0E3A70 !important;
+            }
+
+        .pb-form #gridContainer .dx-datagrid-header-panel .dx-searchbox.dx-texteditor {
+            border: 1px solid #dbe4ee !important;
+            border-radius: 6px !important;
+            background: #eef3f8 !important;
+        }
+
+    .pb-form #gridContainer .dx-datagrid-headers,
+    .pb-form #gridContainer .dx-datagrid-headers .dx-header-row,
+    .pb-form #gridContainer .dx-datagrid-headers .dx-header-row > td {
+        background: #0F3F7A !important;
+        color: #ffffff !important;
+    }
+
+        .pb-form #gridContainer .dx-datagrid-headers .dx-header-row > td {
+            padding-top: 10px !important;
+            padding-bottom: 10px !important;
+            border-color: rgba(255, 255, 255, 0.14) !important;
+            font-size: 12.5px !important;
+            font-weight: 600;
+        }
+
+            .pb-form #gridContainer .dx-datagrid-headers .dx-header-row > td .dx-header-filter,
+            .pb-form #gridContainer .dx-datagrid-headers .dx-header-row > td .dx-sort,
+            .pb-form #gridContainer .dx-datagrid-headers .dx-header-row > td .dx-icon {
+                color: rgba(255, 255, 255, 0.75) !important;
+            }
+
+        .pb-form #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row,
+        .pb-form #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row > td {
+            background: #eef3f8 !important;
+            border-color: #dbe4ee !important;
+        }
+
+            .pb-form #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row .dx-texteditor {
+                border: 1px solid #dbe4ee !important;
+                border-radius: 5px !important;
+                background: #ffffff !important;
+            }
+
+            .pb-form #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row .dx-icon {
+                color: #5A7394 !important;
+            }
+
+    .pb-form #gridContainer .dx-datagrid-rowsview .dx-row > td {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        border-color: #e7eef7 !important;
+        color: #0A2348;
+        font-size: 12.5px;
+    }
+
+    .pb-form #gridContainer .dx-datagrid-rowsview .dx-row-alt > td {
+        background-color: #f7faff;
+    }
+
+    .pb-form #gridContainer .dx-datagrid-rowsview .dx-data-row.dx-state-hover:not(.dx-selection) > td {
+        background-color: #eaf2fc !important;
+    }
+
+    .pb-form #gridContainer .dx-datagrid-rowsview .dx-selection.dx-row > td {
+        background-color: #154C93 !important;
+        color: #ffffff !important;
+    }
+
+    .pb-form #gridContainer .dx-datagrid-rowsview .dx-data-row a,
+    .pb-form #gridContainer .dx-datagrid-rowsview .dx-data-row i {
+        color: #154C93;
+    }
+
+    .pb-form #gridContainer .dx-datagrid-rowsview .dx-selection.dx-row a,
+    .pb-form #gridContainer .dx-datagrid-rowsview .dx-selection.dx-row i {
+        color: #ffffff;
+    }
+
+    .pb-form #gridContainer .dx-datagrid-total-footer {
+        border-top: 1px solid #dbe6f2;
+        background: #eef3f8 !important;
+    }
+
+        .pb-form #gridContainer .dx-datagrid-total-footer .dx-datagrid-summary-item {
+            color: #0E3A70 !important;
+            font-weight: 700;
+        }
+
+    .pb-form #gridContainer .dx-datagrid-pager {
+        padding: 10px 12px;
+        border-top: 1px solid #e7eef7;
+        background: #ffffff;
+    }
+
+        .pb-form #gridContainer .dx-datagrid-pager .dx-page,
+        .pb-form #gridContainer .dx-datagrid-pager .dx-page-size {
+            min-width: 28px;
+            padding: 5px 8px;
+            border-radius: 6px;
+            color: #0E3A70;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+            .pb-form #gridContainer .dx-datagrid-pager .dx-page:hover,
+            .pb-form #gridContainer .dx-datagrid-pager .dx-page-size:hover {
+                background: #eaf2fc;
+            }
+
+            .pb-form #gridContainer .dx-datagrid-pager .dx-page.dx-selection,
+            .pb-form #gridContainer .dx-datagrid-pager .dx-page-size.dx-selection {
+                background: #0E3A70 !important;
+                color: #ffffff !important;
+            }
+
+        .pb-form #gridContainer .dx-datagrid-pager .dx-navigate-button {
+            color: #0E3A70;
+        }
+
+        .pb-form #gridContainer .dx-datagrid-pager .dx-info {
+            color: #5A7394;
+            font-size: 12px;
+            opacity: 1;
+        }
+
     @@media (max-width: 1199px) {
-        .pb-form .image-box {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 6px;
+        .pb-form .erp-qr-card {
+            margin-top: 10px;
+        }
+
+        .pb-form .pb-head-card::before {
+            display: none;
         }
     }
 
     @@media (max-width: 767px) {
-        .pb-form .pb-actions {
+        .pb-form .erp-actions {
             flex-wrap: wrap;
         }
+    }
+
+    .pb-form .pb-fbr-note {
+        align-items: center;
+        gap: 8px;
+        margin-right: auto;
+        padding: 7px 14px;
+        border: 1px solid #d3e2f3;
+        border-radius: 8px;
+        background: #eef4fb;
+        color: #0A2348;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+        .pb-form .pb-fbr-note i {
+            color: #0E3A70;
+            font-size: 14px;
+        }
+
+    .pb-form .iv-only,
+    .pb-form #pbInvoiceView {
+        display: none !important;
+    }
+
+    .pb-form.pb-view-mode .iv-only {
+        display: inline-flex !important;
+    }
+
+    .pb-form.pb-view-mode #pbInvoiceView {
+        display: block !important;
+    }
+
+    .pb-form.pb-view-mode .iv-hide,
+    .pb-form.pb-view-mode .pb-top-row,
+    .pb-form.pb-view-mode .pb-items-card,
+    .pb-form.pb-view-mode .pb-entry-foot {
+        display: none !important;
+    }
+
+    .pb-form .iv-row {
+        --bs-gutter-x: 12px;
+        --bs-gutter-y: 10px;
+        margin-bottom: 10px;
+    }
+
+    .pb-form .iv-card {
+        height: 100%;
+        border: 1px solid #dbe6f2;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 6px 18px rgba(10, 35, 72, 0.06);
+        overflow: hidden;
+    }
+
+        .pb-form .iv-card .iv-body {
+            padding: 10px 14px;
+            color: #0A2348;
+            font-size: 12px;
+        }
+
+    .pb-form .iv-kv {
+        display: flex;
+        padding: 7px 0;
+        border-bottom: 1px solid #e7eef7;
+    }
+
+        .pb-form .iv-kv:last-child {
+            border-bottom: 0;
+        }
+
+        .pb-form .iv-kv .iv-k {
+            flex: 0 0 90px;
+            font-weight: 600;
+        }
+
+        .pb-form .iv-kv .iv-v {
+            flex: 1 1 auto;
+            word-break: break-all;
+        }
+
+    .pb-form .iv-kv.iv-kv-stack {
+        flex-direction: column;
+        gap: 3px;
+    }
+
+        .pb-form .iv-kv.iv-kv-stack .iv-k {
+            flex: none;
+        }
+
+        .pb-form .iv-kv.iv-kv-stack .iv-v {
+            white-space: nowrap;
+            word-break: normal;
+            font-weight: 600;
+            color: #0E3A70;
+        }
+
+    .pb-form .iv-party-name {
+        margin-bottom: 6px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .pb-form .iv-party-addr {
+        min-height: 40px;
+        margin-bottom: 8px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e7eef7;
+        text-transform: uppercase;
+    }
+
+    .pb-form .iv-line {
+        padding: 4px 0;
+    }
+
+        .pb-form .iv-line b {
+            font-weight: 600;
+        }
+
+        .pb-form .iv-line i {
+            color: #0E3A70;
+            margin-right: 6px;
+        }
+
+    .pb-form .iv-qr-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        text-align: center;
+    }
+
+        .pb-form .iv-qr-body img {
+            height: 110px;
+            max-width: 100%;
+        }
+
+        .pb-form .iv-qr-body .verified-label {
+            color: #15803d;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+    .pb-form .iv-fbr-box {
+        width: 100%;
+        padding: 6px 10px;
+        border: 1px solid #b7e4c7;
+        border-radius: 8px;
+        background: #e6f6ec;
+        color: #15803d;
+        font-size: 11.5px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .pb-form .iv-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+        .pb-form .iv-table thead th {
+            padding: 8px 10px;
+            border-right: 1px solid rgba(255, 255, 255, 0.14);
+            background: #0F3F7A;
+            color: #ffffff;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .pb-form .iv-table tbody td {
+            padding: 7px 10px;
+            border-right: 1px solid #e7eef7;
+            border-bottom: 1px solid #e7eef7;
+            color: #0A2348;
+        }
+
+        .pb-form .iv-table tbody tr.iv-filler td {
+            height: 50px;
+            border-bottom: 0;
+        }
+
+    .pb-form .iv-totals {
+        display: flex;
+        align-items: center;
+        border-top: 1px solid #dbe6f2;
+        background: #eef3f8;
+    }
+
+        .pb-form .iv-totals .iv-t {
+            flex: 1 1 0;
+            padding: 10px;
+            color: #0A2348;
+            font-size: 12.5px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+    .pb-form .iv-net {
+        flex: 0 0 220px;
+        margin: 6px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #154C93 0%, #0E3A70 100%);
+        color: #ffffff;
+        text-align: center;
+    }
+
+        .pb-form .iv-net small {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .pb-form .iv-net strong {
+            font-size: 18px;
+        }
+
+    .pb-form .iv-words {
+        margin: 8px 12px 10px;
+        padding: 8px 12px;
+        border: 1px solid #dbe6f2;
+        border-radius: 8px;
+        background: #eef3f8;
+        color: #0A2348;
+        font-size: 12.5px;
+        font-weight: 600;
+    }
+
+        .pb-form .iv-words i {
+            margin-right: 6px;
+            color: #0E3A70;
+        }
+
+    .pb-form .iv-foot {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .pb-form .iv-note {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #0A2348;
+        font-size: 11.5px;
+    }
+
+        .pb-form .iv-note > i {
+            color: #0E3A70;
+            font-size: 20px;
+        }
+
+    .pb-form .iv-foot-btns {
+        display: flex;
+        gap: 8px;
+    }
+
+    .pb-form .erp-page-foot .btn-cancel {
+        border: 1px solid #c9d8ea !important;
+        background: #ffffff !important;
+        color: #0E3A70 !important;
+    }
+
+    .pb-form .erp-page-foot .btn-edit {
+        background: linear-gradient(180deg, #1A5BAA 0%, #154C93 100%) !important;
+    }
+
+    .pb-form .pb-fbr-res-wrap {
+        position: relative;
+    }
+
+        .pb-form .pb-fbr-res-wrap #FBR_RES {
+            padding-right: 44px !important;
+            text-overflow: ellipsis;
+        }
+
+    .pb-form .pb-fbr-res-eye {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        bottom: 3px;
+        width: 34px;
+        border: 0;
+        border-radius: 5px;
+        background: #0E3A70;
+        color: #ffffff;
+        font-size: 13px;
+        transition: background 0.15s ease;
+    }
+
+        .pb-form .pb-fbr-res-eye:hover {
+            background: #0A2348;
+        }
+
+    #fbrResModal .modal-dialog {
+        max-width: 440px;
+    }
+
+    #fbrResModal .modal-content {
+        height: auto;
+        border: 0;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    #fbrResModal .fbr-res-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        background: linear-gradient(90deg, #b42318 0%, #d9452f 100%);
+        color: #ffffff;
+    }
+
+        #fbrResModal .fbr-res-head.is-success {
+            background: linear-gradient(90deg, #15803d 0%, #22a06b 100%);
+        }
+
+        #fbrResModal .fbr-res-head > i {
+            font-size: 22px;
+        }
+
+        #fbrResModal .fbr-res-head h5 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        #fbrResModal .fbr-res-head span {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+    #fbrResModal .fbr-res-label {
+        margin-bottom: 6px;
+        color: #5A7394;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    #fbrResModal .fbr-res-desc {
+        margin: 0;
+        color: var(--erp-text);
+        font-size: 13px;
+        line-height: 1.6;
+        word-break: break-word;
+    }
+
+    #fbrResModal .modal-footer {
+        border-top: 0;
+        padding-top: 0;
+    }
+
+    #ivQrModal .modal-body img {
+        width: 320px;
+        max-width: 100%;
     }
 
     #InvoiceBulkUploadModal .modal-dialog {
@@ -78,6 +1284,7 @@
 
     #InvoiceBulkUploadModal .modal-content {
         min-height: 620px;
+        border-radius: 16px;
     }
 
     #InvoiceBulkUploadModal .modal-body {
@@ -117,19 +1324,19 @@
     }
 
     .ibu-step.active {
-        color: #055a87;
+        color: #1A73C7;
         font-weight: 700;
     }
 
     .ibu-step.active .ibu-step-num {
-        background: #055a87;
-        border-color: #055a87;
+        background: #1A73C7;
+        border-color: #1A73C7;
         color: #fff;
     }
 
     .ibu-step.done .ibu-step-num {
-        background: #055a87;
-        border-color: #055a87;
+        background: #1A73C7;
+        border-color: #1A73C7;
         color: #fff;
     }
 
@@ -149,12 +1356,12 @@
     #BtnDownloadInvoiceBulkTemplate:hover {
         background: #f8fafc;
         border-color: #b7c0cb;
-        color: #055a87;
+        color: #1A73C7;
     }
 
     #ibuDropZone {
-        border: 2px dashed #1f2a37 !important;
-        border-radius: 8px;
+        border: 2px dashed #1A73C7 !important;
+        border-radius: 12px;
         min-height: 260px;
         cursor: pointer;
         background: #fff;
@@ -166,7 +1373,7 @@
     }
 
     #ibuDropZone .ibu-excel-icon {
-        color: #055a87;
+        color: #1A73C7;
         font-size: 42px;
         margin-bottom: 10px;
     }
@@ -190,8 +1397,8 @@
 
     .ibu-msg-info {
         background: #e8f3f8;
-        border: 1px solid #055a87;
-        color: #055a87;
+        border: 1px solid #1A73C7;
+        color: #1A73C7;
     }
 
     .ibu-msg-error {
@@ -205,167 +1412,164 @@
         padding-left: 18px;
     }
 </style>
-<div class="card pb-form">
-    <div class="card-header">
-        <button type="button" class="btn btn-light btn-search waves-effect waves-light" data-bs-toggle="modal"
-                data-bs-target=".bs-example-modal-xl" id="BtnQuickSearch">
-            <i class="fa fa-search"></i> Quick Search
-        </button>
-        <button type="button" class="btn btn-primary btn-new waves-effect waves-light float-end" id="BtnNew">
-            <i class="fa fa-plus"></i> Add New
-        </button>
-        <button type="button" class="btn btn-light waves-effect waves-light float-end me-2" id="BtnInvoiceBulkUpload">
-            <i class="fa fa-upload"></i> Invoice Bulk Upload
-        </button>
+<div class="erp-page pb-form">
+    <div class="erp-page-head pb-head-card">
+        <div class="erp-page-title">
+            <div class="erp-page-icon">
+                <span>FBR</span>
+                <b class="erp-page-check"><i class="fa-solid fa-check"></i></b>
+            </div>
+            <div>
+                <h2>Sales Tax Invoice</h2>
+                <p id="pbHeadSub">FBR Digital Invoice • Master Detail View</p>
+            </div>
+        </div>
+        <div class="erp-actions">
+            <button type="button" class="btn erp-action iv-hide" data-bs-toggle="modal" data-bs-target=".bs-example-modal-xl" id="BtnQuickSearch">
+                <i class="fa fa-search"></i> Quick Search
+            </button>
+            <button type="button" class="btn erp-action iv-hide" id="BtnInvoiceBulkUpload">
+                <i class="fa fa-upload"></i> Bulk Upload
+            </button>
+            <button type="button" class="btn erp-action iv-only" id="ivBtnViewQr">
+                <i class="fa-solid fa-qrcode"></i> View QR
+            </button>
+            <button type="button" id="BtnPrint" class="btn erp-action">
+                <i class="fa fa-print"></i> Print
+            </button>
+            <button type="button" class="btn erp-action iv-only" id="ivBtnExportPdf">
+                <i class="fa-solid fa-file-pdf"></i> Export PDF
+            </button>
+            <button type="button" class="btn erp-action" id="BtnfBRpOST">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Post To FBR
+            </button>
+            <button type="button" class="btn erp-action btn-new" id="BtnNew">
+                <i class="fa-solid fa-rotate-right"></i> Reset
+            </button>
+        </div>
     </div>
-    <div class="card-body Record">
-        <div class="row align-items-start">
-            <input id="ID" hidden />
-            <input id="ACT_CODE" hidden />
-            <input id="SACODE" hidden />
-            <input id="partyhidden" hidden />
-            <input id="acthidden" hidden />
-            <input id="salesmanhidden" hidden />
-            <input id="itemIdHidden" hidden />
-            <div class="col-xl-10 col-lg-9 col-md-8">
-                <div class="row">
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-12 pb-field">
-                        <label class="form-label" for="Code">Code:</label>
-                        <input class="form-control" id="Code" readonly type="text" autocomplete="off">
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-12 pb-field">
-                        <label class="form-label" for="ASTATUS">Status:</label>
-                        <div id="ASTATUS"></div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-12 pb-field">
-                        <label class="form-label" for="V_DATE">Transaction Date:</label>
-                        <input class="form-control" id="V_DATE" type="date" onkeydown="empr_helper.HandleTabFocusToSelectBox(event, '#PARTY_CODE')" value="@DateTime.Now.Date.ToString("yyyy-MM-dd")" autocomplete="off">
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-12 pb-field vHide">
-                        <label class="form-label" for="VOUCHER_NO">Transaction #:</label>
-                        <input class="form-control" id="VOUCHER_NO" type="text" readonly autocomplete="off">
-                    </div>
-
-                    <div class="col-xl-3 d-none">
-                        <label class="form-label" for="ORDER_TYPE">ORDER_TYPE:</label>
-                        <input class="form-control" id="ORDER_TYPE" type="text" readonly autocomplete="off">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-12 pb-field" onkeydown="empr_helper.MoveFocusToGrid(event, '#DetailContainer', 0, 'iteM_CODE')">
-                        <label class="form-label" for="PARTY_CODE">Party Name:</label>
-                        <div id="PARTY_CODE"></div>
-                    </div>
-                    <div class="col-xl-3 d-none">
-                        <div class="row">
-                            <div class="col-xl-6 d-none">
-                                <label class="form-label" for="PARTY_BALANCE">Party Balance:</label>
-                                <input class="form-control" id="PARTY_BALANCE" type="text" autocomplete="off">
+    <div class="row pb-top-row">
+    <div class="col-xl-10 col-lg-9 col-md-8 col-12">
+    <div class="card pb-details-card">
+        <div class="pb-card-tab-wrap"><div class="pb-card-tab"><i class="fa-solid fa-file-lines"></i> Bill Details</div></div>
+        <div class="card-body Record">
+            <div class="row g-2 align-items-start">
+                <input id="ID" hidden />
+                <input id="ACT_CODE" hidden />
+                <input id="SACODE" hidden />
+                <input id="partyhidden" hidden />
+                <input id="acthidden" hidden />
+                <input id="salesmanhidden" hidden />
+                <input id="itemIdHidden" hidden />
+                <div class="col-12">
+                    <div class="row g-2">
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <label class="form-label" for="Code">Code:</label>
+                            <input class="form-control" id="Code" readonly type="text" autocomplete="off">
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <label class="form-label" for="ASTATUS">Status:</label>
+                            <div id="ASTATUS"></div>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <label class="form-label" for="V_DATE">Transaction Date:</label>
+                            <input class="form-control" id="V_DATE" type="date" onkeydown="empr_helper.HandleTabFocusToSelectBox(event, '#PARTY_CODE')" value="@DateTime.Now.Date.ToString("yyyy-MM-dd")" autocomplete="off">
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12 vHide">
+                            <label class="form-label" for="VOUCHER_NO">Transaction #:</label>
+                            <input class="form-control" id="VOUCHER_NO" type="text" readonly autocomplete="off">
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-12" onkeydown="empr_helper.MoveFocusToGrid(event, '#DetailContainer', 0, 'iteM_CODE')">
+                            <label class="form-label" for="PARTY_CODE">Party Name:</label>
+                            <div id="PARTY_CODE"></div>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12 d-none">
+                            <label class="form-label" for="BTYPE">Pay Type:</label>
+                            <div id="BTYPE"></div>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <label class="form-label" for="REF">Reference #:</label>
+                            <input class="form-control" id="REF" type="text" onkeydown="empr_helper.HandleTabFocus(event, '#REMARKS')" autocomplete="off">
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <label class="form-label" for="DOC">Doc:</label>
+                            <input type="hidden" value="" id="hdnDOC" />
+                            <div class="input-group my-doc-input-group">
+                                <input type="file" name="DOC" id="DOC" class="d-none" onchange=" empr_PurchaseBill.UploadDoc()" accept=".pdf, .doc, .docx, .xls, .xlsx, image/*" />
+                                <input type="text" id="DOCName" class="form-control my-doc-text" placeholder="No File" readonly />
+                                <button type="button" class="btn my-doc-browse" onclick="$('#DOC').click()">Browse</button>
+                                <a href="javascript:;" class="my-doc-eye" id="openDoc" onclick=" empr_PurchaseBill.OpenDoc()"><i class="fa fa-eye my-eye-btn"></i></a>
                             </div>
-                            <div class="col-xl-6 d-none">
-                                <label class="form-label" for="TERMS">Pay Terms:</label>
-                                <input class="form-control" onkeydown="empr_helper.HandleTabFocus(event, '#REF') id="TERMS" type="text" autocomplete="off">
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12">
+                            <label class="form-label" for="REMARKS">Comment:</label>
+                            <textarea class="form-control" id="REMARKS" rows="1" type="text" onkeydown="empr_helper.MoveFocusToGrid(event, '#DetailContainer', 0, 'iteM_CODE')" autocomplete="off"></textarea>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12">
+                            <label class="form-label" for="FBR_RES">FBR Response:</label>
+                            <div class="pb-fbr-res-wrap">
+                                <input class="form-control" id="FBR_RES" type="text" placeholder=" " readonly autocomplete="off">
+                                <button type="button" class="pb-fbr-res-eye" id="BtnFbrResView" title="View FBR Response"><i class="fa-solid fa-eye"></i></button>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-xl-3 d-none">
-                        <label class="form-label" for="DISC">Disc %:</label>
-                        <input class="form-control" id="DISC" type="text" autocomplete="off" />
-                    </div>
-
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-12 pb-field">
-                        <label class="form-label" for="BTYPE">Pay Type:</label>
-                        <div id="BTYPE"></div>
-                    </div>
-                    <div class="col-xl-3 d-none">
-                        <label class="form-label" for="Currency">Currency:</label>
-                        <div id="Currency"></div>
-                    </div>
-
-                    <div class="col-xl-3 d-none">
-                        <label class="form-label" for="Rate">Rate:</label>
-                        <input class="form-control" id="Rate" type="text" autocomplete="off" oninput="empr_helper.EnhancedDecimalFieldValidation(this)">
-                    </div>
-
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-12 pb-field">
-                        <label class="form-label" for="REF">Refrence #:</label>
-                        <input class="form-control" id="REF" type="text" onkeydown="empr_helper.HandleTabFocus(event, '#REMARKS') autocomplete="off">
-                    </div>
-
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-12 pb-field">
-                        <label class="form-label" for="DOC">Doc :</label>
-                        <input type="hidden" value="" id="hdnDOC" />
-
-                        <div class="input-group my-doc-input-group">
-                            <input type="file" name="DOC" id="DOC" class="d-none" onchange=" empr_PurchaseBill.UploadDoc()" accept=".pdf, .doc, .docx, .xls, .xlsx, image/*" />
-
-                            <input type="text" id="DOCName" class="form-control my-doc-text" placeholder="No File" readonly />
-
-                            <button type="button" class="btn my-doc-browse" onclick="$('#DOC').click()">Browse</button>
-                            <a href="javascript:;" class="my-doc-eye" id="openDoc" onclick=" empr_PurchaseBill.OpenDoc()"><i class="fa fa-eye my-eye-btn"></i></a>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-3 d-none">
-                        <label class="form-label" for="CARTAGE">Cartage:</label>
-                        <input class="form-control" id="CARTAGE" type="number" step="0.01" min="0" onkeydown="return !['e', 'E', '+', '-'].includes(event.key)" autocomplete="off">
-                    </div>
-
-                    <div class="col-xl-3 d-none">
-                        <label class="form-label" for="WAREHOUSE">Warehouse:</label>
-                        <div id="WAREHOUSE"></div>
-                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-12 pb-field">
-                        <label class="form-label" for="REMARKS">Comment:</label>
-                        <textarea class="form-control" id="REMARKS" rows="1" type="text" onkeydown="empr_helper.MoveFocusToGrid(event, '#DetailContainer', 0, 'iteM_CODE') autocomplete="off"></textarea>
-                    </div>
-                    <div class="col-xl-6 col-lg-6 col-md-12 pb-field">
-                        <label class="form-label" for="FBR_RES">FBR Responce:</label>
-                        <input class="form-control" id="FBR_RES" type="text" readonly autocomplete="off">
-                    </div>
-                </div>
-               
             </div>
-
-            <div class="col-xl-2 col-lg-3 col-md-4 col-12">
-                <div class="text-center">
-                    <div class="image-box">
-                        @* <img id="empProfileImgFinal" src="~/Client/Company/default.jpg" /> *@
-                        <img id="qrImg" src="~/Client/Company/notPostedYet.jpg" />
-                    </div>
+            <div class="d-none">
+                <div class="col-xl-3">
+                    <label class="form-label" for="ORDER_TYPE">ORDER_TYPE:</label>
+                    <input class="form-control" id="ORDER_TYPE" type="text" readonly autocomplete="off">
+                </div>
+                <div class="col-xl-6">
+                    <label class="form-label" for="PARTY_BALANCE">Party Balance:</label>
+                    <input class="form-control" id="PARTY_BALANCE" type="text" autocomplete="off">
+                </div>
+                <div class="col-xl-6">
+                    <label class="form-label" for="TERMS">Pay Terms:</label>
+                    <input class="form-control" onkeydown="empr_helper.HandleTabFocus(event, '#REF')" id="TERMS" type="text" autocomplete="off">
+                </div>
+                <div class="col-xl-3">
+                    <label class="form-label" for="DISC">Disc %:</label>
+                    <input class="form-control" id="DISC" type="text" autocomplete="off" />
+                </div>
+                <div class="col-xl-3">
+                    <label class="form-label" for="Currency">Currency:</label>
+                    <div id="Currency"></div>
+                </div>
+                <div class="col-xl-3">
+                    <label class="form-label" for="Rate">Rate:</label>
+                    <input class="form-control" id="Rate" type="text" autocomplete="off" oninput="empr_helper.EnhancedDecimalFieldValidation(this)">
+                </div>
+                <div class="col-xl-3">
+                    <label class="form-label" for="CARTAGE">Cartage:</label>
+                    <input class="form-control" id="CARTAGE" type="number" step="0.01" min="0" onkeydown="return !['e', 'E', '+', '-'].includes(event.key)" autocomplete="off">
+                </div>
+                <div class="col-xl-3">
+                    <label class="form-label" for="WAREHOUSE">Warehouse:</label>
+                    <div id="WAREHOUSE"></div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-12 pb-actions d-flex justify-content-end align-items-center">
-           @*  <button type="button" class="btn btn-primary" id="BtnSodaPick">
-                <i class="fa fa-search"></i> Pick Data
-            </button> *@
-
-            <button type="button" id="BtnPrint" class="btn btn-success btn-print waves-effect waves-light">
-                <i class="fa fa-print"></i> Print
-            </button>
-
-            <button type="button" class="btn btn-primary" id="BtnfBRpOST">
-                Post To FBR
-            </button>
-
-           @*  <button type="button" id="BtnPrintFBR" class="btn btn-success btn-print waves-effect waves-light">
-                <i class="fa fa-print"></i> Print
-            </button> *@
-
-            <span id="verifiedText" class="verified-label" style="display:none;">
-                ✔ Verified
-            </span>
+    </div>
+    </div>
+    <div class="col-xl-2 col-lg-3 col-md-4 col-12">
+        <div class="pb-qr-card">
+            <div class="pb-qr-head"><i class="fa-solid fa-qrcode"></i> FBR QR Code</div>
+            <div class="pb-qr-body">
+                <div class="image-box">
+                    <img id="qrImg" src="~/Client/Company/notPostedYet.jpg" />
+                </div>
+                <span id="verifiedText" class="verified-label" style="display:none;"><i class="fa-solid fa-circle-check"></i> Verified by FBR</span>
+            </div>
         </div>
-
+    </div>
+    </div>
+    <div class="card erp-section-card pb-items-card">
         <ul class="nav nav-tabs nav-primary" id="pills-warningtab" role="tablist">
             <li class="nav-item detailInfo">
                 <a class="nav-link active" id="pills-warninghome-tab" data-bs-toggle="pill"
                    href="#pills-warninghome" role="tab" aria-controls="pills-warninghome" aria-selected="true">
-                    Detail Info
+                    <i class="fa-solid fa-list"></i> Bill Items
                 </a>
             </li>
             <li class="nav-item d-none" id="charges-tab-li">
@@ -375,37 +1579,159 @@
                 </a>
             </li>
         </ul>
-
-        <div class="tab-content mt-10" id="pills-warningtabContent">
-            <!-- Detail Tab -->
+        <div class="tab-content" id="pills-warningtabContent">
             <div class="tab-pane fade show active" id="pills-warninghome" role="tabpanel"
                  aria-labelledby="pills-warninghome-tab">
-                <div class="table-responsive">
+                <div class="pb-detail-grid-wrap">
                     <div id="DetailContainer"></div>
                 </div>
-                <div class="col-xl-12 text-end pb-save-row pr-10">
-                    <button class="btn btn-danger btn-delete" id="BtnDelete" style="display:none"><i class="fa fa-trash"></i> Delete</button>
-                    <button class="btn btn-primary btn-save" id="BtnSave"><i class="fa fa-save"></i> Save</button>
-                </div>
             </div>
-
-            <!-- Charges -->
             <div class="tab-pane fade" id="pills-warningsummary" role="tabpanel" aria-labelledby="pills-warningsummary-tab">
                 <div class="table-responsive">
                     <div id="ChargesGridContainer"></div>
                 </div>
                 <div class="col-xl-12 text-end pb-save-row pr-10">
                     <button type="button" id="BtnChargesSave" class="mr-5 btn btn-primary btn-print waves-effect waves-light float-end">
-                        <i class="fa fa-print"></i> Save Charges
+                        <i class="fa fa-save"></i> Save Charges
                     </button>
                 </div>
-
             </div>
         </div>
-
+    </div>
+    <div class="erp-page-foot pb-entry-foot">
+        <span class="pb-fbr-note" id="fbrVerifiedNote" style="display:none"><i class="fa-solid fa-circle-info"></i> Invoice has been successfully verified by FBR</span>
+        <button class="btn btn-danger btn-delete" id="BtnDelete" style="display:none"><i class="fa fa-trash"></i> Delete</button>
+        <button class="btn btn-primary btn-save" id="BtnSave"><i class="fa fa-save"></i> Save</button>
     </div>
 
+    <div id="pbInvoiceView">
+        <div class="row iv-row">
+            <div class="col-xl-3 col-md-6 col-12">
+                <div class="iv-card">
+                    <div class="pb-card-tab-wrap"><div class="pb-card-tab"><i class="fa-solid fa-file-lines"></i> Invoice Details</div></div>
+                    <div class="iv-body">
+                        <div class="iv-kv"><span class="iv-k">Invoice # :</span><span class="iv-v" id="ivInvoiceNo"></span></div>
+                        <div class="iv-kv"><span class="iv-k">Date :</span><span class="iv-v" id="ivDate"></span></div>
+                        <div class="iv-kv"><span class="iv-k">Ref :</span><span class="iv-v" id="ivRef"></span></div>
+                        <div class="iv-kv iv-kv-stack"><span class="iv-k">FBR Invoice No # :</span><span class="iv-v" id="ivFbrNo"></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 col-12">
+                <div class="iv-card">
+                    <div class="pb-card-tab-wrap"><div class="pb-card-tab"><i class="fa-solid fa-building"></i> Supplier Information</div></div>
+                    <div class="iv-body">
+                        <div class="iv-party-name" id="ivSupplierName"></div>
+                        <div class="iv-party-addr" id="ivSupplierAddress"></div>
+                        <div class="iv-line"><i class="fa fa-phone"></i><span id="ivSupplierTel"></span></div>
+                        <div class="iv-line"><b>S.T. Reg. No. :</b> <span id="ivSupplierStrn"></span></div>
+                        <div class="iv-line"><b>N.T.N Reg. No. :</b> <span id="ivSupplierNtn"></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 col-12">
+                <div class="iv-card">
+                    <div class="pb-card-tab-wrap"><div class="pb-card-tab"><i class="fa-solid fa-user"></i> Buyer Information</div></div>
+                    <div class="iv-body">
+                        <div class="iv-party-name" id="ivBuyerName"></div>
+                        <div class="iv-party-addr" id="ivBuyerAddress"></div>
+                        <div class="iv-line"><i class="fa fa-phone"></i><span id="ivBuyerTel"></span></div>
+                        <div class="iv-line"><b>S.T. Reg. No. :</b> <span id="ivBuyerStrn"></span></div>
+                        <div class="iv-line"><b>N.T.N Reg. No. :</b> <span id="ivBuyerNtn"></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 col-12">
+                <div class="iv-card">
+                    <div class="pb-qr-head"><i class="fa-solid fa-qrcode"></i> FBR QR Code</div>
+                    <div class="iv-qr-body">
+                        <img id="ivQrImg" src="~/Client/Company/notPostedYet.jpg" />
+                        <span id="ivVerified" class="verified-label"><i class="fa-solid fa-circle-check"></i> Verified by FBR</span>
+                        <div id="ivFbrBox" class="iv-fbr-box"><i class="fa-solid fa-circle-check"></i> FBR Invoice No:<br /><span id="ivFbrNo2"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="iv-card mb-2">
+            <div class="pb-card-tab-wrap"><div class="pb-card-tab"><i class="fa-solid fa-cart-shopping"></i> Invoice Items</div></div>
+            <div class="table-responsive">
+                <table class="iv-table">
+                    <thead>
+                        <tr>
+                            <th>HSCODE - Description</th>
+                            <th>UOM</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th>Rate (%)</th>
+                            <th>Tax Amount</th>
+                            <th>Value Inc. Tax</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ivItems"></tbody>
+                </table>
+            </div>
+            <div class="iv-totals">
+                <div class="iv-t">Total : <span id="ivTotalQty"></span></div>
+                <div class="iv-t">Total Amount : <span id="ivTotalAmt"></span></div>
+                <div class="iv-t">Tax : <span id="ivTotalTax"></span></div>
+                <div class="iv-net"><small>Net Total :</small><strong id="ivNetTotal"></strong></div>
+            </div>
+            <div class="iv-words"><i class="fa-solid fa-circle-info"></i> Rupees : <span id="ivWords"></span></div>
+        </div>
+        <div class="erp-page-foot iv-foot">
+            <div class="iv-note">
+                <i class="fa-solid fa-file-lines"></i>
+                <div>
+                    <b>NOTE : THIS IS COMPUTER GENERATED INVOICE AND DOES NOT REQUIRE ANY SIGNATURE</b><br />
+                    Unit prices are displayed up to 4 decimal places only, please calculate further decimals as needed.
+                </div>
+            </div>
+            <div class="iv-foot-btns">
+                <button type="button" class="btn btn-cancel" id="ivBtnCancel"><i class="fa-solid fa-circle-xmark"></i> Cancel</button>
+                <button type="button" class="btn btn-delete" id="ivBtnDelete"><i class="fa fa-trash"></i> Delete</button>
+                <button type="button" class="btn btn-edit" id="ivBtnEdit"><i class="fa fa-pen"></i> Edit</button>
+                <button type="button" class="btn btn-save" id="ivBtnSave"><i class="fa fa-save"></i> Save</button>
+            </div>
+        </div>
+    </div>
 
+    <div class="modal fade" id="fbrResModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="fbr-res-head" id="fbrResHead">
+                    <i class="fa-solid fa-triangle-exclamation" id="fbrResIcon"></i>
+                    <div>
+                        <h5 id="fbrResTitle">FBR Response</h5>
+                        <span id="fbrResCode"></span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="fbr-res-label">Description</div>
+                    <p class="fbr-res-desc" id="fbrResDesc"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ivQrModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">FBR QR Code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="ivQrModalImg" src="~/Client/Company/notPostedYet.jpg" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card pb-modal-host">
 @* quick search *@
     <div class="modal fade bs-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -532,7 +1858,7 @@
                             <i class="fa fa-file-excel ibu-excel-icon"></i>
                             <div><strong>Drop Excel file here</strong></div>
                             <div class="text-muted small mt-1">or click Upload. Columns: V_Date, Party, Item, Qty, Rate, Sale Type...</div>
-                            <button type="button" class="btn btn-primary mt-3" id="BtnInvoiceBulkSelectFile" style="background:#055a87;border-color:#055a87;">
+                            <button type="button" class="btn btn-primary mt-3" id="BtnInvoiceBulkSelectFile">
                                 <i class="fa fa-cloud-upload-alt"></i> Upload
                             </button>
                             <div id="ibuSelectedFileName" class="mt-2 text-muted small"></div>
@@ -544,7 +1870,7 @@
                         <div id="ibuPartyErrorBox" class="ibu-msg ibu-msg-error d-none"></div>
                         <div id="ibuPartyGrid"></div>
                         <div class="text-end mt-3">
-                            <button type="button" class="btn btn-primary" id="BtnInvoiceBulkAddParties" style="background:#055a87;border-color:#055a87;"><i class="fa fa-plus"></i> Add Party</button>
+                            <button type="button" class="btn btn-primary" id="BtnInvoiceBulkAddParties"><i class="fa fa-plus"></i> Add Party</button>
                         </div>
                     </div>
 
@@ -552,7 +1878,7 @@
                         <div id="ibuItemErrorBox" class="ibu-msg ibu-msg-error d-none"></div>
                         <div id="ibuItemGrid"></div>
                         <div class="text-end mt-3">
-                            <button type="button" class="btn btn-primary" id="BtnInvoiceBulkAddItems" style="background:#055a87;border-color:#055a87;"><i class="fa fa-plus"></i> Add Items</button>
+                            <button type="button" class="btn btn-primary" id="BtnInvoiceBulkAddItems"><i class="fa fa-plus"></i> Add Items</button>
                         </div>
                     </div>
 
@@ -560,7 +1886,7 @@
                         <div id="ibuInvoiceSummary" class="mb-2"></div>
                         <div id="ibuInvoiceGrid"></div>
                         <div class="text-end mt-3">
-                            <button type="button" class="btn btn-primary" id="BtnInvoiceBulkUploadInvoices" style="background:#055a87;border-color:#055a87;"><i class="fa fa-upload"></i> Upload Invoices</button>
+                            <button type="button" class="btn btn-primary" id="BtnInvoiceBulkUploadInvoices"><i class="fa fa-upload"></i> Upload Invoices</button>
                         </div>
                     </div>
                 </div>
@@ -570,6 +1896,8 @@
             </div>
         </div>
     </div>
+    </div>
+</div>
 
 @section LinkScriptSection {
         <script type="text/javascript">

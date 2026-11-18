@@ -60,18 +60,35 @@ namespace Empire_ERP.Controllers
                 var currentCompanyResponse = _companyService.GetCompanyByCode(companydata.Company);
                 var currentCompany = (Company)currentCompanyResponse.data;
                 var data = _databaseBackupService.GenerateDatabaseBackup(_hostingEnvironment.WebRootPath, CommonHelper.GetValues(HttpContext));
-                var email = data.data2.ToString();
-                var path = data.data.ToString();
+                if (data.msgType != 1 || data.data == null)
+                {
+                    return Json(data);
+                }
+
+                var email = Convert.ToString(data.data2);
+                var path = Convert.ToString(data.data);
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    data.msgType = 2;
+                    data.msg = "Backup created but no email is saved on your profile.";
+                    return Json(data);
+                }
+
                 MailMessage emailMessage = new MailMessage();
                 emailMessage.To.Add(new MailAddress(email));
-                //emailMessage.Bcc.Add(new MailAddress("Support@empiretecknologies.com", "Empire Tecknologies"));
                 emailMessage.Subject = $@"Database Backup - {currentCompany.C_NAME}";
                 emailMessage.Body = System.IO.File.ReadAllText(Path.Combine(_hostingEnvironment.WebRootPath, "Client", "NotificationTemplates", "DatabaseBackup.html"));
-                emailMessage.Body = emailMessage.Body.Replace("[[OTP]]", Convert.ToString(123456));
                 Attachment attachment = new Attachment(Path.Combine(_hostingEnvironment.WebRootPath, "Client", "TempDatabaseBackupZips", path));
                 emailMessage.Attachments.Add(attachment);
                 var emailResponse = CommonController.SendEmail(emailMessage);
+                if (!emailResponse)
+                {
+                    data.msgType = 2;
+                    data.msg = "Backup created but email could not be sent. " + (CommonController.LastEmailError ?? "");
+                    return Json(data);
+                }
 
+                data.msg = "Backup generated and sent to " + CommonController.MaskEmail(email) + ".";
                 return Json(data);
             }
             catch (Exception ex)

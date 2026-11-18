@@ -450,10 +450,10 @@ var empr_Notes = {
     //    const currentDate = $("#V_DATE").val();
     //    const printContent = `
     //                <div>
-    //                    <p style="color: #055a87; font-size: 18px; font-weight: bold;">
+    //                    <p style="color: #1A73C7; font-size: 18px; font-weight: bold;">
     //                        ${empr_Notes.companyName}
     //                    </p>
-    //                    <p style="color: #055a87; font-size: 14px;">
+    //                    <p style="color: #1A73C7; font-size: 14px;">
     //                        ${empr_Notes.companyAddress}
     //                    </p>
     //                    <hr>
@@ -490,10 +490,10 @@ var empr_Notes = {
         const currentDate = $("#V_DATE").val();
         const printContent = `
         <div>
-            <p style="color: #055a87; font-size: 18px; font-weight: bold;">
+            <p style="color: #1A73C7; font-size: 18px; font-weight: bold;">
                 ${empr_Notes.companyName}
             </p>
-            <p style="color: #055a87; font-size: 14px;">
+            <p style="color: #1A73C7; font-size: 14px;">
                 ${empr_Notes.companyAddress}
             </p>
             <hr>

@@ -425,6 +425,130 @@ namespace Empire_ERP.Infrastructure.Repositories
             return response;
         }
 
+        public MyHttpResponseMessage GetProfile(int userID)
+        {
+            MyHttpResponseMessage response = new MyHttpResponseMessage();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(new SQLService().getconnstring()))
+                {
+                    string query = "SELECT U_ID, USERNAME, FULLNAME, CELL_NO, EMAIL, PICTURES FROM TBL_USER WHERE U_ID = @U_ID AND DLT = 'T'";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@U_ID", userID);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        response.data = new User
+                        {
+                            U_ID = Convert.ToInt32(reader["U_ID"]),
+                            USERNAME = Convert.ToString(reader["USERNAME"]),
+                            FULLNAME = Convert.ToString(reader["FULLNAME"]),
+                            CELL_NO = Convert.ToString(reader["CELL_NO"]),
+                            EMAIL = Convert.ToString(reader["EMAIL"]),
+                            PICTURES = Convert.ToString(reader["PICTURES"])
+                        };
+                        response.msgType = 1;
+                    }
+                    else
+                    {
+                        response.msg = "User not found.";
+                        response.msgType = 2;
+                    }
+                    reader.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                string _catchMessage = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    _catchMessage += "<br/>" + ex.InnerException.Message;
+                }
+                response.msgType = 2;
+                response.msg = _catchMessage;
+            }
+            return response;
+        }
+
+        public MyHttpResponseMessage UpdateProfile(User user, Common common)
+        {
+            MyHttpResponseMessage response = new MyHttpResponseMessage();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(new SQLService().getconnstring()))
+                {
+                    connection.Open();
+                    SqlTransaction transaction = connection.BeginTransaction();
+                    try
+                    {
+                        SqlCommand check = new SqlCommand("SELECT COUNT(*) FROM TBL_USER WHERE USERNAME = @USERNAME AND U_ID <> @U_ID AND DLT = 'T'", connection, transaction);
+                        check.Parameters.AddWithValue("@USERNAME", user.USERNAME);
+                        check.Parameters.AddWithValue("@U_ID", user.U_ID);
+                        if (Convert.ToInt32(check.ExecuteScalar()) > 0)
+                        {
+                            transaction.Rollback();
+                            response.msgType = 2;
+                            response.msg = "This username is already taken. Please choose another one.";
+                            return response;
+                        }
+
+                        string query = @"UPDATE TBL_USER SET
+                                            USERNAME = @USERNAME,
+                                            FULLNAME = @FULLNAME,
+                                            CELL_NO = @CELL_NO,
+                                            EMAIL = @EMAIL,
+                                            PICTURES = @PICTURES,
+                                            EDIT_USER_ID = @EDIT_USER_ID,
+                                            EDIT_DATE = @EDIT_DATE,
+                                            EDIT_COMPUTER_NAME = @EDIT_COMPUTER_NAME,
+                                            EDIT_IP_ADDRESS = @EDIT_IP_ADDRESS,
+                                            EDIT_POSTALCODE = @EDIT_POSTALCODE
+                                         WHERE U_ID = @U_ID AND DLT = 'T'";
+                        SqlCommand command = new SqlCommand(query, connection, transaction);
+                        command.Parameters.AddWithValue("@USERNAME", user.USERNAME);
+                        command.Parameters.AddWithValue("@FULLNAME", (object?)user.FULLNAME ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@CELL_NO", (object?)user.CELL_NO ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@EMAIL", (object?)user.EMAIL ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@PICTURES", (object?)user.PICTURES ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@EDIT_USER_ID", (object?)common.Username ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@EDIT_DATE", DateTime.ParseExact(CommonService.GetDateTime("Pakistan Standard Time"), "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture));
+                        command.Parameters.AddWithValue("@EDIT_COMPUTER_NAME", (object?)common.ComputerName ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@EDIT_IP_ADDRESS", (object?)common.IPAddress ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@EDIT_POSTALCODE", (object?)common.PostalCode ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@U_ID", user.U_ID);
+                        int rows = command.ExecuteNonQuery();
+                        transaction.Commit();
+
+                        response.msgType = rows > 0 ? 1 : 2;
+                        response.msg = rows > 0 ? "Profile Updated Successfully" : "User not found.";
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        string _catchMessage = ex.Message;
+                        if (ex.InnerException != null)
+                        {
+                            _catchMessage += "<br/>" + ex.InnerException.Message;
+                        }
+                        response.msg = _catchMessage;
+                        response.msgType = 2;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string _catchMessage = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    _catchMessage += "<br/>" + ex.InnerException.Message;
+                }
+                response.msgType = 2;
+                response.msg = _catchMessage;
+            }
+            return response;
+        }
+
         public MyHttpResponseMessage GetUserByUserID(int userID)
         {
             MyHttpResponseMessage response = new MyHttpResponseMessage();

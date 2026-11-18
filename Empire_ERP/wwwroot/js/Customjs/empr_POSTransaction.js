@@ -127,7 +127,7 @@ var empr_POSTransaction = {
                 debugger;
                 if ($('#BILL_STATUS').val() != 'P') {
                     $('.headers .icondiv').css({
-                        'background-color': '#055a87'
+                        'background-color': '#1A73C7'
                     });
 
                     var iconId = $(this).attr('id');
@@ -3293,7 +3293,7 @@ var empr_POSTransaction = {
         const slider = document.getElementById('slider');
         if (!slider) return;
         const percentage = (totalPoints / maxPoints) * 100;
-        slider.style.background = `linear-gradient(to right, #055a87 0%, #055a87 ${percentage}%, #d3d3d3 ${percentage}%, #d3d3d3 100%)`;
+        slider.style.background = `linear-gradient(to right, #1A73C7 0%, #1A73C7 ${percentage}%, #d3d3d3 ${percentage}%, #d3d3d3 100%)`;
     },
 
     InitBankAccount: function (selectedValue) {
@@ -4706,7 +4706,7 @@ var empr_POSTransaction = {
                                         </td>
                                         <td style="display: none;"><input type="hidden" class="tax" value="${item.tax}"></td>
                                         <td><input type="number" class="quantity-input" value="${quantity}" data-price="${item.salE_RATE}" ${item.dT_CODE != 0 && item.dT_CODE != null && item.dT_CODE != undefined ? 'readonly' : ''}></td>
-                                        <!-- <i class="fa-solid fa-warehouse warehouse-icon" style="font-size: 1.5em;color: #055a87;cursor: pointer; width: 10px;margin-left: 3px;" data-id="${item.iteM_CODE}"></i> -->
+                                        <!-- <i class="fa-solid fa-warehouse warehouse-icon" style="font-size: 1.5em;color: #1A73C7;cursor: pointer; width: 10px;margin-left: 3px;" data-id="${item.iteM_CODE}"></i> -->
                                         </td>
                                         <td><input type="number" class="total-price" value="${item.salE_RATE}" style="font-size: 11px; font-weight: bold; width: 85px;"></td>
                                         <td style="display: none;"><input type="hidden" class="unit" data-price="${item.unitid}" value="${item.unit}"></td>
@@ -4875,7 +4875,7 @@ var empr_POSTransaction = {
         $('#expamt').val('');
         $('#Dec').val('');
         $('.headers .icondiv').css({
-            'background-color': '#055a87'
+            'background-color': '#1A73C7'
         });
         $('.quantity-input').prop('readonly', false);
         $('.total-price').prop('readonly', false);
@@ -6976,7 +6976,7 @@ var empr_POSTransaction = {
                 if (masterData.length == 1) {
 
                     $('.headers .icondiv').css({
-                        'background-color': '#055a87'
+                        'background-color': '#1A73C7'
                     });
                     var response = masterData[0];
                     console.log(response);

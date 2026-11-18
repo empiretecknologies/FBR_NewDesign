@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Company | Branch | Period</title>
     <!-- favicon -->
-    <link rel="shortcut icon" href="~/images/Favicon.png" />
+    <link rel="shortcut icon" href="~/images/empire-logo.png" />
     <!-- toster styles -->
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
 
@@ -41,6 +41,7 @@
     <link href="~/css/tautocomplete.css" rel="stylesheet" asp-append-version="true">
     <!-- Custom styles for this template -->
     <link href="~/css/style.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/css/app-theme.css" rel="stylesheet" asp-append-version="true">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <style>
@@ -150,7 +151,7 @@
         }
 
         .highlight {
-            background-color: #055a87;
+            background-color: #1A73C7;
             color: #fff;
         }
 
@@ -179,13 +180,157 @@
             font-weight: 600;
             font-size: 11px;
         }
+
+        .login_wrap > .container-fluid {
+            display: flex;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 30px !important;
+        }
+
+            .login_wrap > .container-fluid > .row {
+                width: 100%;
+            }
+
+        .login_wrap .login-card {
+            width: 324px;
+            max-width: calc(100% - 32px);
+            margin: 0 auto !important;
+            padding: 22px 22px 20px;
+            border-radius: 14px;
+            box-shadow: 0 16px 40px rgba(10, 35, 72, 0.30);
+        }
+
+        .login_wrap .login-card .login-main {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            box-shadow: none;
+        }
+
+        .login-card .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 10px 0;
+            border: 1px solid #e3eaf2 !important;
+            border-bottom: 0 !important;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .login-card .logo img {
+            width: 184px;
+            max-width: 100%;
+            height: auto;
+            max-height: none;
+        }
+
+        .login-card span.productname {
+            margin: 0 0 16px;
+            padding: 7px 10px;
+            border-radius: 0 0 10px 10px;
+            color: #0E4A94;
+            background: #EEF4FB;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 20px;
+            text-align: center;
+        }
+
+        .login-card .login-main .theme-form .form-group {
+            width: 100%;
+            margin: 0 0 10px;
+        }
+
+        .login-card .login-main .theme-form label.form-label {
+            margin: 0 0 4px;
+            color: #0A2348;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .login-card .login-main .theme-form select.form-control,
+        .login-card .login-main .theme-form select.form-select {
+            height: 34px !important;
+            min-height: 34px !important;
+            padding: 0 32px 0 12px !important;
+            border: 1px solid #cfd9e6 !important;
+            border-radius: 8px !important;
+            background-color: #ffffff;
+            color: #0A2348;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px !important;
+            font-weight: 500;
+            box-shadow: none !important;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+            .login-card .login-main .theme-form select.form-control:hover,
+            .login-card .login-main .theme-form select.form-select:hover {
+                border-color: #9fb6d1 !important;
+            }
+
+            .login-card .login-main .theme-form select.form-control:focus,
+            .login-card .login-main .theme-form select.form-select:focus {
+                border-color: #1A73C7 !important;
+                box-shadow: 0 0 0 3px rgba(26, 115, 199, 0.15) !important;
+                outline: none;
+            }
+
+        .login-card .login-main .theme-form .form-group .mt-3 {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 16px !important;
+        }
+
+        .login-card .login-main .theme-form .mt-3 .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex: 1 1 0;
+            width: auto;
+            height: 36px;
+            margin: 0;
+            padding: 0 12px;
+            border-radius: 8px !important;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1;
+            transition: box-shadow 0.15s ease, transform 0.15s ease, background 0.15s ease;
+        }
+
+        .login-card .login-main .theme-form .mt-3 .btn-light {
+            border: 1px solid #cfd9e6 !important;
+            background: #ffffff !important;
+            color: #0E4A94 !important;
+        }
+
+            .login-card .login-main .theme-form .mt-3 .btn-light:hover {
+                background: #EEF4FB !important;
+            }
+
+        .login-card .login-main .theme-form #nextmove {
+            border: 0 !important;
+            background: linear-gradient(135deg, #1A73C7 0%, #0E4A94 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 6px 14px rgba(14, 74, 148, 0.28);
+        }
+
+            .login-card .login-main .theme-form #nextmove:hover {
+                background: linear-gradient(135deg, #0E4A94 0%, #0A2348 100%) !important;
+                box-shadow: 0 8px 18px rgba(10, 35, 72, 0.32);
+                transform: translateY(-1px);
+            }
     </style>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous" asp-append-version="true"></script>
 
-    <script src="~/dx/dx.all.js"></script>
     <script src="~/dx/ajaxhelper.js"></script>
-    <script src="~/dx/ati_dxhelper.js"></script>
     <script src="~/js/customjs/empr_helper.js"></script>
 
 </head>
@@ -206,29 +351,28 @@
     <div class="login_wrap" style="background-image: url(../@ViewBag.Background)">
         <!-- login page start-->
         <div class="container-fluid p-0">
-            <div class="row justify-content-center m-0">
-                <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4 p-3">
+            <div class="row m-0">
+                <div class="col-12 p-0">
                     <div class="login-card">
                         <div>
                             <div class="login-main">
                                 <a class="logo" href="javascript:;">
-                                    <img class="img-fluid for-light" src="~/@ViewBag.Logo" alt="looginpage">
+                                    <img class="img-fluid for-light" src="~/images/empire-logo.png" alt="Empire Technologies">
                                 </a>
                                 <span class="productname">@ViewBag.c_name</span>
                                 <form class="theme-form">
 
                                     <div class="form-group">
                                         <label class="form-label"> Company <span class="text-danger">*</span></label>
-                                        <div id="companydxddl"></div>
-
+                                        <select id="companydxddl" class="form-control form-select"></select>
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label"> Branch <span class="text-danger">*</span> </label>
-                                        <div id="branchdxddl"></div>
+                                        <select id="branchdxddl" class="form-control form-select"></select>
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label"> Period <span class="text-danger">*</span> </label>
-                                        <div id="perioddxddl"></div>
+                                        <select id="perioddxddl" class="form-control form-select"></select>
                                     </div>
                                     <div class="form-group mb-0">
                                         <div class="mt-3">

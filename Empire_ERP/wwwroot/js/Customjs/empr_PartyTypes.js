@@ -6,6 +6,7 @@ var empr_partyTypes = {
         $(document).ready(function () {
             debugger;
             empr_partyTypes.resetForm();
+            empr_partyTypes.InitQuickSearch();
             
             $('.saveAttempt').click(function () {
                 if (Permissions != "Admin") {
@@ -129,7 +130,7 @@ var empr_partyTypes = {
 
             if (Permissions != "Admin") {
                 !Permissions.r_ADD && $('#resetForm').hide();
-                !Permissions.r_VIEW && $('#quicksearch').hide();
+                !Permissions.r_VIEW && $('#gridContainer').hide();
                 (!Permissions.r_ADD && !Permissions.r_EDIT) && $('.saveAttempt').hide();
             }
 
@@ -715,6 +716,7 @@ var empr_partyTypes = {
                 if (data.msgType == 1) {
 
                     empr_partyTypes.resetForm();
+                    empr_partyTypes.InitQuickSearch();
                 }
             }, false, true);
         });
@@ -836,6 +838,7 @@ var empr_partyTypes = {
                 //$('#pills-warningprofile').show();
                 //$('#pills-warningcontact').show();
                 $('.btn-delete').show();
+                empr_partyTypes.InitQuickSearch();
 
                 try {
                     $('#chartofaccount').dxDropDownBox('instance').option("disabled", true);
@@ -1247,6 +1250,9 @@ var empr_partyTypes = {
 
                 var selectedvalue = 0;
                 var selectedobj = [];
+                if (_selectedValue == null && data.data && data.data.length > 0) {
+                    _selectedValue = data.data[0].key;
+                }
                 if (_selectedValue != null) {
                     selectedobj = data.data.filter(x => x.key == _selectedValue);
                     if (selectedobj.length > 0) {

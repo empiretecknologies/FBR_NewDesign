@@ -16,12 +16,37 @@ namespace Empire_ERP.Controllers
 {
     public class ReportController : Controller
     {
+        public static readonly BaseColor ThemeNavy = new BaseColor(0x0E, 0x3A, 0x70);
+        public static readonly BaseColor ThemeText = new BaseColor(0x0A, 0x23, 0x48);
+        public static readonly BaseColor ThemeBorder = new BaseColor(0xDB, 0xE6, 0xF2);
+        public static readonly BaseColor ThemeGroupBg = new BaseColor(0xEE, 0xF3, 0xF8);
+        public static readonly BaseColor ThemeSubGroupBg = new BaseColor(0xF5, 0xF8, 0xFC);
+        public static readonly BaseColor ThemeAltRowBg = new BaseColor(0xF7, 0xFA, 0xFF);
+        public static readonly BaseColor ThemeTotalBg = new BaseColor(0xE3, 0xEB, 0xF5);
+        public static readonly BaseColor ThemeAccent = new BaseColor(0x4D, 0xB8, 0xF0);
+
+        static PdfPCell ThemeHeaderCell(string text, Font font, int align)
+        {
+            return new PdfPCell(new Phrase(text, font))
+            {
+                HorizontalAlignment = align,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                BackgroundColor = ThemeNavy,
+                Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER,
+                BorderColor = new BaseColor(0x2A, 0x55, 0x8C),
+                BorderWidth = 0.5f,
+                PaddingTop = 5,
+                PaddingBottom = 6,
+                PaddingLeft = 4,
+                PaddingRight = 4
+            };
+        }
 
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult GeneratePDF([FromBody] PDFRequest request)
         {
-            BaseColor themeColor = new BaseColor(0x05, 0x5A, 0x87);
+            BaseColor themeColor = ThemeNavy;
 
             MemoryStream stream = new MemoryStream();
             Rectangle pageSize = request.IsLandscape ? PageSize.A4.Rotate() : PageSize.A4;
@@ -149,17 +174,9 @@ namespace Empire_ERP.Controllers
                     formatted = char.ToUpper(formatted[0]) + formatted.Substring(1);
 
                 BaseFont bf = BaseFont.CreateFont(@"C:\Windows\Fonts\arialbd.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-                Font customBoldFont = new Font(bf, 7, Font.NORMAL, themeColor);
+                Font customBoldFont = new Font(bf, 7, Font.NORMAL, BaseColor.WHITE);
 
-                PdfPCell h = new PdfPCell(new Phrase(formatted, customBoldFont));
-                h.HorizontalAlignment = Element.ALIGN_CENTER;
-                h.Padding = 4;
-                h.Border = Rectangle.TOP_BORDER | Rectangle.BOTTOM_BORDER;
-                h.BorderColor = new BaseColor(220, 220, 220);
-                h.BorderWidthTop = 0.8f;
-                h.BorderWidthBottom = 0.8f;
-
-                table.AddCell(h);
+                table.AddCell(ThemeHeaderCell(formatted, customBoldFont, Element.ALIGN_CENTER));
             }
             table.HeaderRows = 1;
 
@@ -179,8 +196,10 @@ namespace Empire_ERP.Controllers
             foreach (var c in visibleColumns)
                 if (IsNumericColumn(c.ColumnName))
                     grandTotals[c.ColumnName] = 0;
+            int rowIndex = 0;
             foreach (DataRow r in dt.Rows)
             {
+                BaseColor rowBg = rowIndex++ % 2 == 1 ? ThemeAltRowBg : BaseColor.WHITE;
                 for (int level = 0; level < groupColumns.Count; level++)
                 {
                     string currentValue = r[groupColumns[level]]?.ToString() ?? "";
@@ -230,7 +249,7 @@ namespace Empire_ERP.Controllers
                         grandTotals[col.ColumnName] += num;
 
                         string displayValue = string.IsNullOrWhiteSpace(val) || val == "0" ? "" : string.Format("{0:N0}", num);
-                        cell = new PdfPCell(new Phrase(displayValue, GetFont(7, Font.NORMAL, isTransactionColumn ? themeColor : BaseColor.BLACK)))
+                        cell = new PdfPCell(new Phrase(displayValue, GetFont(7, Font.NORMAL, isTransactionColumn ? themeColor : ThemeText)))
                         { HorizontalAlignment = Element.ALIGN_RIGHT };
                     }
                     else
@@ -239,15 +258,20 @@ namespace Empire_ERP.Controllers
                         if (col.ColumnName.Contains("Date") && DateTime.TryParse(newVal, out DateTime parsedDate))
                             newVal = parsedDate.ToString("dd-MM-yy");
 
-                        cell = new PdfPCell(new Phrase(newVal, GetFont(7, Font.NORMAL, isTransactionColumn ? themeColor : BaseColor.BLACK)))
+                        cell = new PdfPCell(new Phrase(newVal, GetFont(7, Font.NORMAL, isTransactionColumn ? themeColor : ThemeText)))
                         { HorizontalAlignment = Element.ALIGN_CENTER };
                     }
 
                     if (colIndex == 0) cell.Border &= ~Rectangle.LEFT_BORDER;
                     if (colIndex == visibleColumns.Count - 1) cell.Border &= ~Rectangle.RIGHT_BORDER;
 
-                    cell.BorderColor = new BaseColor(220, 220, 220);
-                    cell.Padding = 2;
+                    cell.BorderColor = ThemeBorder;
+                    cell.BorderWidth = 0.5f;
+                    cell.PaddingTop = 3;
+                    cell.PaddingBottom = 4;
+                    cell.PaddingLeft = 3;
+                    cell.PaddingRight = 3;
+                    cell.BackgroundColor = rowBg;
 
                     table.AddCell(cell);
                 }
@@ -354,7 +378,7 @@ namespace Empire_ERP.Controllers
                 _ => 6f  // Account Name or deeper
             };
 
-            Font font = new Font(bf, fontSize, Font.NORMAL, BaseColor.BLACK);
+            Font font = new Font(bf, fontSize, Font.NORMAL, ThemeNavy);
 
             PdfPCell cell = new PdfPCell(
                 new Phrase($"{columnName} : {value}", font)
@@ -362,10 +386,13 @@ namespace Empire_ERP.Controllers
 
             cell.Colspan = colSpan;
             cell.PaddingTop = 5;
-            cell.PaddingBottom = 5;
+            cell.PaddingBottom = 6;
+            cell.PaddingLeft = 6 + level * 8;
             cell.HorizontalAlignment = Element.ALIGN_LEFT;
-
-            cell.Border = Rectangle.NO_BORDER;
+            cell.BackgroundColor = level == 0 ? ThemeGroupBg : ThemeSubGroupBg;
+            cell.Border = Rectangle.LEFT_BORDER;
+            cell.BorderColorLeft = level == 0 ? ThemeNavy : ThemeAccent;
+            cell.BorderWidthLeft = 2.5f;
 
             table.AddCell(cell);
         }
@@ -387,7 +414,7 @@ namespace Empire_ERP.Controllers
                 BaseFont.IDENTITY_H,
                 BaseFont.EMBEDDED);
 
-            Font customBoldFont = new Font(bf, 6.5f, Font.NORMAL, BaseColor.BLACK);
+            Font customBoldFont = new Font(bf, 6.5f, Font.NORMAL, ThemeNavy);
 
             for (int i = 0; i < cols.Count; i++)
             {
@@ -398,7 +425,7 @@ namespace Empire_ERP.Controllers
                 {
                     decimal totalValue = totals[col.ColumnName];
                     string val;
-                    BaseColor textColor = BaseColor.BLACK;
+                    BaseColor textColor = ThemeNavy;
 
                     if (totalValue == 0)
                     {
@@ -425,10 +452,16 @@ namespace Empire_ERP.Controllers
                     cell = new PdfPCell(new Phrase("", customBoldFont));
                 }
 
-                cell.Padding = 4;
+                cell.PaddingTop = 4;
+                cell.PaddingBottom = 5;
+                cell.PaddingLeft = 4;
+                cell.PaddingRight = 4;
                 cell.Border = Rectangle.TOP_BORDER | Rectangle.BOTTOM_BORDER;
-                cell.BorderColor = new BaseColor(220, 220, 220);
-                cell.BackgroundColor = BaseColor.WHITE;
+                cell.BorderColor = ThemeBorder;
+                cell.BorderColorTop = ThemeNavy;
+                cell.BorderWidthTop = 0.8f;
+                cell.BorderWidthBottom = 0.5f;
+                cell.BackgroundColor = ThemeTotalBg;
 
                 if (i == 0)
                     cell.Border &= ~Rectangle.LEFT_BORDER;
@@ -530,13 +563,14 @@ namespace Empire_ERP.Controllers
                     grandTotals[col.ColumnName] = 0;
             }
 
-            BaseColor lightGrayBorder = new BaseColor(220, 220, 220);
+            BaseColor lightGrayBorder = ThemeBorder;
             BaseFont bfBold = BaseFont.CreateFont(
                 @"C:\Windows\Fonts\arialbd.ttf",
                 BaseFont.IDENTITY_H,
                 BaseFont.EMBEDDED
             );
 
+            int dataRowIndex = 0;
             // Loop through all data rows
             foreach (DataRow row in dt.Rows)
             {
@@ -581,57 +615,33 @@ namespace Empire_ERP.Controllers
                         {
 
                             // Add first group header (font size 8)
-                            Font firstGroupFont = new Font(bfBold, 7.5f, Font.NORMAL, BaseColor.BLACK);
+                            Font firstGroupFont = new Font(bfBold, 7.5f, Font.NORMAL, ThemeNavy);
                             PdfPCell firstGroupCell = new PdfPCell(new Phrase($"{groupColumn} : {currentGroupValue}", firstGroupFont));
                             firstGroupCell.Colspan = visibleColumns.Count;
-                            firstGroupCell.PaddingTop = 5;
-                            firstGroupCell.PaddingBottom = 5;
+                            firstGroupCell.PaddingTop = 6;
+                            firstGroupCell.PaddingBottom = 7;
+                            firstGroupCell.PaddingLeft = 7;
                             firstGroupCell.HorizontalAlignment = Element.ALIGN_LEFT;
-                            firstGroupCell.BackgroundColor = BaseColor.WHITE;
-
-                            // Check if this first group has child groups
-                            bool hasChildGroups = groupColumns.Count > 1 && dt.AsEnumerable()
-                                .Any(r => r[groupColumn]?.ToString() == currentGroupValue &&
-                                          !string.IsNullOrWhiteSpace(r[groupColumns[1]]?.ToString()));
-
-                            // Add bottom border if first group has child groups
-                            if (hasChildGroups)
-                            {
-                                firstGroupCell.Border = Rectangle.BOTTOM_BORDER;
-                                firstGroupCell.BorderWidthBottom = 0.8f;
-                                firstGroupCell.BorderColorBottom = lightGrayBorder;
-                            }
-                            else
-                            {
-                                firstGroupCell.Border = Rectangle.NO_BORDER;
-                            }
+                            firstGroupCell.BackgroundColor = ThemeGroupBg;
+                            firstGroupCell.Border = Rectangle.LEFT_BORDER;
+                            firstGroupCell.BorderColorLeft = ThemeNavy;
+                            firstGroupCell.BorderWidthLeft = 3f;
 
                             table.AddCell(firstGroupCell);
 
-                            Font headerFont = new Font(bfBold, 7, Font.NORMAL, themeColor);
+                            Font headerFont = new Font(bfBold, 7, Font.NORMAL, BaseColor.WHITE);
                             foreach (var col in visibleColumns)
                             {
                                 string formatted = Regex.Replace(col.ColumnName, "([a-z])([A-Z])", "$1 $2");
                                 if (!string.IsNullOrEmpty(formatted))
                                     formatted = char.ToUpper(formatted[0]) + formatted.Substring(1);
 
-                                PdfPCell headerCell = new PdfPCell(new Phrase(formatted, headerFont));
-
                                 string[] rightAlignColumns = { "Debit", "Credit", "Amount", "Rate", "Net Amount", "Balance", "Qty", "Due Amount", "Due Year", "Due Month", "Due Days" };
-                                if (rightAlignColumns.Contains(formatted))
-                                    headerCell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                                else
-                                    headerCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                int align = rightAlignColumns.Contains(formatted) ? Element.ALIGN_RIGHT : Element.ALIGN_CENTER;
 
-                                headerCell.Padding = 4;
-                                headerCell.Border = Rectangle.TOP_BORDER | Rectangle.BOTTOM_BORDER;
-                                headerCell.BorderColor = lightGrayBorder;
-                                headerCell.BorderWidthTop = 0.8f;
-                                headerCell.BorderWidthBottom = 0.8f;
-                                headerCell.BackgroundColor = BaseColor.WHITE;
-
-                                table.AddCell(headerCell);
+                                table.AddCell(ThemeHeaderCell(formatted, headerFont, align));
                             }
+                            dataRowIndex = 0;
 
 
                             // Reset first level totals
@@ -641,14 +651,17 @@ namespace Empire_ERP.Controllers
                         else
                         {
                             // For subsequent group levels (level 1, 2, etc.), add group header (font size 7)
-                            Font subGroupFont = new Font(bfBold, 7f, Font.NORMAL, BaseColor.BLACK);
+                            Font subGroupFont = new Font(bfBold, 7f, Font.NORMAL, ThemeNavy);
                             PdfPCell subGroupCell = new PdfPCell(new Phrase($"{groupColumn} : {currentGroupValue}", subGroupFont));
                             subGroupCell.Colspan = visibleColumns.Count;
                             subGroupCell.PaddingTop = 4;
-                            subGroupCell.PaddingBottom = 4;
+                            subGroupCell.PaddingBottom = 5;
+                            subGroupCell.PaddingLeft = 7 + level * 8;
                             subGroupCell.HorizontalAlignment = Element.ALIGN_LEFT;
-                            subGroupCell.BackgroundColor = BaseColor.WHITE;
-                            subGroupCell.Border = Rectangle.NO_BORDER;
+                            subGroupCell.BackgroundColor = ThemeSubGroupBg;
+                            subGroupCell.Border = Rectangle.LEFT_BORDER;
+                            subGroupCell.BorderColorLeft = ThemeAccent;
+                            subGroupCell.BorderWidthLeft = 2.5f;
 
                             table.AddCell(subGroupCell);
 
@@ -684,6 +697,7 @@ namespace Empire_ERP.Controllers
                     }
                 }
 
+                BaseColor rowBg = dataRowIndex++ % 2 == 1 ? ThemeAltRowBg : BaseColor.WHITE;
                 // Add data row cells
                 for (int colIndex = 0; colIndex < visibleColumns.Count; colIndex++)
                 {
@@ -713,7 +727,7 @@ namespace Empire_ERP.Controllers
                         if (string.IsNullOrWhiteSpace(val) || val == "0" || num == 0)
                         {
                             displayValue = "";
-                            textColor = isTransactionColumn ? themeColor : BaseColor.BLACK;
+                            textColor = isTransactionColumn ? themeColor : ThemeText;
                         }
                         else if (num < 0)
                         {
@@ -725,7 +739,7 @@ namespace Empire_ERP.Controllers
                         {
                             // Positive value: normal format
                             displayValue = string.Format("{0:N0}", num);
-                            textColor = isTransactionColumn ? themeColor : BaseColor.BLACK;
+                            textColor = isTransactionColumn ? themeColor : ThemeText;
                         }
 
                         cell = new PdfPCell(new Phrase(displayValue,
@@ -741,7 +755,7 @@ namespace Empire_ERP.Controllers
                             newVal = parsedDate.ToString("dd-MM-yy");
 
                         cell = new PdfPCell(new Phrase(newVal,
-                            GetFont(7, Font.NORMAL, isTransactionColumn ? themeColor : BaseColor.BLACK)))
+                            GetFont(7, Font.NORMAL, isTransactionColumn ? themeColor : ThemeText)))
                         {
                             HorizontalAlignment = Element.ALIGN_CENTER
                         };
@@ -752,8 +766,12 @@ namespace Empire_ERP.Controllers
                     if (colIndex == visibleColumns.Count - 1) cell.Border &= ~Rectangle.RIGHT_BORDER;
 
                     cell.BorderColor = lightGrayBorder;
-                    cell.Padding = 2;
-                    cell.BackgroundColor = BaseColor.WHITE;
+                    cell.BorderWidth = 0.5f;
+                    cell.PaddingTop = 3;
+                    cell.PaddingBottom = 4;
+                    cell.PaddingLeft = 3;
+                    cell.PaddingRight = 3;
+                    cell.BackgroundColor = rowBg;
 
                     table.AddCell(cell);
                 }
@@ -818,7 +836,7 @@ namespace Empire_ERP.Controllers
 
         public override void OnEndPage(PdfWriter writer, Document document)
         {
-            BaseColor themeColor = new BaseColor(0x05, 0x5A, 0x87);
+            BaseColor themeColor = ReportController.ThemeNavy;
 
             Font GetFont(float size, int style, BaseColor color)
             {
@@ -835,7 +853,7 @@ namespace Empire_ERP.Controllers
             companyCell.HorizontalAlignment = Element.ALIGN_LEFT;
             header.AddCell(companyCell);
 
-            PdfPCell reportCell = new PdfPCell(new Phrase(ReportName, GetFont(9, Font.BOLD, themeColor)));
+            PdfPCell reportCell = new PdfPCell(new Phrase(ReportName, GetFont(9, Font.BOLD, new BaseColor(0x5A, 0x73, 0x94))));
             reportCell.Colspan = 3;
             reportCell.Border = Rectangle.NO_BORDER;
             reportCell.HorizontalAlignment = Element.ALIGN_LEFT;
@@ -873,8 +891,9 @@ namespace Empire_ERP.Controllers
             // Line between rows
             PdfPCell lineCell = new PdfPCell(new Phrase(""));
             lineCell.Colspan = 3;
+            lineCell.BackgroundColor = themeColor;
             lineCell.Border = Rectangle.BOTTOM_BORDER;
-            lineCell.BorderColorBottom = new BaseColor(200, 200, 200); // light gray
+            lineCell.BorderColorBottom = new BaseColor(0x2A, 0x55, 0x8C);
             lineCell.BorderWidthBottom = 0.5f;
             lineCell.PaddingBottom = 2; // Reduced padding to minimize space
             header.AddCell(lineCell);
@@ -896,7 +915,14 @@ namespace Empire_ERP.Controllers
             header.AddCell(pd2);
             header.AddCell(pageCell);
 
-            header.AddCell(spacer);
+            PdfPCell accentBar = new PdfPCell(new Phrase(""))
+            {
+                Colspan = 3,
+                Border = Rectangle.NO_BORDER,
+                BackgroundColor = ReportController.ThemeAccent,
+                FixedHeight = 2f
+            };
+            header.AddCell(accentBar);
 
             // Position header closer to top (reduced from -10 to -5)
             header.WriteSelectedRows(0, -1, document.LeftMargin, document.PageSize.Height - 5, writer.DirectContent);

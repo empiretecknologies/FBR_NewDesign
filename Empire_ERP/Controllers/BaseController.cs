@@ -33,143 +33,51 @@ namespace Empire_ERP.Controllers
             {
                 ViewBag.Name = HttpContext.Session.GetString("Username");
                 ViewBag.ProfileImage = $"/images/upload/users/{HttpContext.Session.GetString("Picture")}";
-                List<Menu> menuBuilders;
-                if (HttpContext.Session.GetString("RoleType") == "A")
+
+                string[] requestURL = filterContext.HttpContext.Request.Path.ToString().Split('/');
+                string controllerURL = requestURL.Length > 1 ? requestURL[1] : "Home";
+                if (string.IsNullOrWhiteSpace(controllerURL))
                 {
-                    menuBuilders = _menuService.GetMenu().Menu;
+                    controllerURL = "Home";
                 }
-                else
-                {
-                    menuBuilders = _menuService.GetMenuByRole(HttpContext.Session.GetInt32("RoleId")).Menu;
-                }
+                ViewBag.ControllerName = CommonService.UpperCaseWords(controllerURL);
+                ViewBag.ControllerURL = controllerURL.ToLower();
 
                 if (Request.Query.ContainsKey("Code"))
                 {
                     int Code = CommonService.ParseInt(Request.Query["CODE"]);
-                    if (!menuBuilders.Any(menu => menu.ID == Code))
-                    {
-                        filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new
-                        {
-                            controller = "Login",
-                            action = "Index"
-                        }));
-                        return;
-                    }
                     ViewBag.Code = Code;
+                    HttpContext.Session.SetString("MenuID", Code.ToString());
                 }
-
-                string[] requestURL = filterContext.HttpContext.Request.Path.ToString().Split('/');
-                string controllerURL = requestURL[1].ToLower();
-                ViewBag.ControllerName = CommonService.UpperCaseWords(controllerURL);
-                ViewBag.ControllerURL = controllerURL;
-                string menuURL = controllerURL;
-                string actionURL = string.Empty;
-                string Menu = string.Empty;
-                string MenuChild = string.Empty;
-                string MenuId = string.Empty;
-                Menu += "<ul class='nav ul-navbar'>";
-                //var Master = menuBuilders.Where(x => x.MENU_PARENT_CODE == 0 && x.DLT == "T" && x.ASTATUS == "Y" && x.MENU_TYPE == 1).OrderBy(x => x.MENU_GRCODE).ToList();
-
-                var MasterList = menuBuilders.Where(x => x.MENU_PARENT_CODE == 0 && x.DLT == "T" && x.ASTATUS == "Y" && x.MENU_TYPE == 1).OrderBy(x => x.MENU_GRCODE).ToList();
-
-                foreach (var master in MasterList)
+                else
                 {
-                    Menu += "<li class='nav-item dropdown'>";
-                    string masterUrl = "?MOID=" + master.ID + (Request.Query.ContainsKey("CODE") ? "&Code=" + Request.Query["CODE"] : "");
-                    Menu += $"<a href='{masterUrl}' class='nav-link dropdown-toggle' data-bs-toggle='dropdown'><i class='{master.MPIC}'></i>{master.MENU_NAME} &#x2335</a>";
-
-                    var parents = menuBuilders.Where(x => x.MENU_PARENT_CODE == master.ID && x.MENU_TYPE == 2 && x.DLT == "T" && x.ASTATUS == "Y").OrderBy(x => x.MENU_GRCODE).ToList();
-
-                    var directChildren = menuBuilders.Where(x => x.MENU_PARENT_CODE == master.ID && x.MENU_TYPE == 3 && x.DLT == "T" && x.ASTATUS == "Y").OrderBy(x => x.MENU_GRCODE).ToList();
-
-                    Menu += "<ul class='dropdown-menu'>";
-
-                    if (parents.Any())
+                    int? resolvedId = NavHelper.ResolveMenuId(controllerURL);
+                    if (resolvedId.HasValue)
                     {
-                        foreach (var parent in parents)
-                        {
-                            Menu += "<li class='dropdown-submenu'>";
-                            string parentUrl = ViewBag.WebsiteURL + parent.MENU_PAGE + "?MOID=" + master.ID + "&Code=" + parent.ID;
-                            Menu += $"<a href='{parentUrl}' class='dropdown-item dropdown-toggle'>{parent.MENU_NAME}</a>";
-
-                            var children = menuBuilders.Where(x => x.MENU_PARENT_CODE == parent.ID && x.MENU_TYPE == 3 && x.DLT == "T" && x.ASTATUS == "Y").OrderBy(x => x.MENU_GRCODE).ToList();
-
-                            if (children.Any())
-                            {
-                                Menu += "<ul class='dropdown-menu'>";
-                                foreach (var child in children)
-                                {
-                                    string childUrl = ViewBag.WebsiteURL + child.MENU_PAGE + "?MOID=" + parent.ID + "&Code=" + child.ID;
-                                    //Menu += $"<li><a class='dropdown-item' href='{childUrl}'>{child.MENU_NAME}</a></li>";
-                                    Menu += $"<li><a class='dropdown-item' href='{childUrl}' data-menuurl='{childUrl}' data-mtype='{child.MTYPE}' data-menuid='{child.ID}' data-menuname='{child.MENU_NAME}' data-menuurl='{child.MENU_PAGE}' data-menutype='{child.MENU_TYPE}'>{child.MENU_NAME}</a></li>";
-
-                                }
-                                Menu += "</ul>";
-                            }
-                            Menu += "</li>";
-                        }
+                        HttpContext.Session.SetString("MenuID", resolvedId.Value.ToString());
+                        ViewBag.Code = resolvedId.Value;
                     }
-
-                    if (directChildren.Any())
-                    {
-                        foreach (var child in directChildren)
-                        {
-                            string childUrl = ViewBag.WebsiteURL + child.MENU_PAGE + "?MOID=" + master.ID + "&Code=" + child.ID;
-                            Menu += $"<li><a class='dropdown-item' href='{childUrl}' data-menuurl='{childUrl}' data-mtype='{child.MTYPE}' data-menuid='{child.ID}' data-menuname='{child.MENU_NAME}' data-menuurl='{child.MENU_PAGE}' data-menutype='{child.MENU_TYPE}'>{child.MENU_NAME}</a></li>";
-                        }
-                    }
-
-                    Menu += "</ul>";
-                    Menu += "</li>";
                 }
 
-                Menu += "</ul>";
-                ViewBag.Menu = Menu;
-                bool isSidebarOpen = isSidebarOpens();
-
-                ViewBag.IsSidebarOpen = isSidebarOpen;
+                var navPage = NavHelper.GetByController(controllerURL);
+                ViewBag.NavKey = navPage?.Key ?? "";
+                ViewBag.PageGroup = navPage?.Group ?? ViewBag.ControllerName;
+                ViewBag.MENU_NAME = navPage?.Title ?? ViewBag.ControllerName;
+                ViewBag.WebsiteName = ViewBag.MENU_NAME;
+                ViewBag.IsSidebarOpen = true;
                 ViewBag.PageURL = ViewBag.WebsiteURL + controllerURL;
-                if (Request.Query.ContainsKey("MOID"))
+
+                string homeUrl = Url.Action("Index", "Home");
+                string BreadCrumbHtml = $"<a href='{homeUrl}'><i class='fa fa-home'></i></a>";
+                if (navPage != null && navPage.Controller != "Home")
                 {
-                    string MOID = Request.Query["MOID"];
-                    MenuChild += "<ul class='ul-leftside'>";
-                    var Child = menuBuilders.Where(x => x.MENU_TYPE == 3 && x.DLT == "T" && x.ASTATUS == "Y" && x.MENU_PARENT_CODE == Convert.ToInt32(MOID)).OrderBy(x => x.MENU_GRCODE).ToList();
-                    foreach (var ChildRecord in Child)
-                    {
-                        string _menuUrl = ViewBag.WebsiteURL + ChildRecord.MENU_PAGE;
-                        MenuChild += "<li>";
-                        MenuChild += "<a href='" + _menuUrl + "?MOID=" + MOID + "&Code=" + ChildRecord.ID + "'>" + ChildRecord.MENU_NAME + "</a>";
-                        MenuChild += "</li>";
-                    }
-                    MenuChild += "</ul>";
-                    ViewBag.ChildMenu = MenuChild;
+                    BreadCrumbHtml += $"<span class='sep'>›</span><span>{navPage.Group}</span><span class='sep'>›</span><strong>{navPage.Title}</strong>";
                 }
-                string BreadCrumbHtml = "<ol class='breadcrumb breadcrumb-custom  d-flex align-items-center position-relative'>";
-                BreadCrumbHtml += "<ol class='breadcrumb position-relative'>";
-                //BreadCrumbHtml += "<li class='breadcrumb-item'><a href='" + CommonService.ConvertToWebURL("Home") + "'><i class='fa fa-home'></i></a></li>";
-                string url = Url.Action("Index", "Home");
-                BreadCrumbHtml += "<li class='breadcrumb-item'><a href=' " + url + " '><i class='fa fa-home'></i></a></li>";
-                var MenuPermissionList = menuBuilders.Select(o => o.MENU_NAME.ToLower()).Distinct().ToList();
-                if (ViewBag.ControllerName != "Home")
+                else
                 {
-                    string CODE = Request.Query["Code"];
-                    if (!String.IsNullOrWhiteSpace(CODE))
-                    {
-                        var BreadChild = menuBuilders.FirstOrDefault(x => x.ID == Convert.ToInt64(CODE));
-                        if (BreadChild != null && !String.IsNullOrWhiteSpace(BreadChild.MENU_NAME))
-                        {
-                            ViewBag.MENU_NAME = BreadChild.MENU_NAME;
-                            var href = CommonService.ConvertToWebURL(controllerURL);
-                            BreadCrumbHtml += "<li class='breadcrumb-item'><a href='javascript::'>" + BreadChild.MENU_NAME + "</a></li>";
-                            BreadCrumbHtml += $@"<li class='breadcrumb-item position-relative'><a href='javascript::' class='ms-1'
-                                 id='gearBtn'><i class='fa-solid fa-gear' ></i></a>
-                                </li>
-                                ";
-                            ViewBag.WebsiteName = BreadChild.MENU_NAME;
-                        }
-                    }
+                    BreadCrumbHtml += "<span class='sep'>›</span><strong>Dashboard</strong>";
                 }
-                BreadCrumbHtml += "</ol>";
+                BreadCrumbHtml += "<a href='javascript:;' class='ms-2' id='gearBtn'><i class='fa-solid fa-gear'></i></a>";
                 ViewBag.BreadCrumbHTML = BreadCrumbHtml;
                 ViewBag.Company = CommonHelper.GetCompanyName(common.Company);
                 ViewBag.BranchForNav = CommonHelper.GetBranch(common.Branch);
@@ -192,10 +100,8 @@ namespace Empire_ERP.Controllers
                 //var data11 = approval.data;
 
                 //ViewBag.StatusApp = approval.data;
-                base.OnActionExecuting(filterContext);
             }
-
-            
+            base.OnActionExecuting(filterContext);
         }
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {

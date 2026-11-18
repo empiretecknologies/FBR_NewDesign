@@ -17,6 +17,8 @@ namespace Empire_ERP.Core.Interfaces
         MyHttpResponseMessage OTPVerification(OTPUser user);
         MyHttpResponseMessage UpdatePassword(User user);
         MyHttpResponseMessage GetUserByUserID(int userID);
+        MyHttpResponseMessage GetProfile(int userID);
+        MyHttpResponseMessage UpdateProfile(User user, Common common);
         MyHttpResponseMessage GetAllDDL(Common common);
     }
 }

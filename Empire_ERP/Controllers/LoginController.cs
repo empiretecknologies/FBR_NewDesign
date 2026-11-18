@@ -229,23 +229,32 @@ namespace Empire_ERP.Controllers
                             var otpReponse = _loginService.SaveUserOTP(otpUser);
                             if (otpReponse.msgType == 1)
                             {
-                                MailMessage emailMessage = new MailMessage();
-                                emailMessage.To.Add(new MailAddress(user.EMAIL, user.FULLNAME));
-                                //emailMessage.Bcc.Add(new MailAddress("Support@empiretecknologies.com", "Empire Tecknologies"));
-                                emailMessage.Subject = "Password Reset Request";
-                                emailMessage.Body = System.IO.File.ReadAllText(Path.Combine(_hostingEnvironment.WebRootPath, "Client", "NotificationTemplates", "ForgetPassword.html"));
-                                emailMessage.Body = emailMessage.Body.Replace("[[FullName]]", user.FULLNAME);
-                                emailMessage.Body = emailMessage.Body.Replace("[[OTP]]", Convert.ToString(otpUser.OTP));
-                                var emailResponse = CommonController.SendEmail(emailMessage);
-                                if (emailResponse)
+                                if (string.IsNullOrWhiteSpace(user.EMAIL))
                                 {
-                                    response.data = CommonController.MaskEmail(otpUser.EMAIL);
-                                    response.msgType = 1;
+                                    response.msg = "No email address is saved for this user.";
+                                    response.msgType = 2;
                                 }
                                 else
                                 {
-                                    response.msg = "Something went wrong while sending the email! please try again later.";
-                                    response.msgType = 2;
+                                    MailMessage emailMessage = new MailMessage();
+                                    emailMessage.To.Add(new MailAddress(user.EMAIL, user.FULLNAME));
+                                    emailMessage.Subject = "Password Reset Request";
+                                    emailMessage.Body = System.IO.File.ReadAllText(Path.Combine(_hostingEnvironment.WebRootPath, "Client", "NotificationTemplates", "ForgetPassword.html"));
+                                    emailMessage.Body = emailMessage.Body.Replace("[[FullName]]", user.FULLNAME);
+                                    emailMessage.Body = emailMessage.Body.Replace("[[OTP]]", Convert.ToString(otpUser.OTP));
+                                    var emailResponse = CommonController.SendEmail(emailMessage);
+                                    if (emailResponse)
+                                    {
+                                        response.data = CommonController.MaskEmail(otpUser.EMAIL);
+                                        response.msgType = 1;
+                                    }
+                                    else
+                                    {
+                                        response.msg = "Something went wrong while sending the email! please try again later.";
+                                        if (!string.IsNullOrWhiteSpace(CommonController.LastEmailError))
+                                            response.msg += " " + CommonController.LastEmailError;
+                                        response.msgType = 2;
+                                    }
                                 }
                             }
                             else

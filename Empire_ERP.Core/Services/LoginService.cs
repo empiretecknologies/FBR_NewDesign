@@ -49,6 +49,16 @@ namespace Empire_ERP.Core.Services
         {
             return _loginInterface.GetUserByUserID(userID);
         }
+        public MyHttpResponseMessage GetProfile(int userID)
+        {
+            return _loginInterface.GetProfile(userID);
+        }
+
+        public MyHttpResponseMessage UpdateProfile(User user, Common common)
+        {
+            return _loginInterface.UpdateProfile(user, common);
+        }
+
         public MyHttpResponseMessage GetAllDDL(Common common)
         {
             return _loginInterface.GetAllDDL(common);

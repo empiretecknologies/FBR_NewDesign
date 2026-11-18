@@ -1,4 +1,7 @@
 ﻿$(document).ready(function () {
+    if (!$('.leftsidebar').length) {
+        return;
+    }
 
     $(".dropdown-item[data-menutype='3']").attr("draggable", true).on("dragstart", onMenuDrag);
 
@@ -246,7 +249,7 @@
         menu.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
         menu.style.cursor = 'pointer';
         //menu.innerText = '🗑 Remove';
-        menu.innerHTML = '<i class="fa fa-trash" style="margin-right:6px;color:#055a87;"></i> Remove';
+        menu.innerHTML = '<i class="fa fa-trash" style="margin-right:6px;color:#1A73C7;"></i> Remove';
 
         // On click -> delete favorite
         menu.addEventListener('click', function () {

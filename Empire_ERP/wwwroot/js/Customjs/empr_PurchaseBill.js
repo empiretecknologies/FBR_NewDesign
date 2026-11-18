@@ -72,7 +72,37 @@ var empr_PurchaseBill = {
                 $('#Code').val(id);
                 $('.modal').modal('hide');
                 empr_helper.selectedBill = id;
-                empr_PurchaseBill.GetPurchaseBillByCode(id);
+                empr_PurchaseBill.GetPurchaseBillByCode(id, true);
+            });
+
+            $('body').on('click', '#ivBtnCancel', function () {
+                $('#BtnNew').click();
+            });
+
+            $('body').on('click', '#ivBtnDelete', function () {
+                empr_PurchaseBill.Delete();
+            });
+
+            $('body').on('click', '#ivBtnEdit', function () {
+                empr_PurchaseBill.HideInvoiceView();
+                $('#DetailContainer').dxDataGrid('instance').resize();
+            });
+
+            $('body').on('click', '#ivBtnSave', function () {
+                $('#BtnSave').click();
+            });
+
+            $('body').on('click', '#ivBtnViewQr', function () {
+                $('#ivQrModalImg').attr('src', $('#ivQrImg').attr('src'));
+                $('#ivQrModal').modal('show');
+            });
+
+            $('body').on('click', '#BtnFbrResView', function () {
+                empr_PurchaseBill.ShowFbrResponse();
+            });
+
+            $('body').on('click', '#ivBtnExportPdf', function () {
+                empr_PurchaseBill.ExportInvoicePdf();
             });
 
             $('body').on('click', '#BtnfBRpOST', function () {
@@ -742,6 +772,7 @@ var empr_PurchaseBill = {
             {
                 dataField: 'hS_CODE',
                 caption: 'HS Code',
+                width: 110,
                 allowEditing: false
             },
             {
@@ -839,15 +870,15 @@ var empr_PurchaseBill = {
             {
                 dataField: 'taX_AMT',
                 caption: 'Tax Amount',
-                width: 110,
+                width: 120,
                 allowEditing: false,
                 dataType: 'number',
                 format: { type: 'fixedPoint', precision: 2 }
             },
             {
                 dataField: 'f_TAX',
-                caption: 'Futher Tax',
-                width: 80,
+                caption: 'Further Tax',
+                width: 120,
                 dataType: 'number',
                 format: { type: 'fixedPoint', precision: 2 },
                 setCellValue: function (newData, value, currentRowData) {
@@ -861,8 +892,8 @@ var empr_PurchaseBill = {
             },
             {
                 dataField: 'f_TAX_AMT',
-                caption: 'Futher Tax Amt',
-                width: 110,
+                caption: 'Further Tax Amt',
+                width: 150,
                 allowEditing: false,
                 dataType: 'number',
                 format: { type: 'fixedPoint', precision: 2 }
@@ -870,7 +901,7 @@ var empr_PurchaseBill = {
             {
                 dataField: 'neT_AMT',
                 caption: 'Net Amount',
-                width: 110,
+                width: 120,
                 allowEditing: false,
                 dataType: 'number',
                 format: { type: 'fixedPoint', precision: 2 }
@@ -1039,7 +1070,8 @@ var empr_PurchaseBill = {
                 dataField: 'fbR_TYPE',
                 caption: "Sale Type",
                 allowSorting: false,
-                width: 200,
+                width: 320,
+                minWidth: 280,
                 lookup: {
                     dataSource: {
                         store: fbrType,
@@ -1079,23 +1111,37 @@ var empr_PurchaseBill = {
             {
                 dataField: 'iteM_SNO',
                 caption: 'Item SNO',
+                width: 110,
                 allowEditing: false
             },
             {
                 dataField: 'schedulE_NO',
                 caption: 'Schedule No',
+                width: 130,
                 allowEditing: false
             },
             {
                 dataField: 'seriaL_NO',
                 caption: 'Serial No',
+                width: 110,
                 allowEditing: false
             }
         ];
-        empr_helper.editableDxGridbindingForTransactionsVouchers('#DetailContainer', col, dataSrc, "PurchaseBilll", "iteM_CODE");
+        empr_helper.editableDxGridbindingForTransactionsVouchers('#DetailContainer', col, dataSrc, "PurchaseBillGridV2", "iteM_CODE");
+        var detailGrid = $('#DetailContainer').dxDataGrid('instance');
+        detailGrid.option({
+            height: 320,
+            scrolling: {
+                mode: 'standard',
+                showScrollbar: 'always',
+                scrollByThumb: true,
+                scrollByContent: true,
+                useNative: true
+            }
+        });
         if (dataSrc.length == 0) {
-            $('#DetailContainer').dxDataGrid('instance').addRow().done(function () {
-                $('#DetailContainer').dxDataGrid('instance').saveEditData();
+            detailGrid.addRow().done(function () {
+                detailGrid.saveEditData();
             });
         }
 
@@ -1498,13 +1544,14 @@ var empr_PurchaseBill = {
                     }
                 }
             },
-            { dataField: 'id', caption: 'Code', width: 80, alignment: "center" },
-            { dataField: 'v_DATE', caption: 'Voucher Date', dataType: 'date', format: 'dd-MM-yyy' },
-            { dataField: 'voucheR_NO', caption: 'Voucher No', alignment: 'center', },
+            { dataField: 'id', caption: 'Code', width: 90, alignment: "center" },
+            { dataField: 'v_DATE', caption: 'Transaction Date', dataType: 'date', format: 'dd-MM-yyyy', width: 150 },
+            { dataField: 'voucheR_NO', caption: 'Transaction #', alignment: 'center', width: 170 },
             {
                 dataField: 'pvoucheR_NO', caption: 'Pick Tran#',
                 allowEditing: false,
                 alignment: 'center',
+                width: 150,
                 cellTemplate: function (container, options) {
                     $('<a>')
                         .addClass('dx-link')
@@ -1514,16 +1561,16 @@ var empr_PurchaseBill = {
                         .appendTo(container);
                 }
             },
-            { dataField: 'partY_NAME', caption: 'Party Name', },
-            { dataField: 'warehouse', caption: 'Warehouse', },
-            { dataField: 'lot', caption: 'Lot', },
-            { dataField: 'iteM_NAME', caption: 'Item Name', },
-            { dataField: 'ref', caption: 'Refrence #', },
-            { dataField: 'remarks', caption: 'Description', },
-            { dataField: 'qty', caption: 'Qty', },
-            { dataField: 'rate', caption: 'Rate', },
-            { dataField: 'amt', caption: 'Amount', },
-            { dataField: 'astatus', caption: 'Status', },
+            { dataField: 'partY_NAME', caption: 'Party Name', minWidth: 220 },
+            { dataField: 'warehouse', caption: 'Warehouse', width: 130 },
+            { dataField: 'lot', caption: 'Lot', width: 110 },
+            { dataField: 'iteM_NAME', caption: 'Item', minWidth: 200 },
+            { dataField: 'ref', caption: 'Reference #', width: 140 },
+            { dataField: 'remarks', caption: 'Comment', minWidth: 180 },
+            { dataField: 'qty', caption: 'Qty', width: 90 },
+            { dataField: 'rate', caption: 'Rate', width: 90 },
+            { dataField: 'amt', caption: 'Amount', width: 110 },
+            { dataField: 'astatus', caption: 'Status', width: 100 },
             ];
         }
         else {
@@ -1544,27 +1591,52 @@ var empr_PurchaseBill = {
                                </div>`).appendTo(container);
                 }
             },
-            { dataField: 'id', caption: 'Code', width: 80, alignment: "center" },
-            { dataField: 'v_DATE', caption: 'Voucher Date', dataType: 'date', format: 'dd-MM-yyy' },
-            { dataField: 'voucheR_NO', caption: 'Voucher No', alignment: 'center', },
-            { dataField: 'astatus', caption: 'Status', },
-            { dataField: 'partY_NAME', caption: 'Party Name', },
-            //{ dataField: 'region', caption: 'Region', },
-            { dataField: 'ref', caption: 'Refrence #', },
-            { dataField: 'fbR_NO', caption: 'FBR Responce', },
-            { dataField: 'remarks', caption: 'Remarks', },
+            { dataField: 'id', caption: 'Code', width: 90, alignment: "center" },
+            { dataField: 'v_DATE', caption: 'Transaction Date', dataType: 'date', format: 'dd-MM-yyyy', width: 150 },
+            { dataField: 'voucheR_NO', caption: 'Transaction #', alignment: 'center', width: 170 },
+            { dataField: 'astatus', caption: 'Status', width: 100 },
+            { dataField: 'partY_NAME', caption: 'Party Name', minWidth: 240 },
+            { dataField: 'ref', caption: 'Reference #', width: 140 },
+            { dataField: 'fbR_NO', caption: 'FBR Response', minWidth: 180 },
+            { dataField: 'remarks', caption: 'Comment', minWidth: 200 },
                 //{ dataField: 'rinV_NO', caption: 'R.Inv No', },
                 //{ dataField: 'rinV_DATE', caption: 'R.Inv Date', dataType: 'date', format: 'dd-MM-yyy' },
             ]
         }
         //empr_helper.dxGridbindingLazyLoading('#gridContainer', col, "/PurchaseBill/GetPurchaseBill", "id", "PartyOpening");
-        empr_helper.dxGridbindingVouchers('#gridContainer', col, dataSrc, "PurchaseBillQS", "single");
+        empr_helper.dxGridbindingVouchers('#gridContainer', col, dataSrc, "PurchaseBillQSV2", "single");
         setTimeout(function () {
             $('#gridContainer').dxDataGrid('instance').resize();
         }, 500);
     },
 
-    GetPurchaseBillByCode: function (code) {
+    ShowFbrResponse: function () {
+        var res = $.trim($('#FBR_RES').val());
+        var $head = $('#fbrResHead').removeClass('is-success');
+        var $icon = $('#fbrResIcon').attr('class', 'fa-solid fa-triangle-exclamation');
+
+        if (res === '') {
+            $head.addClass('is-success');
+            $icon.attr('class', 'fa-solid fa-circle-info');
+            $('#fbrResTitle').text('FBR Response');
+            $('#fbrResCode').text('');
+            $('#fbrResDesc').text('This invoice has not been posted to FBR yet.');
+        } else if (/^\S+$/.test(res)) {
+            $head.addClass('is-success');
+            $icon.attr('class', 'fa-solid fa-circle-check');
+            $('#fbrResTitle').text('Verified by FBR');
+            $('#fbrResCode').text('FBR Invoice No: ' + res);
+            $('#fbrResDesc').text('This invoice has been successfully verified by FBR.');
+        } else {
+            var match = res.match(/^\s*([A-Za-z0-9]+)\s*:\s*([\s\S]*)$/);
+            $('#fbrResTitle').text('FBR Error');
+            $('#fbrResCode').text(match ? 'Error Code: ' + match[1] : '');
+            $('#fbrResDesc').text(match ? match[2] : res);
+        }
+        $('#fbrResModal').modal('show');
+    },
+
+    GetPurchaseBillByCode: function (code, openInView) {
         empr_PurchaseBill.ResetForm();
         ajaxHelper.ajaxGetJson('/PurchaseBill/GetPurchaseBillByCode?code=' + code, function (data) {
             if (data.master.msgType == 1) {
@@ -1577,7 +1649,7 @@ var empr_PurchaseBill = {
                     var response = masterData[0];
                     empr_PurchaseBill.vDate = response.v_DATE;
                     var filteredData = $.grep(PartyType, function (item) {
-                        return item.partyCode === response.partY_CODE && item.accountCode === response.acT_CODE;
+                        return item.partyCode === response.partY_CODE;
                     });
                     var fbrNo = response.fbR_NO || "";
                     debugger;
@@ -1649,6 +1721,11 @@ var empr_PurchaseBill = {
                     }
                     if (isValidFbrNo) {
                         $('#BtnDelete').show();
+                        $('#fbrVerifiedNote').css('display', 'inline-flex');
+                    }
+
+                    if (openInView && isValidFbrNo) {
+                        empr_PurchaseBill.ShowInvoiceView(response.id, isValidFbrNo);
                     }
                 }
                 //$('#charges-tab-li').removeClass('d-none');
@@ -1709,7 +1786,7 @@ var empr_PurchaseBill = {
         var V_DATE = $("#V_DATE").val();
         var VOUCHER_NO = $("#VOUCHER_NO").val();
         var PARTY_CODE = $("#partyhidden").val();
-        var ACT_CODE = $("#acthidden").val();
+        var ACT_CODE = 0;
         var BTYPE = $("#BTYPE").dxSelectBox('option', 'value');
         var REF = $("#REF").val();
         var DOC = $("#hdnDOC").val();
@@ -1888,7 +1965,141 @@ var empr_PurchaseBill = {
         }, false, true);
     },
 
+    ShowInvoiceView: function (code, isVerified) {
+        var reportType = $('#ReportType').dxSelectBox('instance');
+        var mdId = reportType ? (reportType.option('value') || 0) : 0;
+        ajaxHelper.ajaxGetJson('/PurchaseBill/GetInvoiceViewData?code=' + code + '&mdId=' + mdId, function (data) {
+            if (data.msgType != 1) {
+                empr_helper.notify(data.msg, 2);
+                return;
+            }
+            var fmt = function (n, min, max) {
+                return (parseFloat(n) || 0).toLocaleString('en-US', { minimumFractionDigits: min, maximumFractionDigits: max });
+            };
+            var m = data.master;
+            $('#ivInvoiceNo').text(m.invoiceNumber || '');
+            $('#ivDate').text(m.date || '');
+            $('#ivRef').text(m.refNo || '');
+            $('#ivFbrNo, #ivFbrNo2').text(isVerified ? (m.fbrNo || '') : '');
+            $('#ivSupplierName').text(m.supplierName || '');
+            $('#ivSupplierAddress').text(m.supplierAddress || '');
+            $('#ivSupplierTel').text(m.supplierTel || '—');
+            $('#ivSupplierStrn').text(m.supplierStrn || '');
+            $('#ivSupplierNtn').text(m.supplierNtn || '');
+            $('#ivBuyerName').text(m.buyerName || '');
+            $('#ivBuyerAddress').text(m.buyerAddress || '');
+            $('#ivBuyerTel').text(m.buyerTel || '—');
+            $('#ivBuyerStrn').text(m.buyerStrn || '');
+            $('#ivBuyerNtn').text(m.buyerNtn || '');
+
+            $('#ivQrImg').attr('src', $('#qrImg').attr('src'));
+            $('#ivVerified, #ivFbrBox').toggle(isVerified);
+
+            var totalQty = 0, totalAmt = 0, totalTax = 0, totalNet = 0;
+            var $body = $('#ivItems').empty();
+            $.each(data.items || [], function (i, item) {
+                totalQty += parseFloat(item.qty) || 0;
+                totalAmt += parseFloat(item.amt) || 0;
+                totalTax += parseFloat(item.taxAmt) || 0;
+                totalNet += parseFloat(item.netAmt) || 0;
+                $('<tr>')
+                    .append($('<td>').text((item.hsCode || '') + ' - ' + (item.itemName || '')))
+                    .append($('<td class="text-center">').text(item.unit || ''))
+                    .append($('<td class="text-end">').text(fmt(item.qty, 2, 2)))
+                    .append($('<td class="text-end">').text(fmt(item.rate, 2, 4)))
+                    .append($('<td class="text-center">').text(fmt(item.tax, 0, 2) + '%'))
+                    .append($('<td class="text-end">').text(fmt(item.taxAmt, 2, 2)))
+                    .append($('<td class="text-end">').text(fmt(item.netAmt, 2, 2)))
+                    .appendTo($body);
+            });
+            if ((data.items || []).length < 3) {
+                $('<tr class="iv-filler"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>').appendTo($body);
+            }
+
+            $('#ivTotalQty').text(fmt(totalQty, 2, 2));
+            $('#ivTotalAmt').text(fmt(totalAmt, 0, 2));
+            $('#ivTotalTax').text(fmt(totalTax, 2, 2));
+            $('#ivNetTotal').text(fmt(totalNet, 2, 2));
+            $('#ivWords').text(empr_PurchaseBill.AmountInWords(totalNet));
+
+            $('#pbHeadSub').text(isVerified ? 'FBR Digital Invoice – Validated by FBR' : 'FBR Digital Invoice – Not Posted to FBR');
+            $('#ivBtnDelete').toggle($('#BtnDelete').css('display') !== 'none');
+            $('#ivBtnSave').toggle($('#BtnSave').css('display') !== 'none' && !isVerified);
+            $('#ivBtnEdit').hide();
+            $('.pb-form').addClass('pb-view-mode');
+        }, false, true);
+    },
+
+    HideInvoiceView: function () {
+        $('.pb-form').removeClass('pb-view-mode');
+        $('#pbHeadSub').text('FBR Digital Invoice • Master Detail View');
+    },
+
+    ExportInvoicePdf: function () {
+        var MD_ID = 0, reportName = '';
+        var selectedItem = $('#ReportType').dxSelectBox('option', 'selectedItem');
+        if (selectedItem) {
+            MD_ID = selectedItem.mD_ID;
+            reportName = selectedItem.reporT_NAME;
+        }
+        var dataModel = {
+            TRAN_ID: empr_helper.selectedBill,
+            MD_ID: MD_ID,
+            REPORT_NAME: reportName,
+            BALANCE: $('#PARTY_BALANCE').val(),
+        };
+        ajaxHelper.ajaxPostJsonData(dataModel, "/PurchaseBill/GetPrintReport", function (data) {
+            if (data.msgType == 1) {
+                var link = document.createElement('a');
+                link.href = window.location.origin + data.data;
+                link.download = data.data.split('/').pop();
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            }
+            else {
+                empr_helper.notify(data.msg, data.msgType);
+            }
+        }, false, true);
+    },
+
+    AmountInWords: function (amount) {
+        var ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+            'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        var tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        var below1000 = function (n) {
+            var s = '';
+            if (n >= 100) {
+                s = ones[Math.floor(n / 100)] + ' Hundred';
+                n = n % 100;
+                if (n) s += ' And ';
+            }
+            if (n >= 20) {
+                s += tens[Math.floor(n / 10)] + (n % 10 ? '-' + ones[n % 10] : '');
+            } else if (n > 0) {
+                s += ones[n];
+            }
+            return s;
+        };
+        var value = Math.abs(parseFloat(amount) || 0);
+        var whole = Math.floor(value);
+        var paisa = Math.round((value - whole) * 100);
+        if (whole === 0 && paisa === 0) return 'Zero Only';
+        var scales = ['', ' Thousand', ' Million', ' Billion'];
+        var parts = [], i = 0;
+        while (whole > 0) {
+            var chunk = whole % 1000;
+            if (chunk) parts.unshift(below1000(chunk) + scales[i]);
+            whole = Math.floor(whole / 1000);
+            i++;
+        }
+        var words = parts.join(' ');
+        if (paisa) words += (words ? ' And ' : '') + below1000(paisa) + ' Paisa';
+        return words + ' Only';
+    },
+
     ResetForm: function () {
+        empr_PurchaseBill.HideInvoiceView();
         $('.detailInfo a').tab('show');
         empr_PurchaseBill.CreateGrid([{ __KEY__: empr_PurchaseBill.GenerateKey(36), dT_CODE: 0, }]);
         empr_PurchaseBill.CreateChargesGrid(DefaultCharges);
@@ -1916,6 +2127,7 @@ var empr_PurchaseBill = {
         $('#pickItems').show();
         $('#BtnfBRpOST').show();
         $("#verifiedText").hide();
+        $('#fbrVerifiedNote').hide();
         if (Permissions != "Admin") {
             if (Permissions.r_ADD) {
                 $('#BtnSave').show();
@@ -2043,7 +2255,7 @@ var empr_PurchaseBill = {
             });
 
             $('#partyhidden').val(filteredData[0].partyCode);
-            $('#acthidden').val(filteredData[0].accountCode);
+            $('#acthidden').val('');
 
             var code = $('#Code').val();
             if (code) {
@@ -2107,7 +2319,6 @@ var empr_PurchaseBill = {
     },
 
     GeneratePrintReport: function () {
-        empr_PurchaseBill.InitReportTypeDDL();
         let TRAN_ID = empr_helper.selectedBill;
         let MD_ID = 0;
         let reportName = "";
@@ -2127,22 +2338,31 @@ var empr_PurchaseBill = {
             REPORT_NAME: reportName,
             BALANCE: balance,
         }
-        ajaxHelper.ajaxPostJsonData(dataModel, "/PurchaseBill/GetPrintReport", function (data) {
+        $("#Loader").show();
+        $("#Loader").css('display', 'flex');
+        var xhr = ajaxHelper.ajaxPostJsonData(dataModel, "/PurchaseBill/GetPrintReport", function (data) {
             console.log('report', data);
-            if (data.msgType == 1) {
+            try {
+                if (data.msgType == 1) {
 
-                $('#ModalBody').empty();
-                setTimeout(function () {
+                    $('#ModalBody').empty();
                     $('#ReportType').dxSelectBox('instance').option('value', MD_ID);
                     $('#ModalBody').html("<center><object id='objReport' data='" + window.location.origin + data.data + "' width='1100' height='600'></object></center>");
                     $('#ShowReportModal').show();
                     $('#ShowReportModal').modal('show');
-                }, 100);
+                }
+                else {
+                    empr_helper.notify(data.msg, data.msgType);
+                }
+            } finally {
+                $("#Loader").hide();
             }
-            else {
-                empr_helper.notify(data.msg, data.msgType);
-            }
-        }, false, true);
+        }, true);
+        if (xhr && xhr.fail) {
+            xhr.fail(function () {
+                $("#Loader").hide();
+            });
+        }
     },
 
     UploadDoc: function () {
@@ -2394,6 +2614,10 @@ var empr_PurchaseBill = {
                         );
                         $('#BtnfBRpOST').hide();
                         $("#verifiedText").show();
+                        $('#fbrVerifiedNote').css('display', 'inline-flex');
+                        if ($('.pb-form').hasClass('pb-view-mode')) {
+                            empr_PurchaseBill.ShowInvoiceView(code, true);
+                        }
                     }
                 }
                 else {

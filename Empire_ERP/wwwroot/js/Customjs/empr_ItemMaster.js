@@ -5,6 +5,7 @@ var empr_ItemMaster = {
             
             empr_ItemMaster.resetForm();
             empr_ItemMaster.InitBarcodeInfoForm(true);
+            empr_ItemMaster.InitQuickSearch();
             //$("#Size").dxDropDownBox("instance").option("disabled", false);
             //$("#Color").dxDropDownBox("instance").option("disabled", false);
             //$("#BarCodeType").dxSelectBox("instance").option("disabled", false);
@@ -117,7 +118,7 @@ var empr_ItemMaster = {
             });
 
             if (Permissions != "Admin") {
-                !Permissions.r_VIEW && $('#BtnQuickSearch').hide();
+                !Permissions.r_VIEW && $('#gridContainer').hide();
                 (!Permissions.r_ADD && !Permissions.r_EDIT) && $('#BtnSave').hide();
                 (!Permissions.r_ADD && !Permissions.r_EDIT) && $('#BtnSaveBarcode').hide();
             }
@@ -829,7 +830,7 @@ var empr_ItemMaster = {
             //    visible: false,
             //},
         ];
-        empr_helper.dxGridbindingVouchers('#gridContainer', columns, dataSrc, "ItemMaster");
+        empr_helper.dxGridbindingVouchers('#gridContainer', columns, dataSrc, "ItemMaster", 'single');
         //empr_helper.dxGridbindingLazyLoading('#gridContainer', columns, "/ItemMaster/QuickSearch", "id", "ItemMaster");
     },
 
@@ -1256,6 +1257,7 @@ var empr_ItemMaster = {
                 empr_helper.notify(data.msg, data.msgType);
                 if (data.msgType == 1) {
                     empr_ItemMaster.resetForm();
+                    empr_ItemMaster.InitQuickSearch();
                 }
             }, false, true);
         });
@@ -1395,7 +1397,7 @@ var empr_ItemMaster = {
                 } else {
                     empr_ItemMaster.resetForm();
                 }
-
+                empr_ItemMaster.InitQuickSearch();
           
             }
         }, false, true);

@@ -19,34 +19,52 @@ namespace Empire_ERP.Controllers
             _hostingEnvironment = hostingEnvironment;
         }
 
+        public static EmailSettings MailConfig { get; private set; }
+        public static string LastEmailError { get; private set; }
+
+        public static void ConfigureEmail(IConfiguration configuration)
+        {
+            MailConfig = configuration.GetSection("EmailSettings").Get<EmailSettings>() ?? new EmailSettings();
+        }
+
         public static bool SendEmail(MailMessage emailMessage)
         {
-            string mailFrom = "Support@empiretecknologies.com",
-                mailFromName = "Empire Tecknologies",
-                password = "DS&T5*lKS&^SalesMNT24",
-                port = "587",
-                host = "smtp.titan.email";
             var isSent = false;
+            LastEmailError = "";
             try
             {
+                var settings = MailConfig;
+                if (settings == null || string.IsNullOrWhiteSpace(settings.MailFrom) || string.IsNullOrWhiteSpace(settings.Password) || string.IsNullOrWhiteSpace(settings.SmtpHost))
+                {
+                    LastEmailError = "SMTP settings are missing.";
+                    return false;
+                }
+
                 emailMessage.Body += "<br/>";
                 emailMessage.IsBodyHtml = true;
-                emailMessage.From = new MailAddress(mailFrom, mailFromName);
+                emailMessage.From = new MailAddress(settings.MailFrom, settings.MailFromName);
 
-                SmtpClient client = new SmtpClient();
-                client.UseDefaultCredentials = false;
-                client.Credentials = new System.Net.NetworkCredential(mailFrom, password);
-                client.Port = Convert.ToInt32(port);
-                client.Host = host;
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                //client.Timeout = 600000;
-                client.EnableSsl = true;
-                client.Send(emailMessage);
+                var mime = MimeMessage.CreateFromMailMessage(emailMessage);
+                using (var client = new MailKit.Net.Smtp.SmtpClient())
+                {
+                    client.Timeout = settings.Timeout > 0 ? settings.Timeout : 30000;
+                    var socketOptions = !settings.SmtpEnableSsl
+                        ? SecureSocketOptions.None
+                        : settings.SmtpPort == 465
+                            ? SecureSocketOptions.SslOnConnect
+                            : SecureSocketOptions.StartTls;
+                    client.Connect(settings.SmtpHost, settings.SmtpPort, socketOptions);
+                    client.Authenticate(settings.MailFrom, settings.Password);
+                    client.Send(mime);
+                    client.Disconnect(true);
+                }
                 isSent = true;
             }
             catch (Exception ex)
             {
-
+                LastEmailError = ex.Message;
+                if (ex.InnerException != null && !string.IsNullOrWhiteSpace(ex.InnerException.Message))
+                    LastEmailError += " " + ex.InnerException.Message;
             }
             return isSent;
         }
@@ -140,7 +158,7 @@ namespace Empire_ERP.Controllers
         //    {
         //        await client.ConnectAsync("imap.titan.email", 993, SecureSocketOptions.SslOnConnect);
 
-        //        await client.AuthenticateAsync("Support@empiretecknologies.com", "DS&T5*lKS&^SalesMNT24");
+        //        await client.AuthenticateAsync(MailConfig.MailFrom, MailConfig.Password);
 
         //        var inbox = client.Inbox;
         //        await inbox.OpenAsync(FolderAccess.ReadOnly);
@@ -174,8 +192,9 @@ namespace Empire_ERP.Controllers
 
             using (var client = new ImapClient())
             {
-                await client.ConnectAsync("imap.titan.email", 993, SecureSocketOptions.SslOnConnect);
-                await client.AuthenticateAsync("Support@empiretecknologies.com", "DS&T5*lKS&^SalesMNT24");
+                var mail = MailConfig;
+                await client.ConnectAsync(mail.ImapHost, mail.ImapPort, mail.ImapEnableSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.None);
+                await client.AuthenticateAsync(mail.MailFrom, mail.Password);
 
                 var inbox = client.Inbox;
                 await inbox.OpenAsync(FolderAccess.ReadOnly);
