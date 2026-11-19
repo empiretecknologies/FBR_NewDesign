@@ -1576,6 +1576,7 @@ namespace Empire_ERP.Infrastructure.Repositories
                         dataRow["Tax"] = reader["TAX"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["TAX"]);
                         dataRow["TaxAmt"] = reader["TAX_AMT"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["TAX_AMT"]);
                         dataRow["NetAmt"] = reader["NET_AMT"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["NET_AMT"]);
+                        dataRow["WRate"] = reader["W_RATE"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["W_RATE"]);
 
                         dataTable.Rows.Add(dataRow);
                     }

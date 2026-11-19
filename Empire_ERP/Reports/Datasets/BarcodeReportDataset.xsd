@@ -392,6 +392,7 @@
               <xs:element name="TaxAmt" msprop:Generator_ColumnPropNameInTable="TaxAmtColumn" msprop:Generator_ColumnPropNameInRow="TaxAmt" msprop:Generator_UserColumnName="TaxAmt" msprop:Generator_ColumnVarNameInTable="columnTaxAmt" type="xs:decimal" minOccurs="0" />
               <xs:element name="NetAmt" msprop:Generator_ColumnPropNameInTable="NetAmtColumn" msprop:Generator_ColumnPropNameInRow="NetAmt" msprop:Generator_UserColumnName="NetAmt" msprop:Generator_ColumnVarNameInTable="columnNetAmt" type="xs:decimal" minOccurs="0" />
               <xs:element name="Unit" msprop:Generator_ColumnPropNameInRow="Unit" msprop:Generator_ColumnPropNameInTable="UnitColumn" msprop:Generator_ColumnVarNameInTable="columnUnit" msprop:Generator_UserColumnName="Unit" type="xs:string" minOccurs="0" />
+              <xs:element name="WRate" msprop:Generator_ColumnPropNameInTable="WRateColumn" msprop:Generator_ColumnPropNameInRow="WRate" msprop:Generator_UserColumnName="WRate" msprop:Generator_ColumnVarNameInTable="columnWRate" type="xs:decimal" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
